@@ -11,6 +11,7 @@ export default {
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
+        customGreen: 'rgba(62, 238, 154, 1)',
       },
     },
   },
