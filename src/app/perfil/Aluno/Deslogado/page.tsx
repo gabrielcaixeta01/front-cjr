@@ -7,21 +7,34 @@ export default function PerfilAlunoDeslogado() {
   const router = useRouter();
 
   return (
-    <div className="flex flex-col h-screen bg-gray-100 p-6">
-      <div className="flex justify-end mb-4">
-        <button className="p-2 bg-gray-200 rounded hover:bg-gray-300 mx-5">
-          <HomeIcon
-            className="h-6 w-6 text-black"
-            onClick={() => router.push("/feed/Deslogado")}
+    <div className="flex flex-col h-screen bg-gray-100">
+      <div className="flex justify-between bg-blue-200 p-2 items-center">
+        <div className="">
+          <Image
+            src="/logounb.png"
+            alt="Logo da UnB"
+            width={80}
+            height={80}
+            className="w-20 h-10"
           />
-        </button>
-        <button
-          className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 mx-5"
-          onClick={() => router.push("/login")}
-        >
-          Fazer Login
-        </button>
+        </div>
+        <div className="flex items-center p-2">
+          <button className="bg-azulCjr hover:bg-blue-600 mx-5 p-2 rounded-[60px] transition duration-300 ease-in-out">
+            <HomeIcon
+              className="h-6 w-6 text-white"
+              onClick={() => router.push("/feed/Deslogado")}
+            />
+          </button>
+          <button
+            className=" mx-5 bg-azulCjr text-white rounded-[60px] px-4 py-2 hover:bg-blue-600 transition duration-300 ease-in-out"
+            onClick={() => router.push("/login")}
+          >
+            Fazer Login
+          </button>
+        </div>
+
       </div>
+      
 
       <div className="w-full h-screen max-w-[40%] mx-auto bg-white rounded shadow-md">
         <div className="bg-customGreen border-b rounded-t">
