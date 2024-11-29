@@ -1,66 +1,160 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 
 const validationSchema = Yup.object({
-  name: Yup.string().required("O nome é obrigatório"),
-  email: Yup.string().email("E-mail inválido").required("O e-mail é obrigatório"),
+  name: Yup.string(),
+  password: Yup.string().min(6, "A senha deve ter pelo menos 6 caracteres"),
+  department: Yup.string(),
+  course: Yup.string(),
+  profilePicture: Yup.mixed()
+    .nullable()
+    .test(
+      "fileFormat",
+      "Formato inválido. Apenas imagens são permitidas.",
+      (value) =>
+        !value || (value && ["image/jpeg", "image/png", "image/jpg"].includes(value.type))
+    ),
 });
 
 const initialValues = {
   name: "",
-  email: "",
+  password: "",
+  department: "",
+  course: "",
+  profilePicture: null,
 };
 
-const onSubmit = (values: { name: string; email: string }) => {
-  console.log("Dados enviados:", values);
+const onSubmit = (values: typeof initialValues) => {
+  const filteredValues = Object.fromEntries(
+    Object.entries(values).filter(([, value]) => value !== "")
+  );
+  console.log("Dados enviados:", filteredValues);
 };
 
 export default function EditarPerfil() {
+  const [showPassword, setShowPassword] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<string | null>(null);
+
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold">Editar Perfil</h1>
-      <Formik
-        initialValues={initialValues}
-        validationSchema={validationSchema}
-        onSubmit={onSubmit}
-      >
-        {({ isSubmitting }) => (
-          <Form>
-            <div className="mb-4">
-              <label htmlFor="name">Nome</label>
-              <Field
-                id="name"
-                name="name"
-                type="text"
-                className="border p-2 rounded w-full"
-              />
-              <ErrorMessage name="name" component="div" className="text-red-500" />
-            </div>
+    <div className="flex flex-col h-screen bg-gray-100 items-center justify-center p-6">
+      
+      <div className="bg-customGreen p-6 rounded-lg w-full max-w-md">
+        <div className="text-center mb-6">
+          <h1 className="text-3xl font-bold text-azulCjr">Atualize seu Perfil</h1>
+          <p className="text-sm italic text-gray-600">Mantenha suas informações sempre atualizadas</p>
+        </div>
+        <Formik
+          initialValues={initialValues}
+          validationSchema={validationSchema}
+          onSubmit={onSubmit}
+        >
+          {({ isSubmitting, setFieldValue }) => (
+            <Form className="space-y-4 text-black">
+              {[
+                { id: "name", label: "Nome", type: "text" },
+                { id: "department", label: "Departamento", type: "text" },
+                { id: "course", label: "Curso", type: "text" },
+              ].map(({ id, label, type }) => (
+                <div key={id} className="bg-white p-4 rounded-[30px] shadow-md">
+                  <label htmlFor={id} className="block text-sm font-medium text-gray-700">
+                    {label}
+                  </label>
+                  <Field
+                    id={id}
+                    name={id}
+                    type={type}
+                    className="mt-1 block w-full border-0 border-b-2 border-blue-400 focus:outline-none focus:ring-0"
+                    onBlur={(e: React.FocusEvent<HTMLInputElement>) => e.currentTarget.blur()}
+                  />
+                  <ErrorMessage name={id} component="div" className="text-red-500 text-sm mt-1" />
+                </div>
+              ))}
 
-            <div className="mb-4">
-              <label htmlFor="email">E-mail</label>
-              <Field
-                id="email"
-                name="email"
-                type="email"
-                className="border p-2 rounded w-full"
-              />
-              <ErrorMessage name="email" component="div" className="text-red-500" />
-            </div>
+              <div className="bg-white p-4 rounded-[30px] shadow-md relative">
+                <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+                  Senha
+                </label>
+                <div className="flex items-center">
+                  <Field
+                    id="password"
+                    name="password"
+                    type={showPassword ? "text" : "password"}
+                    className="mt-1 block w-full border-0 border-b-2 border-blue-400 focus:outline-none focus:ring-0"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((prev) => !prev)}
+                    className="absolute right-3 top-8 text-gray-500 hover:text-gray-800 transition"
+                  >
+                    {showPassword ? "👁️" : "🙈"}
+                  </button>
+                </div>
+                <ErrorMessage
+                  name="password"
+                  component="div"
+                  className="text-red-500 text-sm mt-1"
+                />
+              </div>
 
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="bg-blue-500 text-white px-4 py-2 rounded"
-            >
-              {isSubmitting ? "Enviando..." : "Salvar"}
-            </button>
-          </Form>
-        )}
-      </Formik>
+
+              <div className="bg-white p-8 rounded-[30px] justify-center shadow-md flex flex-col">
+                <label htmlFor="profilePicture" className="block text-sm font-medium text-gray-700">
+                  Foto de Perfil
+                </label>
+                <div className="mt-2 flex items-center">
+                  <input
+                    id="profilePicture"
+                    name="profilePicture"
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={(event) => {
+                      const file = event.currentTarget.files?.[0];
+                      if (file) {
+                        setFieldValue("profilePicture", file);
+                        setSelectedFile(file.name);
+                      } else {
+                        setFieldValue("profilePicture", null);
+                        setSelectedFile(null);
+                      }
+                    }}
+                  />
+
+                  <label
+                    htmlFor="profilePicture"
+                    className="bg-azulCjr text-white border text-sm border-black px-4 py-2 rounded cursor-pointer hover:bg-blue-600 transition duration-300"
+                  >
+                    Escolher arquivo
+                  </label>
+
+                  <span className="ml-4 text-sm text-gray-600">
+                    {selectedFile || "Nenhum arquivo selecionado"}
+                  </span>
+                </div>
+
+                <ErrorMessage
+                  name="profilePicture"
+                  component="div"
+                  className="text-red-500 text-sm mt-1"
+                />
+              </div>
+
+              <div className="flex justify-center mt-6">
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="bg-azulCjr text-white px-6 py-2 mt-7 rounded-[60px] hover:bg-blue-600 transition duration-300 ease-in-out"
+                >
+                  {isSubmitting ? "Enviando..." : "Salvar"}
+                </button>
+              </div>
+            </Form>
+          )}
+        </Formik>
+      </div>
     </div>
   );
 }
