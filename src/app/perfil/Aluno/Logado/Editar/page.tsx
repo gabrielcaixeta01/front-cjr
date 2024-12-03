@@ -15,7 +15,7 @@ const validationSchema = Yup.object({
       "fileFormat",
       "Formato inválido. Apenas imagens são permitidas.",
       (value) =>
-        !value || (value && ["image/jpeg", "image/png", "image/jpg"].includes(value.type))
+        !value || (value instanceof File && ["image/jpeg", "image/png", "image/jpg"].includes(value.type))
     ),
 });
 
@@ -66,7 +66,7 @@ export default function EditarPerfil() {
                     id={id}
                     name={id}
                     type={type}
-                    className="mt-1 block w-full border-0 border-b-2 border-blue-400 focus:outline-none focus:ring-0"
+                    className="mt-1 block w-full border-0 border-b-2 border-gray-50 focus:outline-none focus:border-blue-400 focus:ring-0 transition duration-300"
                     onBlur={(e: React.FocusEvent<HTMLInputElement>) => e.currentTarget.blur()}
                   />
                   <ErrorMessage name={id} component="div" className="text-red-500 text-sm mt-1" />
@@ -82,7 +82,7 @@ export default function EditarPerfil() {
                     id="password"
                     name="password"
                     type={showPassword ? "text" : "password"}
-                    className="mt-1 block w-full border-0 border-b-2 border-blue-400 focus:outline-none focus:ring-0"
+                    className="mt-1 block w-full border-0 border-b-2 border-gray-50 focus:outline-none focus:border-blue-400 focus:ring-0 transition duration-300"
                   />
                   <button
                     type="button"
@@ -125,7 +125,7 @@ export default function EditarPerfil() {
 
                   <label
                     htmlFor="profilePicture"
-                    className="bg-azulCjr text-white border text-sm border-black px-4 py-2 rounded cursor-pointer hover:bg-blue-600 transition duration-300"
+                    className="bg-azulCjr text-white text-sm  px-4 py-2 rounded cursor-pointer hover:bg-blue-600 transition duration-300"
                   >
                     Escolher arquivo
                   </label>
