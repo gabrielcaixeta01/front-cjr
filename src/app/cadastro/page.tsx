@@ -3,6 +3,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
+import { useRef } from "react";
 
 const validationSchema = Yup.object({
   name: Yup.string().required("Insira o seu nome"),
@@ -25,6 +26,7 @@ const initialValues = {
 };
 
 export default function Cadastro() {
+  const referencia_imagem = useRef<HTMLInputElement>(null);
   const router = useRouter();
   const onSubmit = (values: typeof initialValues) => {
     const filteredValues = Object.fromEntries(
@@ -36,26 +38,31 @@ export default function Cadastro() {
   //const [showPassword, setShowPassword] = useState(false);
   return (
     <div className="w-full h-screen flex  relative">
-      <div className="ImgContainer h-full flex-1 relative">
+      <div className="ImgContainer flex justify-center h-full flex-1 relative">
+        <div className="absolute w-full h-screen bg-black/30 z-30">
+          
+        </div>
         <Image
           src="/background-login.png"
           alt="Imagem de background da parte esquerda"
           layout="fill"
         />
+        <div className="absolute top-8 text-7xl font-mono font-bold text-white z-50">
+          <h1>Cadastro</h1>
+          <h1 className="ml-4">Usuário</h1>
+        </div>
       </div>
 
-      <div className="absolute top-3 left-56 text-7xl font-mono font-bold text-white">
-        <h1>Cadastro</h1>
-        <h1 className="ml-4">Usuário</h1>
-      </div>
+      
 
       <div className="flex-1 flex flex-col justify-center items-center bg-gray-100">
         <Image
           src="/default-profile.png"
-          alt="Imagem de background da parte esquerda"
+          alt="Imagem padrão"
           width={150}
           height={150}
           className="mt-4 rounded-full"
+          onClick={() => referencia_imagem.current?.click()}
         />
         <Formik
           initialValues={initialValues}
@@ -124,6 +131,8 @@ export default function Cadastro() {
                 className="text-red-500 text-sm mt-2"
               />
 
+
+
               <section className="mt-16">
                 <button
                   type="submit"
@@ -135,6 +144,9 @@ export default function Cadastro() {
             </Form>
           )}
         </Formik>
+        <input type="file" className="hidden" ref={referencia_imagem}>
+        
+        </input>
       </div>
     </div>
   );
