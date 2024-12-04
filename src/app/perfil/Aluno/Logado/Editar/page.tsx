@@ -41,7 +41,7 @@ export default function EditarPerfil() {
   return (
     <div className="flex flex-col h-screen bg-gray-100 items-center justify-center p-6">
       
-      <div className="bg-customGreen p-6 rounded-lg w-full max-w-md">
+      <div className="bg-customGreen p-6 rounded-lg w-full max-w-md shadow-lg">
         <div className="text-center mb-6">
           <h1 className="text-3xl font-bold text-azulCjr">Atualize seu Perfil</h1>
           <p className="text-sm italic text-gray-600">Mantenha suas informações sempre atualizadas</p>
@@ -142,11 +142,17 @@ export default function EditarPerfil() {
                 />
               </div>
 
-              <div className="flex justify-center mt-6">
+              <div className="flex items-center justify-around p-5">
+                <button
+                  className="bg-azulCjr font-semibold text-white px-7 py-2 rounded-lg hover:bg-blue-600 transition duration-300 ease-in-out"
+                  onClick={() => history.back()}
+                >
+                  Voltar
+                </button>
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="bg-azulCjr text-white px-6 py-2 mt-7 rounded-[60px] hover:bg-blue-600 transition duration-300 ease-in-out"
+                  className="bg-azulCjr font-semibold text-white px-7 py-2 rounded-lg hover:bg-blue-600 transition duration-300 ease-in-out"
                 >
                   {isSubmitting ? "Enviando..." : "Salvar"}
                 </button>
