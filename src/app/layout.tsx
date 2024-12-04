@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 import "./globals.css";
-
-
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -12,10 +12,23 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <head>
-        <link rel="icon" href="/favicon.ico" /> 
+        <link rel="icon" href="/favicon.ico" />
       </head>
       <body>
         {children}
+        {/* ToastContainer para notificações */}
+        <ToastContainer
+          position="top-right"
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          className="z-[9999]" // Garantir que o Toastify apareça acima de outros elementos
+        />
       </body>
     </html>
   );

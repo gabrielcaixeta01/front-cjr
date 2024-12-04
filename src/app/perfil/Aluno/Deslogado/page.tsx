@@ -16,6 +16,7 @@ export default function PerfilAlunoDeslogado() {
             width={80}
             height={80}
             className="w-20 h-10"
+            onClick={() => router.push("/feed/Deslogado")}
           />
         </div>
 
