@@ -48,7 +48,7 @@ export default function Avaliacao() {
                 >
                   <Image
                   src="/sair.png"
-                  alt= "Aperte para sair"
+                  alt= "Ícone de sair"
                   width={40}
                   height={40}
                   className="h-6 w-6 text-white"
@@ -78,7 +78,7 @@ export default function Avaliacao() {
                     <span className="font-sans text-[#71767B] text-[12px] font-[350] leading-[16.94px] flex pl-1 items-center"> · Engenharia Química </span>
                 </div>
                 <div className="pl-[6.8rem]"> 
-                  <p className="text-[#222E50] text-[15px] text-[500] leading-[18.15px] pb-2"> Professor bacana. Adoro quando falta! </p>
+                  <p className="text-[#222E50] text-[15px] font-[500] leading-[18.15px] pb-2"> Professor bacana. Adoro quando falta! </p>
                 </div>
                 <div className="flex items-center justify-between pl-[6.5rem]">
                   <div className="flex"> 
@@ -113,7 +113,7 @@ export default function Avaliacao() {
                 
               </div>
               <div className=" pt-[1rem] w-full max-w-[70%] flex flex-col mx-auto border-b-2 border-b-gray-300 mb-2 justify-center">
-                <div className="flex mx-left pb-[0.3rem] items-center">         
+                <div className="flex mx-left pb-[0.2rem] items-center">         
                   <div className="items-center">
                       <Image
                         src="/gabigol.jpg"
@@ -127,8 +127,27 @@ export default function Avaliacao() {
                   <span className="font-sans text-black pl-2 text-[13px] font-[500] leading-[15.73px] text-center items-center"> El Gabi </span> 
                   <span className="font-sans text-[#71767B] pl-2 text-[13px] font-[350] leading-[15.73px] text-center items-center"> · 08/04/2024, ás 21:43  </span>                                   
                 </div>
-                <div className="pl-[2.5rem]"> 
+                <div className="pl-[2.3rem]"> 
                   <p className="text-[#222E50] text-[14px] text-[500] leading-[16.94px] pb-2"> Vou pro Cruzeiro! </p>
+                </div>
+              </div>
+              <div className="pt-[0.3rem] w-full max-w-[70%] flex flex-col mx-auto border-b-2 border-b-gray-300 mb-2 justify-center">
+                <div className="flex mx-left pb-[0.2rem] items-center">         
+                  <div className="items-center">
+                      <Image
+                        src="/felipeluis.jpeg"
+                        alt="Foto de perfil"
+                        width={48}
+                        height={48}
+                        className="w-7 h-7 rounded-full shadow-md bg-white object-cover"
+                        onClick={() => router.push("/perfil/Aluno/Logado")}
+                      />
+                  </div>
+                  <span className="font-sans text-black pl-2 text-[13px] font-[500] leading-[15.73px] text-center items-center"> Guardiola Cabeludo </span> 
+                  <span className="font-sans text-[#71767B] pl-2 text-[13px] font-[350] leading-[15.73px] text-center items-center"> · 08/04/2024, ás 21:43  </span>                                   
+                </div>
+                <div className="pl-[2.3rem]"> 
+                  <p className="text-[#222E50] text-[14px] text-[500] leading-[16.94px] pb-2"> Entreguei pro criciuma nassaum  </p>
                 </div>
               </div>
 
