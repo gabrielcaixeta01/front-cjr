@@ -6,7 +6,7 @@ import { ArrowRightOnRectangleIcon } from "@heroicons/react/20/solid";
 import { toast } from "react-toastify";
 import { useEffect, useState } from "react";
 import ConfirmModal from "@/components/ConfirmModal/ConfirmModal";
-import { deleteUser, fetchUserID, fetchUserInfo } from "@/app/utils/page";
+import { deleteUser, fetchUserInfo } from "@/utils/page"; // Removido fetchUserID
 import "react-toastify/dist/ReactToastify.css";
 
 export default function PerfilAlunoLogado() {
@@ -21,26 +21,31 @@ export default function PerfilAlunoLogado() {
     profilepic: "",
   });
 
-  // Busca as informações do usuário ao carregar a página
+  // Alterar o ID fixo aqui
+  const fixedUserId = 8;
+
+  // Busca as informações do usuário específico ao carregar a página
   useEffect(() => {
     const loadUserInfo = async () => {
       try {
-        const userId = await fetchUserID();
-        const userData = await fetchUserInfo(userId);
-  
-        // Normalize os dados recebidos
+        const userData = await fetchUserInfo(fixedUserId); // Usando ID fixo aqui
+
+        // Normaliza os dados recebidos
         setUserInfo({
           name: userData.name || "",
           email: userData.email || "",
           department: userData.department || "",
           course: userData.course || "",
-          profilepic: typeof userData.profilepic === "string" ? userData.profilepic : "/default-profile.png",
+          profilepic:
+            typeof userData.profilepic === "string"
+              ? userData.profilepic
+              : "/default-profile.png",
         });
       } catch (error) {
         console.error("Erro ao carregar as informações do usuário:", error);
       }
     };
-  
+
     loadUserInfo();
   }, []);
 
@@ -51,9 +56,7 @@ export default function PerfilAlunoLogado() {
       new Promise(async (resolve, reject) => {
         setIsDeleting(true);
         try {
-          const userId = await fetchUserID();
-
-          await deleteUser(userId);
+          await deleteUser(fixedUserId); // Usando o ID fixo
           resolve("Perfil excluído com sucesso.");
           router.push("/feed/Deslogado");
         } catch (error) {
@@ -133,7 +136,9 @@ export default function PerfilAlunoLogado() {
 
         <section className="p-4 bg-white flex justify-between">
           <div className="flex flex-col">
-            <h1 className="text-xl font-bold text-black mb-2">{userInfo?.name || "Carregando..."}</h1>
+            <h1 className="text-xl font-bold text-black mb-2">
+              {userInfo?.name || "Carregando..."}
+            </h1>
 
             <div className="flex items-center gap-2 mb-2">
               <Image
@@ -158,7 +163,9 @@ export default function PerfilAlunoLogado() {
                 height={24}
                 className="w-6 h-6 object-cover"
               />
-              <p className="text-sm text-gray-500">{userInfo?.email || "Carregando..."}</p>
+              <p className="text-sm text-gray-500">
+                {userInfo?.email || "Carregando..."}
+              </p>
             </div>
           </div>
 
@@ -204,9 +211,12 @@ export default function PerfilAlunoLogado() {
                   17/04/2024, às 21:{index === 0 ? "42" : "52"} - Professor X
                 </p>
                 <p className="text-gray-700 mt-2">
-                  Conteúdo interessante que foi publicado pelo aluno Morty Gamer.
+                  Conteúdo interessante que foi publicado pelo aluno Morty
+                  Gamer.
                 </p>
-                <p className="text-sm text-gray-500 mt-2">{index * 10 + 2} comentários</p>
+                <p className="text-sm text-gray-500 mt-2">
+                  {index * 10 + 2} comentários
+                </p>
               </div>
             </article>
           ))}
