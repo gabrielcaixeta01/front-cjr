@@ -3,6 +3,9 @@
 import React, { useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
+import { api } from "@/app/utils/page"; // Instância do Axios configurada
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const validationSchema = Yup.object({
   name: Yup.string(),
@@ -15,7 +18,8 @@ const validationSchema = Yup.object({
       "fileFormat",
       "Formato inválido. Apenas imagens são permitidas.",
       (value) =>
-        !value || (value instanceof File && ["image/jpeg", "image/png", "image/jpg"].includes(value.type))
+        !value ||
+        (value instanceof File && ["image/jpeg", "image/png", "image/jpg"].includes(value.type))
     ),
 });
 
@@ -27,24 +31,52 @@ const initialValues = {
   profilePicture: null,
 };
 
-const onSubmit = (values: typeof initialValues) => {
-  const filteredValues = Object.fromEntries(
-    Object.entries(values).filter(([, value]) => value !== "")
-  );
-  console.log("Dados enviados:", filteredValues);
-};
-
-export default function EditarPerfil() {
+export const EditarPerfil = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [selectedFile, setSelectedFile] = useState<string | null>(null);
 
+  const onSubmit = async (
+    values: typeof initialValues,
+    { setSubmitting, resetForm }: { setSubmitting: (isSubmitting: boolean) => void; resetForm: () => void }
+  ) => {
+    const formData = new FormData();
+
+    // Adiciona os valores do formulário ao FormData
+    Object.entries(values).forEach(([key, value]) => {
+      if (value) {
+        formData.append(key, value as string | Blob);
+      }
+    });
+
+    try {
+      const response = await api.put("/users/me", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      console.log("Dados enviados com sucesso:", response.data);
+      toast.success("Perfil atualizado com sucesso!");
+      resetForm();
+    } catch (error) {
+      console.error("Erro ao atualizar perfil:", error);
+      toast.error("Erro ao atualizar o perfil. Tente novamente.");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   return (
     <div className="flex flex-col h-screen bg-gray-100 items-center justify-center p-6">
-      
+      {/* ToastContainer para exibir as mensagens */}
+      <ToastContainer />
+
       <div className="bg-customGreen p-6 rounded-lg w-full max-w-md shadow-lg">
         <div className="text-center mb-6">
           <h1 className="text-3xl font-bold text-azulCjr">Atualize seu Perfil</h1>
-          <p className="text-sm italic text-gray-600">Mantenha suas informações sempre atualizadas</p>
+          <p className="text-sm italic text-gray-600">
+            Mantenha suas informações sempre atualizadas
+          </p>
         </div>
         <Formik
           initialValues={initialValues}
@@ -67,7 +99,6 @@ export default function EditarPerfil() {
                     name={id}
                     type={type}
                     className="mt-1 block w-full border-0 border-b-2 border-gray-50 focus:outline-none focus:border-blue-400 focus:ring-0 transition duration-300"
-                    onBlur={(e: React.FocusEvent<HTMLInputElement>) => e.currentTarget.blur()}
                   />
                   <ErrorMessage name={id} component="div" className="text-red-500 text-sm mt-1" />
                 </div>
@@ -92,13 +123,7 @@ export default function EditarPerfil() {
                     {showPassword ? "👁️" : "🙈"}
                   </button>
                 </div>
-                <ErrorMessage
-                  name="password"
-                  component="div"
-                  className="text-red-500 text-sm mt-1"
-                />
               </div>
-
 
               <div className="bg-white p-8 rounded-[30px] justify-center shadow-md flex flex-col">
                 <label htmlFor="profilePicture" className="block text-sm font-medium text-gray-700">
@@ -125,7 +150,7 @@ export default function EditarPerfil() {
 
                   <label
                     htmlFor="profilePicture"
-                    className="bg-azulCjr text-white text-sm  px-4 py-2 rounded cursor-pointer hover:bg-blue-600 transition duration-300"
+                    className="bg-azulCjr text-white text-sm px-4 py-2 rounded cursor-pointer hover:bg-blue-600 transition duration-300"
                   >
                     Escolher arquivo
                   </label>
@@ -163,4 +188,6 @@ export default function EditarPerfil() {
       </div>
     </div>
   );
-}
+};
+
+export default EditarPerfil;

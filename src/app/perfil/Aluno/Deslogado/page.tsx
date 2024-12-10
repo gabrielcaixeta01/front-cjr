@@ -8,138 +8,114 @@ export default function PerfilAlunoDeslogado() {
 
   return (
     <div className="flex flex-col h-screen bg-gray-100">
-      <div className="flex justify-between bg-blue-200 p-2 items-center">
-        <div>
-          <Image
-            src="/logounb.png"
-            alt="Logo da UnB"
-            width={80}
-            height={80}
-            className="w-20 h-10"
-            onClick={() => router.push("/feed/Deslogado")}
-          />
-        </div>
+      {/* Cabeçalho */}
+      <header className="flex justify-between bg-blue-200 p-2 items-center">
+        <Image
+          src="/logounb.png"
+          alt="Logo da UnB"
+          width={80}
+          height={80}
+          className="w-20 h-10 cursor-pointer"
+          onClick={() => router.push("/feed/Deslogado")}
+        />
 
-        <div className="flex items-center p-2">
-          <button className="bg-azulCjr hover:bg-blue-600 mx-5 p-2 rounded-[60px] transition duration-300 ease-in-out">
-            <HomeIcon
-              className="h-6 w-6 text-white"
-              onClick={() => router.push("/feed/Deslogado")}
-            />
+        <div className="flex items-center space-x-5">
+          <button
+            className="bg-azulCjr hover:bg-blue-600 p-2 rounded-[60px] transition duration-300 ease-in-out"
+            onClick={() => router.push("/feed/Deslogado")}
+          >
+            <HomeIcon className="h-6 w-6 text-white" />
           </button>
           <button
-            className=" mx-5 bg-azulCjr text-white rounded-[60px] px-4 py-2 hover:bg-blue-600 transition duration-300 ease-in-out"
+            className="bg-azulCjr text-white rounded-[60px] px-4 py-2 hover:bg-blue-600 transition duration-300 ease-in-out"
             onClick={() => router.push("/login")}
           >
             Fazer Login
           </button>
         </div>
-      </div>
+      </header>
 
-      <div className="w-full h-screen max-w-[40%] mx-auto bg-white rounded shadow-md">
-        <div className="bg-customGreen border-b">
-          <div className="flex items-center p-5">
-            <Image
-              src="/morty.png"
-              alt="Foto de perfil"
-              width={120}
-              height={120}
-              className="w-32 h-32 rounded-full shadow-md z-10 bg-white object-cover"
-            />
-          </div>
+      {/* Corpo Principal */}
+      <main className="w-full max-w-[40%] h-full mx-auto bg-white rounded shadow-md my-5">
+        {/* Foto e informações do perfil */}
+        <section className="bg-customGreen border-b rounded-t p-5 flex items-center">
+          <Image
+            src="/morty.png"
+            alt="Foto de perfil"
+            width={120}
+            height={120}
+            className="w-32 h-32 rounded-full shadow-md z-10 bg-white object-cover"
+          />
+        </section>
 
-          <div className="flex justify-between items-center bg-white">
-            <div className="w-full h-40 p-4">
-              <div className="flex flex-col">
-                <div className="flex flex-col w-full p-4 ml-4">
-                  <h1 className="text-xl font-bold text-black mb-1.5">Morty Gamer</h1>
+        <section className="p-4 bg-white">
+          <div className="flex flex-col">
+            <h1 className="text-xl font-bold text-black mb-2">Morty Gamer</h1>
 
-                  <div className="flex items-center gap-2">
-                    <div className="flex items-start justify-center w-7 h-7">
-                      <Image
-                        src="/building.png"
-                        alt="Ícone de prédio"
-                        width={24}
-                        height={24}
-                        className="w-6 h-6 object-cover"
-                      />
-                    </div>
-                    <div>
-                      <p className="text-sm text-gray-700 mb-1.5">
-                        Ciência da Computação / Dept. Ciência da Computação
-                      </p>
-                    </div>
-                  </div>
+            <div className="flex items-center gap-2 mb-2">
+              <Image
+                src="/building.png"
+                alt="Ícone de prédio"
+                width={24}
+                height={24}
+                className="w-6 h-6 object-cover"
+              />
+              <p className="text-sm text-gray-700">
+                Ciência da Computação / Dept. Ciência da Computação
+              </p>
+            </div>
 
-                  <div className="flex items-center gap-2">
-                    <div className="flex items-start justify-center w-7 h-7">
-                      <Image
-                        src="/email.png"
-                        alt="Ícone de e-mail"
-                        width={24}
-                        height={24}
-                        className="w-6 h-6 object-cover"
-                      />
-                    </div>
-                    <div>
-                      <p className="text-sm text-gray-500">morty.gamer-23@xyz.edu.br</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
+            <div className="flex items-center gap-2">
+              <Image
+                src="/email.png"
+                alt="Ícone de e-mail"
+                width={24}
+                height={24}
+                className="w-6 h-6 object-cover"
+              />
+              <p className="text-sm text-gray-500">morty.gamer-23@xyz.edu.br</p>
             </div>
           </div>
-        </div>
+        </section>
 
-        <div className="mt-3 p-4">
+        {/* Publicações */}
+        <section className="mt-3 p-4">
           <h2 className="text-l font-semibold mb-3 text-black">Publicações</h2>
 
-          <div className="bg-customGreen rounded-lg shadow mb-4 flex flex-row p-3 ">
-            <div className="flex items-start justify-center w-16 h-46 mr-2  overflow-hidden">
-              <Image
-                src="/morty.png"
-                alt="Autor"
-                width={64} 
-                height={64}
-                className="w-12 h-12 object-cover rounded-full bg-white"
-              />
-            </div>
-            <div className="max-w-[550px]">
-              <p className="font-bold text-gray-800">Morty Gamer</p>
-              <p className="text-sm text-gray-500">
-                17/04/2024, às 21:42 - João Frango: Surf
-              </p>
-              <p className="text-gray-700 mt-2">
-                O professor João Frango é conhecido por suas aulas dinâmicas e exemplos práticos,
-                o que torna o aprendizado mais acessível e interessante para os alunos.
-              </p>
-              <p className="text-sm text-gray-500 mt-2">2 comentários</p>
-            </div>
-          </div>
-
-          <div className="bg-customGreen rounded-lg shadow mb-4 flex p-3 ">
-            <div className="flex items-start justify-center w-16 h-46 mr-2 overflow-hidden">
-              <Image
-                src="/morty.png"
-                alt="Autor"
-                width={64} 
-                height={64}
-                className="w-12 h-12 object-cover rounded-full bg-white"
-              />
-            </div>
-            <div className="max-w-[550px]">
-              <p className="font-bold text-gray-800">Morty Gamer</p>
-              <p className="text-sm text-gray-500">
-                17/04/2024, às 21:52 - Felipe Luis: Introdução a Técnico de Futebol
-              </p>
-              <p className="text-gray-700 mt-2">
-                Meio chato, mas é um bom professor. Tem hora que me perco nas aulas, mas no geral é bom.
-              </p>
-              <p className="text-sm text-gray-500 mt-2">31 comentários</p>
-            </div>
-          </div>
-        </div>
-      </div>
+          {[1, 2].map((_, index) => (
+            <article
+              key={index}
+              className="bg-customGreen rounded-lg shadow mb-4 flex flex-row p-3"
+            >
+              <div className="flex items-start justify-center w-16 h-46 mr-2 overflow-hidden">
+                <Image
+                  src="/morty.png"
+                  alt="Autor"
+                  width={64}
+                  height={64}
+                  className="w-12 h-12 object-cover rounded-full bg-white"
+                />
+              </div>
+              <div className="max-w-[550px]">
+                <p className="font-bold text-gray-800">Morty Gamer</p>
+                <p className="text-sm text-gray-500">
+                  {index === 0
+                    ? "17/04/2024, às 21:42 - João Frango: Surf"
+                    : "17/04/2024, às 21:52 - Felipe Luis: Introdução a Técnico de Futebol"}
+                </p>
+                <p className="text-gray-700 mt-2">
+                  {index === 0
+                    ? "O professor João Frango é conhecido por suas aulas dinâmicas e exemplos práticos, o que torna o aprendizado mais acessível e interessante para os alunos."
+                    : "Meio chato, mas é um bom professor. Tem hora que me perco nas aulas, mas no geral é bom."}
+                </p>
+                <p className="text-sm text-gray-500 mt-2">
+                  {index === 0 ? "2 comentários" : "31 comentários"}
+                </p>
+              </div>
+            </article>
+          ))}
+        </section>
+      </main>
     </div>
   );
 }
