@@ -15,6 +15,7 @@ export default function Avaliacao() {
   const [listaProfs, setListaProfs] = useState <any[]>([])
   const router = useRouter()
   const [idProfAvaliacao, setIdProfAvaliacao] = useState("-1")
+  const [idCourseAvaliacao, setIdCourseAvaliacao] = useState("-1")
 
   const getProfs = async () => {
     try {
@@ -33,7 +34,7 @@ export default function Avaliacao() {
   <>
     <div className="flex flex-col h-screen bg-gray-100 justify-center">
         <div className="h-screen  w-1/2 max-h-[58%]  flex flex-col mx-auto bg-[#3EEE9A] rounded-md items-center">
-        <select className="flex flex-col bg-white h-[2rem] w-[90%] justify-between items-left hover:cursor-pointer rounded-md text-[#999797] font-[300] text-[18px]  mt-6 leading-[3rem]" onChange={event}> 
+        <select className="flex flex-col bg-white h-[2rem] w-[90%] justify-between items-left hover:cursor-pointer rounded-md text-[#999797] font-[300] text-[18px]  mt-6 leading-[3rem]" onChange={(event)=> setIdProfAvaliacao(event.target.value)}>
         <option value="-1" disabled selected className="text-[#999797] font-[300] text-[18px] leading-[29.05px] pl-2">
       Nome do professor
       </option>
@@ -42,11 +43,7 @@ export default function Avaliacao() {
                 {prof.name}
               </option>))}
             
-  
-
         </select>
-            
-
             <div className="flex bg-white h-[2rem] w-[90%] justify-between items-center hover:cursor-pointer rounded-md mt-4"> 
                 <span className="text-[#999797] font-[300] text-[18px] leading-[29.05px] pl-2" onClick={()=> setMostrarDisciplinas(!mostrarDisciplinas)}> Disciplina </span> 
             </div>
@@ -59,7 +56,11 @@ export default function Avaliacao() {
                 >
                 Cancelar
             </button>
-            <button   onClick={() => texto == ""? toast.error("A avaliação não pode ser vazia") : (setTextoAval(texto), setTexto(""), toast.success("A avaliação foi criada com sucesso", {autoClose:2200}))}
+            <button   onClick={() => texto == ""? toast.error("A avaliação não pode ser vazia") : 
+        
+            (setTextoAval(texto), setTexto(""), 
+            
+            toast.success("A avaliação foi criada com sucesso", {autoClose:2200}))}
                 className="bg-[#A4FED3] text-[#2B895C] font-400 text-[20px] rounded-lg hover:scale-110 duration-200 w-32 h-10 text-xl leading-[42.36px]  mr-10 ml-2"
                 >
                 Avaliar

@@ -1,6 +1,7 @@
 import axios from "axios";
-
+import { Aval } from "../types/Aval";
 const api = axios.create({
+    baseURL: "http://localhost:4000",
     baseURL: "http://localhost:4000",
 })
 export const getAval = async (idAval:number)=> {
