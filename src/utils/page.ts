@@ -39,24 +39,15 @@ export const fetchUserID = async (): Promise<number> => {
   }
 };
 
+const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL;
+
 export const fetchUserInfo = async (userId: number): Promise<User> => {
   try {
-    const response = await fetch(`http://localhost:3000/users/${userId}`, {
-      method: "GET",
-    });
-
+    const response = await fetch(`${apiBaseUrl}/user/${userId}`);
     if (!response.ok) {
-      if (response.status === 404) {
-        throw new Error("Usuário não encontrado.");
-      }
-      throw new Error(`Erro ao buscar informações do usuário: ${response.statusText}`);
+      throw new Error(`Erro ao buscar informações do usuário: ${response.status}`);
     }
-
-    const user = await response.json();
-    return {
-      ...user,
-      profilepic: user.profilepic || Buffer.from("/default-profile.png"),
-    };
+    return await response.json();
   } catch (error) {
     console.error("Erro ao buscar informações do usuário:", error);
     throw new Error("Erro ao buscar informações do usuário.");
