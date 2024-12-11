@@ -3,7 +3,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import { createUser } from "../utils/api";
 
 const validationSchema = Yup.object({
