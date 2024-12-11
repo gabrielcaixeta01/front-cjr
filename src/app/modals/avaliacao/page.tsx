@@ -2,7 +2,7 @@
 import {useEffect, useState} from "react"
 import { toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
-import { getAllProfs } from "@/app/utils/api";
+import { getAllProfs } from "@/app/page";
 import { useParams } from 'next/navigation';
 import { useRouter } from 'next/navigation';
 import { profile } from "console";

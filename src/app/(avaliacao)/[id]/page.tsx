@@ -2,7 +2,7 @@
 import Image from "next/image";
 import { BellIcon } from "@heroicons/react/24/solid";
 import { ArrowRightOnRectangleIcon } from "@heroicons/react/20/solid";
-import getAval from "@/app/utils/api";
+import { getAval } from "@/utils/page";
 import { useParams } from "next/navigation";
 import { useRouter } from "next/compat/router";
 

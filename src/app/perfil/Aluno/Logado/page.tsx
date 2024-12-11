@@ -6,7 +6,7 @@ import { ArrowRightOnRectangleIcon } from "@heroicons/react/20/solid";
 import { toast } from "react-toastify";
 import { useEffect, useState } from "react";
 import ConfirmModal from "@/components/ConfirmModal/ConfirmModal";
-import { deleteUser, fetchUserID, fetchUserInfo } from "@/app/utils/page";
+import { deleteUser, fetchUserID, fetchUserInfo } from "@/utils/page";
 import "react-toastify/dist/ReactToastify.css";
 
 export default function PerfilAlunoLogado() {
