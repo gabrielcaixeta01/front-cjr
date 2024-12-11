@@ -3,7 +3,8 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import { useRef } from "react";
+import { useRef, useState } from "react";
+import { createUser } from "../utils/api";
 
 const validationSchema = Yup.object({
   name: Yup.string().required("Insira o seu nome"),
@@ -23,25 +24,38 @@ const initialValues = {
   password: "",
   department: "",
   course: "",
+  profilepic: null,
 };
 
 export default function Cadastro() {
   const referencia_imagem = useRef<HTMLInputElement>(null);
   const router = useRouter();
-  const onSubmit = (values: typeof initialValues) => {
-    const filteredValues = Object.fromEntries(
-      Object.entries(values).filter(([, value]) => value !== "")
-    );
-    console.log("Dados salvos:", filteredValues);
-    router.push("/feed/Logado");
+
+  const onSubmit = async (values: typeof initialValues) => {
+    const formData = new FormData();
+
+    formData.append("name", values.name);
+    formData.append("email", values.email);
+    formData.append("password", values.password);
+    formData.append("department", values.department);
+    formData.append("course", values.course);
+
+    if (values.profilepic) {
+      formData.append("profilepic", values.profilepic);
+    }
+
+    try {
+      const response = await createUser(formData);
+      console.log("Usuário criado:", response);
+      router.push("/feed/Logado");
+    } catch (error) {
+      console.error("Erro ao criar o usuário:", error);
+    }
   };
-  //const [showPassword, setShowPassword] = useState(false);
   return (
     <div className="w-full h-screen flex  relative">
       <div className="ImgContainer flex justify-center h-full flex-1 relative">
-        <div className="absolute w-full h-screen bg-black/30 z-30">
-          
-        </div>
+        <div className="absolute w-full h-screen bg-black/30 z-30"></div>
         <Image
           src="/background-login.png"
           alt="Imagem de background da parte esquerda"
@@ -52,8 +66,6 @@ export default function Cadastro() {
           <h1 className="ml-4">Usuário</h1>
         </div>
       </div>
-
-      
 
       <div className="flex-1 flex flex-col justify-center items-center bg-gray-100">
         <Image
@@ -69,7 +81,7 @@ export default function Cadastro() {
           validationSchema={validationSchema}
           onSubmit={onSubmit}
         >
-          {() => (
+          {({ setFieldValue }) => (
             <Form className="w-3/4 flex flex-col items-center">
               <Field
                 name="name"
@@ -131,7 +143,16 @@ export default function Cadastro() {
                 className="text-red-500 text-sm mt-2"
               />
 
-
+              <input
+                type="file"
+                className="hidden"
+                ref={referencia_imagem}
+                onChange={(e) => {
+                  if (e.target.files) {
+                    setFieldValue("profilepic", e.target.files[0]);
+                  }
+                }}
+              />
 
               <section className="mt-16">
                 <button
@@ -144,9 +165,6 @@ export default function Cadastro() {
             </Form>
           )}
         </Formik>
-        <input type="file" className="hidden" ref={referencia_imagem}>
-        
-        </input>
       </div>
     </div>
   );

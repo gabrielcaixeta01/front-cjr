@@ -1,7 +1,8 @@
 import axios from "axios";
+import { User } from "../types/User";
 
 const api = axios.create({
-    baseURL: "http://localhost:3000",
+    baseURL: "http://localhost:4000",
 })
 export const getAval = async (idAval:number)=> {
     const response = await api.get("/avaliacao/",{
@@ -21,3 +22,12 @@ export const getAllProfs = async () => {
     const response = await api.get("/professors");
     return response.data;
 }
+
+export const createUser = async (formData: FormData) => {
+  const response = await api.post("/user", formData, {
+    headers: {
+      "Content-Type": "multipart/form-data", 
+    },
+  });
+  return response.data;
+};
