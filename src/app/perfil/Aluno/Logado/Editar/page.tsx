@@ -3,10 +3,11 @@
 import React, { useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import { api } from "@/app/utils/page"; // Instância do Axios configurada
+import { api } from "@/utils/page";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
+// Validação usando Yup
 const validationSchema = Yup.object({
   name: Yup.string(),
   password: Yup.string().min(6, "A senha deve ter pelo menos 6 caracteres"),
@@ -19,10 +20,12 @@ const validationSchema = Yup.object({
       "Formato inválido. Apenas imagens são permitidas.",
       (value) =>
         !value ||
-        (value instanceof File && ["image/jpeg", "image/png", "image/jpg"].includes(value.type))
+        (value instanceof File &&
+          ["image/jpeg", "image/png", "image/jpg"].includes(value.type))
     ),
 });
 
+// Valores iniciais do formulário
 const initialValues = {
   name: "",
   password: "",
@@ -31,13 +34,16 @@ const initialValues = {
   profilePicture: null,
 };
 
-export const EditarPerfil = () => {
+const EditarPerfil = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [selectedFile, setSelectedFile] = useState<string | null>(null);
 
   const onSubmit = async (
     values: typeof initialValues,
-    { setSubmitting, resetForm }: { setSubmitting: (isSubmitting: boolean) => void; resetForm: () => void }
+    {
+      setSubmitting,
+      resetForm,
+    }: { setSubmitting: (isSubmitting: boolean) => void; resetForm: () => void }
   ) => {
     const formData = new FormData();
 
@@ -73,7 +79,9 @@ export const EditarPerfil = () => {
 
       <div className="bg-customGreen p-6 rounded-lg w-full max-w-md shadow-lg">
         <div className="text-center mb-6">
-          <h1 className="text-3xl font-bold text-azulCjr">Atualize seu Perfil</h1>
+          <h1 className="text-3xl font-bold text-azulCjr">
+            Atualize seu Perfil
+          </h1>
           <p className="text-sm italic text-gray-600">
             Mantenha suas informações sempre atualizadas
           </p>
@@ -91,7 +99,10 @@ export const EditarPerfil = () => {
                 { id: "course", label: "Curso", type: "text" },
               ].map(({ id, label, type }) => (
                 <div key={id} className="bg-white p-4 rounded-[30px] shadow-md">
-                  <label htmlFor={id} className="block text-sm font-medium text-gray-700">
+                  <label
+                    htmlFor={id}
+                    className="block text-sm font-medium text-gray-700"
+                  >
                     {label}
                   </label>
                   <Field
@@ -100,12 +111,19 @@ export const EditarPerfil = () => {
                     type={type}
                     className="mt-1 block w-full border-0 border-b-2 border-gray-50 focus:outline-none focus:border-blue-400 focus:ring-0 transition duration-300"
                   />
-                  <ErrorMessage name={id} component="div" className="text-red-500 text-sm mt-1" />
+                  <ErrorMessage
+                    name={id}
+                    component="div"
+                    className="text-red-500 text-sm mt-1"
+                  />
                 </div>
               ))}
 
               <div className="bg-white p-4 rounded-[30px] shadow-md relative">
-                <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+                <label
+                  htmlFor="password"
+                  className="block text-sm font-medium text-gray-700"
+                >
                   Senha
                 </label>
                 <div className="flex items-center">
@@ -126,7 +144,10 @@ export const EditarPerfil = () => {
               </div>
 
               <div className="bg-white p-8 rounded-[30px] justify-center shadow-md flex flex-col">
-                <label htmlFor="profilePicture" className="block text-sm font-medium text-gray-700">
+                <label
+                  htmlFor="profilePicture"
+                  className="block text-sm font-medium text-gray-700"
+                >
                   Foto de Perfil
                 </label>
                 <div className="mt-2 flex items-center">

@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { useRef } from "react";
-import { createUser } from "../utils/api";
+import { createUser } from "@/utils/page";
 
 const validationSchema = Yup.object({
   name: Yup.string().required("Insira o seu nome"),
