@@ -8,7 +8,7 @@ import { toast } from "react-toastify";
 import { useEffect, useState } from "react";
 import ConfirmModal from "@/components/ConfirmModal/ConfirmModal";
 import { deleteUser, fetchUserInfo } from "@/utils/page";
-import { User, Avaliacao } from "@/types"; // Importando tipos do arquivo centralizado
+import { User, Avaliacao } from "@/types"; 
 import "react-toastify/dist/ReactToastify.css";
 
 export default function PerfilAlunoLogado() {
@@ -207,8 +207,8 @@ export default function PerfilAlunoLogado() {
                 <div className="max-w-[550px]">
                   <p className="font-bold text-gray-800">{userInfo.name}</p>
                   <p className="text-sm text-gray-500">
-                    {new Date(avaliacao.date).toLocaleDateString()} -{" "}
-                    {avaliacao.professor.name} - {avaliacao.course?.name || "Curso não encontrado"}
+                    {new Date(avaliacao.date || "").toLocaleDateString()} -{" "}
+                    Professor ID: {avaliacao.professorId} - {avaliacao.courseId || "Curso não encontrado"}
                   </p>
                   <p className="text-gray-700 mt-2">{avaliacao.text}</p>
 

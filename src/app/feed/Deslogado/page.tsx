@@ -38,7 +38,7 @@ export default function FeedDeslogado() {
       return;
     }
 
-    const filtered = professores.filter((professor) =>
+  const filtered = professores.filter((professor) =>
       professor.name.toLowerCase().includes(searchQuery.toLowerCase())
     );
     setFilteredProfessores(filtered);
