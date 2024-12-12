@@ -22,6 +22,11 @@ export const getAllProfs = async () => {
     return response.data;
 }
 
+export const getAllCourses = async ()=> {
+  const response = await api.get("/courses");
+  return response.data;
+}
+
 export const createUser = async (formData: FormData) => {
   const response = await api.post("/user", formData, {
     headers: {
