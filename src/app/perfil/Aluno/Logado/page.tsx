@@ -1,4 +1,5 @@
 "use client";
+
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { BellIcon } from "@heroicons/react/24/solid";
@@ -6,35 +7,43 @@ import { ArrowRightOnRectangleIcon } from "@heroicons/react/20/solid";
 import { toast } from "react-toastify";
 import { useEffect, useState } from "react";
 import ConfirmModal from "@/components/ConfirmModal/ConfirmModal";
-import { deleteUser, fetchUserID, fetchUserInfo } from "@/utils/page";
+import { deleteUser, fetchUserInfo } from "@/utils/page";
+import { User, Avaliacao } from "@/types"; // Importando tipos do arquivo centralizado
 import "react-toastify/dist/ReactToastify.css";
 
 export default function PerfilAlunoLogado() {
   const router = useRouter();
   const [isDeleting, setIsDeleting] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [userInfo, setUserInfo] = useState({
+
+  const [userInfo, setUserInfo] = useState<User & { avaliacoes: Avaliacao[] }>({
+    id: 0,
     name: "",
     email: "",
-    department: "",
-    course: "",
-    profilepic: "",
+    password: "",
+    program: { id: 0, name: "Carregando..." },
+    profilepic: "/default-profile.png",
+    avaliacoes: [],
   });
 
-  // Busca as informações do usuário ao carregar a página
+  const fixedUserId = 2;
+
   useEffect(() => {
     const loadUserInfo = async () => {
       try {
-        const userId = await fetchUserID();
-        const userData = await fetchUserInfo(userId);
-  
-        // Normalize os dados recebidos
+        const userData = await fetchUserInfo(fixedUserId);
+        console.log("Dados do usuário:", userData); // Verifique aqui as avaliações
         setUserInfo({
+          id: userData.id || 0,
           name: userData.name || "",
           email: userData.email || "",
-          department: userData.department || "",
-          course: userData.course || "",
-          profilepic: typeof userData.profilepic === "string" ? userData.profilepic : "/default-profile.png",
+          password: userData.password || "",
+          program: userData.program || { id: 0, name: "Carregando..." },
+          profilepic:
+            typeof userData.profilepic === "string"
+              ? userData.profilepic
+              : "/default-profile.png",
+          avaliacoes: userData.avaliacoes || [], // Verifique se isso está retornando corretamente
         });
       } catch (error) {
         console.error("Erro ao carregar as informações do usuário:", error);
@@ -51,9 +60,7 @@ export default function PerfilAlunoLogado() {
       new Promise(async (resolve, reject) => {
         setIsDeleting(true);
         try {
-          const userId = await fetchUserID();
-
-          await deleteUser(userId);
+          await deleteUser(fixedUserId);
           resolve("Perfil excluído com sucesso.");
           router.push("/feed/Deslogado");
         } catch (error) {
@@ -81,7 +88,6 @@ export default function PerfilAlunoLogado() {
         />
       )}
 
-      {/* Cabeçalho */}
       <header className="flex justify-between bg-blue-200 p-2 items-center">
         <Image
           src="/logounb.png"
@@ -118,9 +124,7 @@ export default function PerfilAlunoLogado() {
         </div>
       </header>
 
-      {/* Corpo Principal */}
       <main className="w-full max-w-[40%] h-full mx-auto bg-white rounded shadow-md my-5">
-        {/* Foto e informações do perfil */}
         <section className="bg-customGreen border-b rounded-t p-5 flex items-center">
           <Image
             src={userInfo?.profilepic || "/default-profile.png"}
@@ -133,7 +137,9 @@ export default function PerfilAlunoLogado() {
 
         <section className="p-4 bg-white flex justify-between">
           <div className="flex flex-col">
-            <h1 className="text-xl font-bold text-black mb-2">{userInfo?.name || "Carregando..."}</h1>
+            <h1 className="text-xl font-bold text-black mb-2">
+              {userInfo?.name || "Carregando..."}
+            </h1>
 
             <div className="flex items-center gap-2 mb-2">
               <Image
@@ -144,9 +150,7 @@ export default function PerfilAlunoLogado() {
                 className="w-6 h-6 object-cover"
               />
               <p className="text-sm text-gray-700">
-                {userInfo
-                  ? `${userInfo.course} / Dept. ${userInfo.department}`
-                  : "Carregando..."}
+                {userInfo.program?.name || "Carregando..."}
               </p>
             </div>
 
@@ -158,11 +162,13 @@ export default function PerfilAlunoLogado() {
                 height={24}
                 className="w-6 h-6 object-cover"
               />
-              <p className="text-sm text-gray-500">{userInfo?.email || "Carregando..."}</p>
+              <p className="text-sm text-gray-500">
+                {userInfo?.email || "Carregando..."}
+              </p>
             </div>
           </div>
 
-          <div className="flex flex-col text-black  text-sm space-y-2 p-4">
+          <div className="flex flex-col text-black text-sm space-y-2 p-4">
             <button
               className="bg-red-400 border border-black rounded-[60px] px-4 py-2 hover:bg-red-500 hover:text-white transition duration-300 ease-in-out shadow-md"
               onClick={() => setIsModalOpen(true)}
@@ -180,36 +186,52 @@ export default function PerfilAlunoLogado() {
           </div>
         </section>
 
-        {/* Publicações */}
         <section className="mt-3 p-4">
           <h2 className="text-l font-semibold mb-3 text-black">Publicações</h2>
 
-          {[1, 2].map((_, index) => (
-            <article
-              key={index}
-              className="bg-customGreen rounded-lg shadow mb-4 flex flex-row p-3"
-            >
-              <div className="flex items-start justify-center w-16 h-46 mr-2 overflow-hidden">
-                <Image
-                  src="/morty.png"
-                  alt="Autor"
-                  width={64}
-                  height={64}
-                  className="w-12 h-12 object-cover rounded-full bg-white"
-                />
-              </div>
-              <div className="max-w-[550px]">
-                <p className="font-bold text-gray-800">Morty Gamer</p>
-                <p className="text-sm text-gray-500">
-                  17/04/2024, às 21:{index === 0 ? "42" : "52"} - Professor X
-                </p>
-                <p className="text-gray-700 mt-2">
-                  Conteúdo interessante que foi publicado pelo aluno Morty Gamer.
-                </p>
-                <p className="text-sm text-gray-500 mt-2">{index * 10 + 2} comentários</p>
-              </div>
-            </article>
-          ))}
+          {userInfo.avaliacoes && userInfo.avaliacoes.length > 0 ? (
+            userInfo.avaliacoes.map((avaliacao) => (
+              <article
+                key={avaliacao.id}
+                className="bg-customGreen rounded-lg shadow mb-4 flex flex-row p-3"
+              >
+                <div className="flex items-start justify-center w-16 h-46 mr-2 overflow-hidden">
+                  <Image
+                    src={userInfo.profilepic || "/default-profile.png"}
+                    alt="Autor"
+                    width={64}
+                    height={64}
+                    className="w-12 h-12 object-cover rounded-full bg-white"
+                  />
+                </div>
+                <div className="max-w-[550px]">
+                  <p className="font-bold text-gray-800">{userInfo.name}</p>
+                  <p className="text-sm text-gray-500">
+                    {new Date(avaliacao.date).toLocaleDateString()} -{" "}
+                    {avaliacao.professor.name} - {avaliacao.course?.name || "Curso não encontrado"}
+                  </p>
+                  <p className="text-gray-700 mt-2">{avaliacao.text}</p>
+
+                  {avaliacao.comments && avaliacao.comments.length > 0 && (
+                    <div className="mt-4">
+                      <p className="text-sm font-semibold text-gray-700">Comentários:</p>
+                      {avaliacao.comments.map((comment) => (
+                        <div
+                          key={comment.id}
+                          className="text-sm text-gray-500 bg-gray-100 rounded p-2 mt-2"
+                        >
+                          <p className="font-semibold text-gray-700">{comment.user?.name || "Usuário desconhecido"}:</p>
+                          <p>{comment.text}</p>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </article>
+            ))
+          ) : (
+            <p className="text-sm text-gray-500">Nenhuma avaliação publicada.</p>
+          )}
         </section>
       </main>
     </div>

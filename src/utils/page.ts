@@ -1,4 +1,4 @@
-import { User } from '../types/User';
+import { User } from '@/types';
 import axios from "axios";
 
 
@@ -47,7 +47,7 @@ export const fetchUserInfo = async (userId: number): Promise<User> => {
   
       return {
         ...user,
-        profilepic: user.profilepic || Buffer.from("/default-profile.png"),
+        profilepic: user.profilepic || Buffer.from("/default-profile.png").toString(),
       };
     } catch (error) {
       console.error("Erro ao buscar informações do usuário:", error);
