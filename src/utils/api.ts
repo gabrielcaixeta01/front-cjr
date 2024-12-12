@@ -1,5 +1,5 @@
 import axios from "axios";
-import { Avaliacao } from "@/types";
+import { Avaliacao, User } from "@/types";
 import { Comment } from "@/types";
 
 const api = axios.create({
@@ -27,14 +27,18 @@ export const getAllProfs = async () => {
   return response.data;
 };
 
-export const createUser = async (formData: FormData) => {
-  const response = await api.post("/user", formData, {
-    headers: {
-      "Content-Type": "multipart/form-data",
-    },
-  });
+export const createUser = async (user: Partial<User>) => {
+  const response= await api.post("/avaliacao",{
+  name: user.name,
+  email: user.email,
+  password: user.password,
+  departmentId: user.department?.id,
+  programId: user.program?.id,
+  profilepic: user.profilepic,
+  })
   return response.data;
-};
+}
+
 
 export const getAllDepartments = async () => {
   const response = await api.get("/departments");
