@@ -28,7 +28,11 @@ export interface Comment {
     text: string;
     userId: number;
     avaliacaoId: number;
-}
+    user?: {
+      id: number;
+      name: string;
+    };
+  }
 
 export interface Professor {
     id: number;

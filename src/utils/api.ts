@@ -7,29 +7,29 @@ const api = axios.create({
   withCredentials: true,
 });
 
-export const getAval = async (idAval:number)=> {
-    const response = await api.get("/avaliacao/",{
-        params: {
-            id:idAval
-        }
-    })
-    return response.data;
-}
+export const getAval = async (idAval: number) => {
+  const response = await api.get("/avaliacao/", {
+    params: {
+      id: idAval,
+    },
+  });
+  return response.data;
+};
 
-export const getAllAval = async ()=>{
-    const response = await api.get("/avaliacao");
-    return response.data;
-}
+export const getAllAval = async () => {
+  const response = await api.get("/avaliacao");
+  return response.data;
+};
 
 export const getAllProfs = async () => {
-    const response = await api.get("/professors");
-    return response.data;
-}
+  const response = await api.get("/professors");
+  return response.data;
+};
 
 export const createUser = async (formData: FormData) => {
   const response = await api.post("/user", formData, {
     headers: {
-      "Content-Type": "multipart/form-data", 
+      "Content-Type": "multipart/form-data",
     },
   });
   return response.data;
@@ -45,22 +45,28 @@ export const getAllPrograms = async () => {
   return response.data;
 }
 
-export const createComment = async (comment : Partial<Comment>) => {
-  const response = await api.post ("/comment",{
+
+export const createComment = async (comment: Partial<Comment>) => {
+  const response = await api.post("/comment", {
     text: comment.text,
     userId: comment.userId,
-    avaliacaoId: comment.avaliacaoId
-  })
+    avaliacaoId: comment.avaliacaoId,
+  });
   return response.data;
-}
+};
 
 export const createAval = async (aval: Partial<Avaliacao>) => {
-  const response= await api.post("/avaliacao",{
-  text: aval.text,
-  userId: aval.userId,
-  professorId: aval.professorId,
-  courseId: aval.courseId,
-  nota: 5,
-  })
+  const response = await api.post("/avaliacao", {
+    text: aval.text,
+    userId: aval.userId,
+    professorId: aval.professorId,
+    courseId: aval.courseId,
+    nota: 5,
+  });
   return response.data;
-}
+};
+
+export const getUserDetails = async (userId: number) => {
+  const response = await api.get(`/user/${userId}`);
+  return response.data;
+};
