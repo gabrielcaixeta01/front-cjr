@@ -27,6 +27,11 @@ export const getAllProfs = async () => {
   return response.data;
 };
 
+export const getAllCourses = async () => {
+  const response = await api.get("/courses");
+  return response.data;
+}
+
 export const createUser = async (user: Partial<User>) => {
   const response= await api.post("/user",{
   name: user.name,
