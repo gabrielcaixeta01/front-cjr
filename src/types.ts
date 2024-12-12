@@ -7,6 +7,10 @@ export interface User {
       id: number;
       name: string;
     };
+    department?: {
+      id: number;
+      name: string;
+    };
     profilepic?: string;
     avaliacoes?: Avaliacao[];
   }
