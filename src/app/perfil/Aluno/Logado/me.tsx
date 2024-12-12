@@ -1,4 +1,4 @@
-import { api } from "@/app/utils/page";
+import { api } from "@/utils/page";
 
 export const fetchUserMe = async () => {
   try {
