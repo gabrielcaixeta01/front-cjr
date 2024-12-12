@@ -72,12 +72,26 @@ const EditarPerfil = () => {
     }
   };
 
+  const handleDeleteProfile = async () => {
+    try {
+      await api.delete("/users/me"); // Substitua pela rota correta de exclusão do perfil
+      toast.success("Perfil excluído com sucesso.");
+      // Redirecionar ou limpar estado após exclusão
+      setTimeout(() => {
+        window.location.href = "/"; // Redireciona para a página inicial
+      }, 2000);
+    } catch (error) {
+      console.error("Erro ao excluir o perfil:", error);
+      toast.error("Erro ao excluir o perfil. Tente novamente.");
+    }
+  };
+
   return (
-    <div className="flex flex-col h-screen bg-gray-100 items-center justify-center p-6">
+    <div className="flex flex-row h-screen bg-gray-100 pt-32 justify-center p-6">
       {/* ToastContainer para exibir as mensagens */}
       <ToastContainer />
 
-      <div className="bg-customGreen p-6 rounded-lg w-full max-w-md shadow-lg">
+      <div className="bg-customGreen p-6 rounded-lg max-w-md max-h-fit shadow-lg">
         <div className="text-center mb-6">
           <h1 className="text-3xl font-bold text-azulCjr">
             Atualize seu Perfil
@@ -206,6 +220,22 @@ const EditarPerfil = () => {
             </Form>
           )}
         </Formik>
+      </div>
+      <div className="bg-red-500 ml-5 p-6 max-h-fit flex flex-col items-center rounded-lg w-full max-w-md shadow-lg">
+        <div className="text-center mb-6 p-2">
+          <h1 className="text-3xl font-bold text-white mb-4">
+            Excluir Perfil
+          </h1>
+          <p className="text-xs italic text-white">
+            Tem certeza de que deseja excluir seu perfil? Sentiremos sua falta, mas respeitamos sua decisão. Lembre-se: esta ação não pode ser desfeita.
+          </p>
+        </div>
+        <button
+          onClick={handleDeleteProfile}
+          className="bg-white text-black font-semibold px-7 py-2 rounded-lg hover:bg-red-600 hover:text-white transition duration-300 ease-in-out"
+        >
+          Excluir
+        </button>
       </div>
     </div>
   );
