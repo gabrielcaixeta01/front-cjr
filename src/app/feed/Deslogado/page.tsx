@@ -141,7 +141,7 @@ export default function FeedDeslogado() {
               key={professor.id}
               className="flex flex-col items-center bg-white p-6 shadow-lg rounded-lg h-60 transform transition duration-300 hover:translate-y-[-5px] hover:shadow-xl"
             >
-              <div className="w-20 h-20 bg-gray-200 rounded-full mb-4">
+              <div className="w-20 h-20 bg-gray-200 border-2 border-customGreen rounded-full mb-4">
                 <Image
                   src={professor.profilepic || "/default-profile.png"}
                   alt={`Foto de ${professor.name}`} // Corrigida a interpolação de string
@@ -156,7 +156,7 @@ export default function FeedDeslogado() {
               <h3 className="text-black text-sm text-center">
                 {professor.department.name}
               </h3>
-              <p className="text-gray-500 text-sm text-center">
+              <p className="text-gray-500 text-xs text-center truncate max-w-[12rem]">
                 {professor.courses.map((course) => course.name).join(", ")}
               </p>
             </div>
