@@ -1,4 +1,5 @@
 import axios from "axios";
+import { Avaliacao } from "@/types";
 
 const api = axios.create({
     baseURL: "http://localhost:4000",
@@ -34,4 +35,16 @@ export const createUser = async (formData: FormData) => {
     },
   });
   return response.data;
+
 };
+
+export const createAval = async (aval: Partial<Avaliacao>) => {
+  const response= await api.post("/avaliacao",{
+  text: aval.text,
+  userId: aval.userId,
+  professorId: aval.professorId,
+  courseId: aval.courseId,
+  nota: 5,
+  })
+  return response.data;
+}
