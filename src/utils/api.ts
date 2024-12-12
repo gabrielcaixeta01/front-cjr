@@ -28,7 +28,7 @@ export const getAllProfs = async () => {
 };
 
 export const createUser = async (user: Partial<User>) => {
-  const response= await api.post("/avaliacao",{
+  const response= await api.post("/user",{
   name: user.name,
   email: user.email,
   password: user.password,

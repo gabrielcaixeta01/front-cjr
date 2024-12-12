@@ -3,8 +3,10 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { createUser } from "@/utils/page";
+import { getAllDepartments, getAllPrograms } from "@/utils/api";
+import { User } from "@/types";
 
 const validationSchema = Yup.object({
   name: Yup.string().required("Insira o seu nome"),
@@ -14,38 +16,74 @@ const validationSchema = Yup.object({
   password: Yup.string()
     .min(6, "A senha deve ter pelo menos 6 caracteres")
     .required("A senha é obrigatória"),
-  department: Yup.string().required("O departamento é obrigatório"),
-  course: Yup.string().required("O curso é obrigatório"),
+  department: Yup.object()
+    .shape({
+      id: Yup.number().required("O departamento é obrigatório").positive(),
+      name: Yup.string().required("O nome do departamento é obrigatório"),
+    })
+    .required("O departamento é obrigatório"),
+  program: Yup.object()
+    .shape({
+      id: Yup.number().required("O curso é obrigatório").positive(),
+      name: Yup.string().required("O nome do curso é obrigatório"),
+    })
+    .required("O curso é obrigatório"),
+  profilepic: Yup.mixed().nullable(),
 });
 
 const initialValues = {
   name: "",
   email: "",
   password: "",
-  department: "",
-  course: "",
+  department: { id: 0, name: "" },
+  program: { id: 0, name: "" },
   profilepic: null,
 };
 
 export default function Cadastro() {
   const referencia_imagem = useRef<HTMLInputElement>(null);
   const router = useRouter();
+  const [departments, setDepartments] = useState<any[]>([]);
+  const [programs, setPrograms] = useState<any[]>([]);
 
-  const onSubmit = async (values: typeof initialValues) => {
-    const formData = new FormData();
-
-    formData.append("name", values.name);
-    formData.append("email", values.email);
-    formData.append("password", values.password);
-    formData.append("department", values.department);
-    formData.append("course", values.course);
-
-    if (values.profilepic) {
-      formData.append("profilepic", values.profilepic);
+  const getDepartments = async () => {
+    try {
+      const departamentos = await getAllDepartments();
+      setDepartments(departamentos);
+    } catch (error) {
+      console.error("Erro ao carregar departamentos", error);
     }
+  };
+
+  useEffect(() => {
+    getDepartments();
+  }, []);
+
+  const getPrograms = async () => {
+    try {
+      const cursos = await getAllPrograms();
+      setPrograms(cursos);
+    } catch (error) {
+      console.error("Erro ao carregar departamentos", error);
+    }
+  };
+
+  useEffect(() => {
+    getPrograms();
+  }, []);
+
+  const onSubmit = async (values: User) => {
+    const newUser = {
+      name: values.name,
+      email: values.email,
+      password: values.password,
+      program: values.program?.id ? values.program : undefined,
+      department: values.department?.id ? values.department : undefined,
+      profilepic: values.profilepic || null,
+    };
 
     try {
-      const response = await createUser(formData);
+      const response = await createUser(newUser);
       console.log("Usuário criado:", response);
       router.push("/feed/Logado");
     } catch (error) {
@@ -81,12 +119,12 @@ export default function Cadastro() {
           validationSchema={validationSchema}
           onSubmit={onSubmit}
         >
-          {({ setFieldValue }) => (
+          {({ values, setFieldValue }) => (
             <Form className="w-3/4 flex flex-col items-center">
               <Field
                 name="name"
                 type="text"
-                className="w-3/4 h-12 p-2 border-[0.125rem] border-gray-300 rounded-lg focus:border-gray-500 mt-16 "
+                className="w-3/4 h-12 p-2 border-[0.125rem] border-gray-300 rounded-lg focus:border-gray-500 mt-16 text-black"
                 placeholder="Nome"
               />
               <ErrorMessage
@@ -98,7 +136,7 @@ export default function Cadastro() {
               <Field
                 name="email"
                 type="text"
-                className="w-3/4 h-12 p-2 border-[0.125rem] border-gray-300 rounded-lg focus:border-gray-500 mt-8"
+                className="w-3/4 h-12 p-2 border-[0.125rem] border-gray-300 rounded-lg focus:border-gray-500 mt-8 text-black"
                 placeholder="Email"
               />
               <ErrorMessage
@@ -110,7 +148,7 @@ export default function Cadastro() {
               <Field
                 name="password"
                 type="password"
-                className="w-3/4 h-12 p-2 border-[0.125rem] border-gray-300 rounded-lg focus:border-gray-500 mt-8"
+                className="w-3/4 h-12 p-2 border-[0.125rem] border-gray-300 rounded-lg focus:border-gray-500 mt-8 text-black"
                 placeholder="Senha"
               />
               <ErrorMessage
@@ -120,22 +158,57 @@ export default function Cadastro() {
               />
 
               <Field
-                name="course"
-                type="text"
-                className="w-3/4 h-12 p-2 border-[0.125rem] border-gray-300 rounded-lg focus:border-gray-500 mt-8"
-                placeholder="Curso"
-              />
+                as="select"
+                name="program"
+                value={values.program?.id || ""}
+                className="w-3/4 h-12 p-2 border-[0.125rem] border-gray-300 rounded-lg focus:border-gray-500 mt-8 text-black"
+                onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
+                  const selectedProgram = programs.find(
+                    (program) => program.id === parseInt(e.target.value)
+                  );
+                  setFieldValue("program", selectedProgram);
+                }}
+              >
+                <option value="" disabled>
+                  Selecione o curso
+                </option>
+                {programs.map((program) => (
+                  <option key={program.id} value={program.id}>
+                    {program.name}
+                  </option>
+                ))}
+              </Field>
               <ErrorMessage
-                name="course"
+                name="program"
                 component="div"
                 className="text-red-500 text-sm mt-2"
               />
 
               <Field
+                as="select"
                 name="department"
-                type="text"
-                className="w-3/4 h-12 p-2 border-[0.125rem] border-gray-300 rounded-lg focus:border-gray-500 mt-8"
-                placeholder="Departamento"
+                value={values.department?.id || ""}
+                className="w-3/4 h-12 p-2 border-[0.125rem] border-gray-300 rounded-lg focus:border-gray-500 mt-8 text-black"
+                onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
+                  const selectedDepartment = departments.find(
+                    (department) => department.id === parseInt(e.target.value)
+                  );
+                  setFieldValue("department", selectedDepartment);
+                }}
+              >
+                <option value="" disabled>
+                  Selecione o departamento
+                </option>
+                {departments.map((department) => (
+                  <option key={department.id} value={department.id}>
+                    {department.name}
+                  </option>
+                ))}
+              </Field>
+              <ErrorMessage
+                name="department"
+                component="div"
+                className="text-red-500 text-sm mt-2"
               />
               <ErrorMessage
                 name="department"
@@ -169,4 +242,3 @@ export default function Cadastro() {
     </div>
   );
 }
-//616 x 750
