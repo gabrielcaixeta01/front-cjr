@@ -1,5 +1,5 @@
 import axios from "axios";
-import { User } from "../app/types/User";
+import { User } from "@/types";
 
 export const api = axios.create({
   baseURL: "http://localhost:3000",
