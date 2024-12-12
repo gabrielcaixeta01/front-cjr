@@ -2,7 +2,7 @@
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 
-export default function Cadastro() {
+export default function Login() {
   const router = useRouter();
   return (
     <div className="w-full h-screen flex  relative">
@@ -52,4 +52,3 @@ export default function Cadastro() {
     </div>
   );
 }
-//616 x 750
