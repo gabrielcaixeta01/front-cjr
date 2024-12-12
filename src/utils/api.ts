@@ -35,6 +35,16 @@ export const createUser = async (formData: FormData) => {
   return response.data;
 };
 
+export const getAllDepartments = async () => {
+  const response = await api.get("/departments");
+  return response.data;
+}
+
+export const getAllPrograms = async () => {
+  const response = await api.get("/programs");
+  return response.data;
+}
+
 export const createComment = async (comment : Partial<Comment>) => {
   const response = await api.post ("/comment",{
     text: comment.text,
