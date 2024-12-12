@@ -56,11 +56,22 @@ export default function Avaliacao() {
                 >
                 Cancelar
             </button>
-            <button   onClick={() => texto == ""? toast.error("A avaliação não pode ser vazia") : 
-        
-            (setTextoAval(texto), setTexto(""), 
-            
-            toast.success("A avaliação foi criada com sucesso", {autoClose:2200}))}
+            <button   onClick={() => {
+            if (texto === ""){
+             toast.error("A avaliação não pode ser vazia")
+            }
+            else if (parseInt(idProfAvaliacao,10)===-1){
+              toast.error("Selecione um professor")
+            }
+            else if (parseInt(idCourseAvaliacao,10)===-1){
+              toast.error("Selecione uma disciplina")
+            }
+            else{
+            setTextoAval(texto);
+            setTexto("");            
+            toast.success("A avaliação foi criada com sucesso", {autoClose:2200})
+            }
+          }}
                 className="bg-[#A4FED3] text-[#2B895C] font-400 text-[20px] rounded-lg hover:scale-110 duration-200 w-32 h-10 text-xl leading-[42.36px]  mr-10 ml-2"
                 >
                 Avaliar
