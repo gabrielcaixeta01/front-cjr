@@ -7,16 +7,9 @@ import { useParams } from 'next/navigation';
 import { useRouter } from 'next/navigation';
 import { profile } from "console";
 
-export default function Avaliacao() {
+export default function ModalComentario() {
   const [texto, setTexto] = useState("");
   const [textoComment, setTextoComment]= useState("");
-
-  
-  
-  
-  
-
-
   return ( 
   <>
     <div className="flex flex-col h-screen bg-gray-100 justify-center  w-screen">

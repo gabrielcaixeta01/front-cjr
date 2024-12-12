@@ -11,7 +11,7 @@ import { createAval } from "@/utils/api";
 import { create } from "domain";
 import { Avaliacao } from "@prisma/client";
 
-export default function Avaliacao() {
+export default function ModalAvaliacao() {
   const [mostrarProfs, setMostrarProfs] = useState(false);
   const [mostrarDisciplinas, setMostrarDisciplinas] = useState(false);
   const [texto, setTexto] = useState("");

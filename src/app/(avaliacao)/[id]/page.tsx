@@ -5,12 +5,18 @@ import { ArrowRightOnRectangleIcon } from "@heroicons/react/20/solid";
 import { getAval } from "@/utils/page";
 import { useParams } from "next/navigation";
 import { useRouter } from "next/compat/router";
+import ModalComentario from "@/components/comentario/page";
+import { useState } from "react";
 
 export default function Avaliacao() {
+
   const router = useRouter();
+  const [createComment, setCreateComment] = useState(false);
+
   return (
     <>
       <div className="flex flex-col h-screen bg-gray-100">
+        {createComment ? <ModalComentario> </ModalComentario> : <p></p>}
           <div className="flex justify-between w-full bg-blue-200 p-2 items-center fixed">
             <div className= "pl-3">
             <Image
@@ -83,6 +89,7 @@ export default function Avaliacao() {
                         width={48}
                         height={48}
                         className="w-6 h-6 rounded-full shadow-md"
+                        onClick= {()=> setCreateComment(true)}
                       />
                       <span className="font-sans text-[#222E50] text-[12px] font-[600] leading-[14.52px] flex pl-1 items-center"> 2 comentários</span>
                   </div>
