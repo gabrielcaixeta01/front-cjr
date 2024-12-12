@@ -6,7 +6,7 @@ import { getAllProfs } from "@/utils/api";
 import { getAllCourses } from "@/utils/api";
 import { useParams } from 'next/navigation';
 import { useRouter } from 'next/navigation';
-import { Avaliacao, Avaliacao } from "@/types";
+import { Avaliacao } from "@/types";
 import { createAval } from "@/utils/api";
 import { create } from "domain";
 import { Avaliacao } from "@prisma/client";
@@ -113,7 +113,6 @@ export default function ModalAvaliacao() {
                     };
                     
                     creatingAval(newAval);
-
                     setTextoAval(texto);
                     setTexto("");
                     toast.success("A avaliação foi criada com sucesso", { autoClose: 2200 });

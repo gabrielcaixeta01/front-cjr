@@ -24,12 +24,10 @@ export interface User {
 }
   
 export interface Comment {
-    id: number;
+    id?: number;
     text: string;
-    user: {
-      id: number;
-      name: string;
-    };
+    userId: number;
+    avaliacaoId: number;
 }
 
 export interface Professor {

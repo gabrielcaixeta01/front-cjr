@@ -5,7 +5,7 @@ import { ArrowRightOnRectangleIcon } from "@heroicons/react/20/solid";
 import { getAval } from "@/utils/page";
 import { useParams } from "next/navigation";
 import { useRouter } from "next/compat/router";
-import ModalComentario from "@/components/comentario/page";
+import ModalComentario from "@/app/modals/comentario/page";
 import { useState } from "react";
 
 export default function Avaliacao() {

@@ -1,5 +1,6 @@
 import axios from "axios";
 import { Avaliacao } from "@/types";
+import { Comment } from "@/types";
 
 const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL,
@@ -33,6 +34,16 @@ export const createUser = async (formData: FormData) => {
   });
   return response.data;
 };
+
+export const createComment = async (comment : Partial<Comment>) => {
+  const response = await api.post ("/comment",{
+    text: comment.text,
+    userId: comment.userId,
+    avaliacaoId: comment.avaliacaoId
+  })
+  return response.data;
+}
+
 export const createAval = async (aval: Partial<Avaliacao>) => {
   const response= await api.post("/avaliacao",{
   text: aval.text,
