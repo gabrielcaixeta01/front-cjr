@@ -4,57 +4,49 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { toast } from "react-toastify";
 import { Professor } from "@/types";
 
-export default function FeedDeslogado() {
+export default function FeedLogado() {
   const router = useRouter();
   const [isPopupOpen, setIsPopupOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
   const [professores, setProfessores] = useState<Professor[]>([]);
   const [filteredProfessores, setFilteredProfessores] = useState<Professor[]>([]);
-
-  // Função para buscar os professores do backend
-  const fetchProfessores = async () => {
-    try {
-      const response = await axios.get("http://localhost:4000/professors"); // Substitua pela URL correta da sua API
-      setProfessores(response.data as Professor[]); // Armazena todos os professores
-      setFilteredProfessores(response.data as Professor[]); // Inicializa com todos os professores
-    } catch (error) {
-      console.error("Erro ao buscar professores:", error);
-    }
-  };
-
-  useEffect(() => {
-    fetchProfessores();
-  }, []);
 
   const togglePopup = () => {
     setIsPopupOpen(!isPopupOpen);
   };
 
-  const handleSearch = () => {
-    if (searchQuery.trim() === "") {
-      setFilteredProfessores(professores); // Exibe todos os professores se o campo estiver vazio
+  // Função para buscar professores
+  useEffect(() => {
+    const fetchProfessores = async () => {
+      try {
+        const response = await axios.get("http://localhost:4000/professors"); // Substitua pela URL correta
+        setProfessores(response.data as Professor[]);
+        setFilteredProfessores(response.data as Professor[]);
+      } catch (error) {
+        toast.error("Erro ao buscar professores.");
+        console.error("Erro ao buscar professores:", error);
+      }
+    };
+    fetchProfessores();
+  }, []);
+
+  // Função de busca
+  const handleSearch = (event: React.ChangeEvent<HTMLInputElement>): void => {
+    const query = event.target.value;
+    if (query.trim() === "") {
+      setFilteredProfessores(professores); // Reseta a lista se vazio
       return;
     }
-
-  const filtered = professores.filter((professor) =>
-      professor.name.toLowerCase().includes(searchQuery.toLowerCase())
+    const filtered = professores.filter((professor) =>
+      professor.name.toLowerCase().includes(query.toLowerCase())
     );
     setFilteredProfessores(filtered);
   };
 
-  const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === "Enter") {
-      handleSearch();
-    }
-  };
-
-  interface SortCriteria {
-    criteria: "name" | "department" | "recent" | "oldest";
-  }
-
-  const handleSort = (criteria: SortCriteria["criteria"]) => {
+  // Função de ordenação
+  const handleSort = (criteria: "name" | "department" | "recent" | "oldest") => {
     const sortedProfessores = [...filteredProfessores];
     if (criteria === "name") {
       sortedProfessores.sort((a, b) => a.name.localeCompare(b.name));
@@ -63,17 +55,20 @@ export default function FeedDeslogado() {
         a.department.name.localeCompare(b.department.name)
       );
     } else if (criteria === "recent") {
-      sortedProfessores.sort((a, b) =>
-        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      sortedProfessores.sort(
+        (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
       );
     } else if (criteria === "oldest") {
-      sortedProfessores.sort((a, b) =>
-        new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+      sortedProfessores.sort(
+        (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
       );
     }
     setFilteredProfessores(sortedProfessores);
     setIsPopupOpen(false);
   };
+
+
+
 
   return (
     <div className="bg-gray-100 min-h-screen">
@@ -101,47 +96,85 @@ export default function FeedDeslogado() {
         </div>
       </header>
 
-      {/* Buscar e Ordenar */}
-      <div className="p-4 flex items-center mb-10 justify-center">
-        <div className="flex items-center bg-white p-4 rounded-[60px] w-[40%] justify-around">
-          <input
-            type="text"
-            placeholder="Nome do Professor"
-            className="border-0 border-b-2 border-green-50 focus:outline-none focus:border-blue-400 transition duration-400 px-2 py-2 w-full max-w-sm text-black"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            onKeyDown={handleKeyPress} // Detecta a tecla Enter
-          />
-          <button
-            className="bg-azulCjr text-white px-6 py-2 rounded ml-1 hover:bg-blue-600 transition duration-500"
-            onClick={handleSearch}
-          >
-            Buscar
-          </button>
+      {/* Buscar Professores */}
+      <div className="flex items-center my-10 justify-center">
+        <div className="flex items-center justify-center px-5 py-2 w-[40%] rounded-lg shadow-lg bg-customGreen">
+          <div className="flex items-center bg-white p-2 rounded-[60px] w-full justify-center">
+            <input
+              type="text"
+              placeholder="Nome do Professor"
+              className="border-0 border-b-2 border-green-50 focus:outline-none focus:border-blue-400 transition duration-400 w-full text-black"
+              onChange={handleSearch}
+            />
+          </div>
         </div>
-      </div>
-
-      {/* Todos os Professores */}
-      <section className="p-4 mx-auto max-w-screen-lg">
-        {/* Header */}
-        <div className="flex w-full justify-between items-center border-b pb-4">
-          <h2 className="text-xl font-bold text-azulUnb text-left">Professores</h2>
+        <div>
           <button
-            className="bg-azulCjr text-white px-6 py-2 rounded hover:bg-blue-600 transition duration-500"
+            className="bg-azulCjr text-white px-6 py-4 ml-2 rounded-lg shadow-md hover:shadow-lg hover:bg-blue-600 transition duration-500"
             onClick={togglePopup}
           >
             Ordenar
           </button>
         </div>
+        {isPopupOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg shadow-md w-80">
+            <h3 className="text-lg font-bold mb-4 text-azulCjr">Ordenar por:</h3>
+            <ul className="space-y-2 text-azulCjr">
+              <li>
+                <button
+                  onClick={() => handleSort("name")}
+                  className="w-full text-left px-4 py-2 hover:bg-gray-100"
+                >
+                  Nome
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => handleSort("department")}
+                  className="w-full text-left px-4 py-2 hover:bg-gray-100"
+                >
+                  Departamento
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => handleSort("recent")}
+                  className="w-full text-left px-4 py-2 hover:bg-gray-100"
+                >
+                  Recentes
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => handleSort("oldest")}
+                  className="w-full text-left px-4 py-2 hover:bg-gray-100"
+                >
+                  Antigos
+                </button>
+              </li>
+            </ul>
+            <button
+              className="w-full mt-4 bg-customGreen text-white px-4 py-2 rounded hover:bg-hoverGreen transition duration-300"
+              onClick={togglePopup}
+            >
+              Fechar
+            </button>
+          </div>
+        </div>
+      )}
+    
+      </div>
 
-        {/* Grid */}
+      {/* Grid de Professores */}
+      <section className="p-4 mx-auto max-w-screen-lg">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-5">
           {filteredProfessores.map((professor) => (
             <div
               key={professor.id}
               className="flex flex-col items-center bg-white p-6 shadow-lg rounded-lg h-60 transform transition duration-300 hover:translate-y-[-5px] hover:shadow-xl"
             >
-              <div className="w-20 h-20 bg-gray-200 border-2 border-customGreen rounded-full mb-4">
+              <div className="w-20 h-20 bg-gray-200 rounded-full mb-4">
                 <Image
                   src={professor.profilepic || "/default-profile.png"}
                   alt={`Foto de ${professor.name}`} // Corrigida a interpolação de string
@@ -162,55 +195,7 @@ export default function FeedDeslogado() {
             </div>
           ))}
         </div>
-
-        {/* Popup */}
-        {isPopupOpen && (
-          <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
-            <div className="bg-white rounded-lg p-6 shadow-lg w-80">
-              <h3 className="text-lg font-bold mb-4 text-azulCjr">Ordenar por:</h3>
-              <ul className="space-y-2 text-azulCjr">
-                <li>
-                  <button
-                    className="w-full text-left px-4 py-2 rounded hover:bg-gray-100"
-                    onClick={() => handleSort("name")}
-                  >
-                    Nome
-                  </button>
-                </li>
-                <li>
-                  <button
-                    className="w-full text-left px-4 py-2 rounded hover:bg-gray-100"
-                    onClick={() => handleSort("department")}
-                  >
-                    Departamento
-                  </button>
-                </li>
-                <li>
-                  <button
-                    className="w-full text-left px-4 py-2 rounded hover:bg-gray-100"
-                    onClick={() => handleSort("recent")}
-                  >
-                    Mais Recentes
-                  </button>
-                </li>
-                <li>
-                  <button
-                    className="w-full text-left px-4 py-2 rounded hover:bg-gray-100"
-                    onClick={() => handleSort("oldest")}
-                  >
-                    Mais Antigos
-                  </button>
-                </li>
-              </ul>
-              <button
-                className="w-full mt-4 bg-customGreen text-azulCjr px-4 py-2 rounded hover:bg-hoverGreen hover:text-white transition duration-500"
-                onClick={togglePopup}
-              >
-                Cancelar
-              </button>
-            </div>
-          </div>
-        )}
       </section>
     </div>
-)}
+  );
+}
