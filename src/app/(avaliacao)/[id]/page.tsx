@@ -16,7 +16,7 @@ export default function Avaliacao() {
   return (
     <>
       <div className="flex flex-col h-screen bg-gray-100">
-        {createComment ? <ModalComentario> </ModalComentario> : <p></p>}
+        {/*{createComment ? <ModalComentario> </ModalComentario> : <p></p>}*/}
           <div className="flex justify-between w-full bg-blue-200 p-2 items-center fixed">
             <div className= "pl-3">
             <Image
@@ -103,7 +103,9 @@ export default function Avaliacao() {
                       width={64} 
                       height={64}
                       className="w-4 h-4 object-cover mx-2 shadow-md hover:bg-blue-200 transition duration-300 ease-in-out cursor-pointer"
+                      onClick= {()=> <ModalComentario> </ModalComentario>}
                     />
+                      
                     <Image
                       src="/lixeira.png"
                       alt="Icone de editar"
