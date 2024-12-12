@@ -12,17 +12,15 @@ export interface User {
   }
   
   export interface Avaliacao {
-    id: number;
-    date: string;
-    professor: {
-        name: string;
-    };
-    course: {
-        id: number;
-        name: string;
-    };
+    id?: number;
+    date?: string;
     text: string;
+    professorId: number;
+    courseId:number;
+    userId: number;
+    nota:number;
     comments?: Comment[];
+    isEdited?: boolean;
 }
   
 export interface Comment {
