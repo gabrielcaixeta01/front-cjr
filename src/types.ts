@@ -45,4 +45,6 @@ export interface Professor {
         id: number;
         name: string;
     }[];
+    createdAt: Date;
+    profilepic?: string;
 }
