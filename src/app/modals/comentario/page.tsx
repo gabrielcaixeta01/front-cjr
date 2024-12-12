@@ -20,8 +20,8 @@ export default function ModalComentario() {
 
   return ( 
   <>
-    <div className="flex flex-col h-screen bg-gray-100 justify-center  w-screen">
-        <div className="h-screen  w-1/2 max-h-[47%]  flex flex-col mx-auto bg-[#3EEE9A] rounded-md items-center fixed">
+    <div className="flex flex-col h-screen bg-gray-100 justify-center">
+        <div className="h-screen  w-1/2 max-h-[58%]  flex flex-col mx-auto bg-[#3EEE9A] rounded-md items-center">
             <div className="flex flex-col h-[12rem] w-[90%] bg-[#A4FED3] mt-[2rem] rounded-md">
               <input type="text" value={textoComment} onChange={(event)=> setTextoComment(event.target.value)} className=" text-black h-16 w-full pt-[0.5px] pl-[1rem] rounded-md bg-[#A4FED3] leading-tight focus:outline-none"/> 
             </div>
