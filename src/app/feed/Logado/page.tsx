@@ -19,17 +19,19 @@ import { BellIcon } from "@heroicons/react/24/solid";
 import { ArrowRightOnRectangleIcon } from "@heroicons/react/20/solid";
 
 export default function FeedLogado() {
-    const [mostrarProfs, setMostrarProfs] = useState(false);
-    const [mostrarDisciplinas, setMostrarDisciplinas] = useState(false);
+    const router = useRouter();
     const [texto, setTexto] = useState("");
-    const [textoAval, setTextoAval]= useState("");
     const [listaProfs, setListaProfs] = useState <any[]>([]);
     const [listaCourses, setListaCourses] = useState <any[]> ([]);
     const [idProfAvaliacao, setIdProfAvaliacao] = useState("-1");
     const [idCourseAvaliacao, setIdCourseAvaliacao] = useState("-1");
     const [profSelected, setProfSelected] = useState("-1");
     const [courseSelected, setCourseSelected] = useState("-1")
-    const [avalCreated, setAvalCreated] = useState(null)
+    const [isPopupOpen, setIsPopupOpen] = useState(false);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [professores, setProfessores] = useState<Professor[]>([]);
+    const [filteredProfessores, setFilteredProfessores] = useState<Professor[]>([]);
+    const [profilePic, setProfilePic] = useState("/default-profile.png");
     
     const getProfs = async () => {
       try {
@@ -63,14 +65,6 @@ export default function FeedLogado() {
         console.log(error);
       }
     }
-
-
-  const router = useRouter();
-  const [isPopupOpen, setIsPopupOpen] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [professores, setProfessores] = useState<Professor[]>([]);
-  const [filteredProfessores, setFilteredProfessores] = useState<Professor[]>([]);
-  const [profilePic, setProfilePic] = useState("/default-profile.png");
 
   // Busca apenas o ID e a foto de perfil do usuário
   useEffect(() => {
@@ -144,9 +138,6 @@ export default function FeedLogado() {
     setFilteredProfessores(sortedProfessores);
     setIsPopupOpen(false);
   };
-
-
-
 
   return (
     <div className="bg-gray-100 min-h-screen">
@@ -320,7 +311,6 @@ export default function FeedLogado() {
                                 };
                                 
                                 creatingAval(newAval);
-                                setTextoAval(texto);
                                 setTexto("");
                                 toast.success("A avaliação foi criada com sucesso", { autoClose: 2200 });
                                 setIdCourseAvaliacao("-1");
