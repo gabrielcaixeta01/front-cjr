@@ -7,12 +7,30 @@ import { useParams } from "next/navigation";
 import { useRouter } from "next/compat/router";
 import ModalComentario from "@/app/modals/comentario/page";
 import { useState } from "react";
+import { toast } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
+import { createComment } from "@/utils/api";
+import { Comment } from "@/types";
 
 export default function Avaliacao() {
 
   const router = useRouter();
-  const [createComment, setCreateComment] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
+  const [textoComment, setTextoComment]= useState("");
+
+  const creatingComment = async (comment: Partial<Comment>) => {
+    try {
+      const created = await createComment(comment);
+    }
+    catch (error){
+      console.log(error);
+    }
+  }
+
+  const toggleModal = () => {
+    setIsModalOpen(!isModalOpen);
+  }
   return (
     <>
       <div className="flex flex-col h-screen bg-gray-100">
@@ -89,21 +107,57 @@ export default function Avaliacao() {
                         width={48}
                         height={48}
                         className="w-6 h-6 rounded-full shadow-md"
-                        onClick= {()=> setCreateComment(true)}
+                        onClick= {()=>toggleModal}
                       />
                       <span className="font-sans text-[#222E50] text-[12px] font-[600] leading-[14.52px] flex pl-1 items-center"> 2 comentários</span>
                   </div>
-                  <div className="flex pr-2">
-                    {/*<button className=" hover:bg-blue-600 rounded-[60px] transition duration-300 ease-in-out"> 
-                      <TrashIcon className="text-black h-4 w-4"/> 
-                      </button>*/}              
+                          {isModalOpen && (
+                                      <div className="flex flex-col h-screen bg-gray-100 justify-center">
+                                          <div className="h-screen  w-1/2 max-h-[58%]  flex flex-col mx-auto bg-[#3EEE9A] rounded-md items-center">
+                                              <div className="flex flex-col h-[12rem] w-[90%] bg-[#A4FED3] mt-[2rem] rounded-md">
+                                                <input type="text" value={textoComment} onChange={(event)=> setTextoComment(event.target.value)} className=" text-black h-16 w-full pt-[0.5px] pl-[1rem] rounded-md bg-[#A4FED3] leading-tight focus:outline-none"/> 
+                                              </div>
+                                              <div className="ml-auto items-right pr-5 mt-6">
+                                                <button onClick={()=> setTextoComment("")}
+                                                  className="bg-transparent rounded-lg hover:scale-110 duration-200 w-20 h-10 text-xl text-[23px] font-400 leading-[54.46px] mr-9"
+                                                  >
+                                                  Cancelar
+                                              </button>
+                                              <button   onClick={() => {
+                                                if (textoComment ==""){
+                                                  toast.error("O comentário não pode ser vazio");
+                                                }
+                                                else {
+                                                  const newComment: Partial<Comment> ={
+                                                    text:textoComment,
+                                                    userId:5,
+                                                    avaliacaoId: 2
+                                                  }
+                                                  creatingComment(newComment);
+                                                  setTextoComment("");
+                                                  toast.success("O comentário foi criado com sucesso", {autoClose:2200})
+                                                }
+                                              }}
+                                              className="bg-[#A4FED3] text-[#2B895C] font-400 text-[20px] rounded-lg hover:scale-110 duration-200 w-32 h-10 text-xl leading-[42.36px]  mr-10 ml-2"
+                                              >
+                                                  Comentar
+                                              </button>
+                                              </div>
+                                          </div>
+                                      </div>
+                                
+                              )
+                            }                             
+                        </div>
+                  
+                  <div className="flex pr-2">             
                     <Image
                       src="/editar.png"
                       alt="Icone de editar"
                       width={64} 
                       height={64}
                       className="w-4 h-4 object-cover mx-2 shadow-md hover:bg-blue-200 transition duration-300 ease-in-out cursor-pointer"
-                      onClick= {()=> <ModalComentario> </ModalComentario>}
+          
                     />
                       
                     <Image
@@ -160,6 +214,6 @@ export default function Avaliacao() {
           </div>
         </div>
       </div>
-    </>
+
   )
 }
