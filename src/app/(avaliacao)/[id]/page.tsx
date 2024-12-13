@@ -10,7 +10,8 @@ import { useState } from "react";
 import { toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import { createComment } from "@/utils/api";
-import { Comment } from "@/types";
+import { Avaliacao, Avaliacao, Comment } from "@/types";
+import { updateAval } from "@/utils/api";
 
 export default function Avaliacao() {
   
@@ -27,6 +28,15 @@ export default function Avaliacao() {
     }
     catch (error){
       console.log(error);
+    }
+  }
+
+  const editingAval = async (aval: Partial <Avaliacao>, id:number) => {
+    try {
+      const created = await updateAval(aval,id);
+    }
+    catch (error) {
+      toast.error("Erro ao editar a avaliação",{autoClose:2200})
     }
   }
 
@@ -186,7 +196,12 @@ export default function Avaliacao() {
                                     }
                                     else {
                                       setTextoEdit(textoEdit);          
-                                      toast.success("O comentário foi editado com sucesso", {autoClose:2200});
+                                      const avalEdited: Partial <Avaliacao> = {
+                                        text: textoEdit,
+                                        nota: 3
+                                      }
+                                      editingAval(avalEdited,4);
+                                      toast.success("A avaliação foi editada com sucesso", {autoClose:2200});
                                       toggleModalEdit();                                   
                                     }}}
                                           className="bg-[#A4FED3] text-[#2B895C] font-400 text-[20px] rounded-lg hover:scale-110 duration-200 w-32 h-10 text-xl leading-[42.36px]  mr-10 ml-2"

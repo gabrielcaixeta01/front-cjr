@@ -77,6 +77,15 @@ export const createAval = async (aval: Partial<Avaliacao>) => {
   return response.data;
 };
 
+export const updateAval = async (aval: Partial<Avaliacao>, id:number)=> {
+  const response = await api.patch(`/avaliacao/${id}`,{
+    text: aval.text,
+    nota: aval.nota,
+    isEdited: true,
+  });
+  return response.data;
+};
+
 export const getUserDetails = async (userId: number) => {
   const response = await api.get(`/user/${userId}`);
   return response.data;
