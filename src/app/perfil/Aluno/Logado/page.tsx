@@ -13,6 +13,7 @@ import axios from "axios";
 export default function PerfilAlunoLogado() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
+  const [openComments, setOpenComments] = useState<number | null>(null);
   const [professores, setProfessores] = useState<{ id: number; name: string }[]>([]);
   const [cursos, setCursos] = useState<{ id: number; name: string }[]>([]);
   const [userInfo, setUserInfo] = useState<User>({
@@ -25,7 +26,7 @@ export default function PerfilAlunoLogado() {
     avaliacoes: [],
   });
 
-  const fixedUserId = 1;
+  const fixedUserId = 2;
 
   // Busca informações do usuário
   useEffect(() => {
@@ -76,7 +77,7 @@ export default function PerfilAlunoLogado() {
   }
 
   return (
-    <div className="flex flex-col h-screen bg-gray-100">
+    <div className="flex flex-col h-screen min-h-fit bg-gray-100">
       {/* Header */}
       <header className="flex justify-between bg-customGreen pb-1 items-center mb-5">
         <div className="flex bg-azulUnb pb-1">
@@ -194,20 +195,33 @@ export default function PerfilAlunoLogado() {
                     {cursos.find((curso) => curso.id === avaliacao.courseId)?.name || "Curso não encontrado"}
                   </p>
                   <p className="text-gray-700 mt-2">{avaliacao.text}</p>
+
+                  {/* Botão para mostrar mais comentários */}
                   {avaliacao.comments && avaliacao.comments.length > 0 && (
-                    <div className="mt-4">
-                      <p className="text-sm font-semibold text-gray-700">Comentários:</p>
-                      {avaliacao.comments.map((comment) => (
-                        <div
-                          key={comment.id}
-                          className="text-sm text-gray-500 bg-gray-100 rounded p-2 mt-2"
-                        >
-                          <p className="font-semibold text-gray-700">
-                            {comment.user?.name || "Usuário desconhecido"}:
-                          </p>
-                          <p>{comment.text}</p>
-                        </div>
-                      ))}
+                    <div className="mt-1">
+                      <button
+                        className="text-gray-500 text-sm font-medium cursor-pointer mb-2"
+                        onClick={() =>
+                          setOpenComments((prev) =>
+                            prev === (avaliacao.id ?? null) ? null : avaliacao.id ?? null
+                          )
+                        }
+                      >
+                        {openComments === avaliacao.id ? "Ocultar comentários" : "Ver mais comentários"}
+                      </button>
+
+                      {openComments === avaliacao.id &&
+                        avaliacao.comments.map((comment) => (
+                          <div
+                            key={comment.id}
+                            className="text-sm text-gray-500 bg-gray-100 rounded-[50px] p-4 mt-2"
+                          >
+                            <p className="font-semibold text-gray-700">
+                              {comment.user?.name || "Usuário desconhecido"}:
+                            </p>
+                            <p>{comment.text}</p>
+                          </div>
+                        ))}
                     </div>
                   )}
                 </div>
