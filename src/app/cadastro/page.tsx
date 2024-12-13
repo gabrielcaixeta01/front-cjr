@@ -4,8 +4,7 @@ import { useRouter } from "next/navigation";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { useEffect, useRef, useState } from "react";
-import { createUser } from "@/utils/page";
-import { getAllDepartments, getAllPrograms } from "@/utils/api";
+import { getAllDepartments, getAllPrograms, createUser } from "@/utils/api";
 import { User } from "@/types";
 
 const validationSchema = Yup.object({
@@ -37,7 +36,7 @@ const initialValues = {
   password: "",
   department: { id: 0, name: "" },
   program: { id: 0, name: "" },
-  profilepic: null,
+  profilepic: undefined,
 };
 
 export default function Cadastro() {
@@ -64,7 +63,7 @@ export default function Cadastro() {
       const cursos = await getAllPrograms();
       setPrograms(cursos);
     } catch (error) {
-      console.error("Erro ao carregar departamentos", error);
+      console.error("Erro ao carregar cursos", error);
     }
   };
 
@@ -77,10 +76,11 @@ export default function Cadastro() {
       name: values.name,
       email: values.email,
       password: values.password,
-      program: values.program?.id ? values.program : undefined,
-      department: values.department?.id ? values.department : undefined,
-      profilepic: values.profilepic || null,
+      programId: values.program?.id || undefined,
+      departmentId: values.department?.id || undefined,
+      profilepic: values.profilepic || undefined,
     };
+
 
     try {
       const response = await createUser(newUser);
@@ -90,8 +90,9 @@ export default function Cadastro() {
       console.error("Erro ao criar o usuário:", error);
     }
   };
+
   return (
-    <div className="w-full h-screen flex  relative">
+    <div className="w-full h-screen flex relative">
       <div className="ImgContainer flex justify-center h-full flex-1 relative">
         <div className="absolute w-full h-screen bg-black/30 z-30"></div>
         <Image
@@ -111,7 +112,7 @@ export default function Cadastro() {
           alt="Imagem padrão"
           width={150}
           height={150}
-          className="mt-4 rounded-full"
+          className="mt-4 rounded-full cursor-pointer"
           onClick={() => referencia_imagem.current?.click()}
         />
         <Formik
@@ -166,7 +167,10 @@ export default function Cadastro() {
                   const selectedProgram = programs.find(
                     (program) => program.id === parseInt(e.target.value)
                   );
-                  setFieldValue("program", selectedProgram);
+                  setFieldValue(
+                    "program",
+                    selectedProgram || { id: 0, name: "" }
+                  );
                 }}
               >
                 <option value="" disabled>
@@ -193,7 +197,10 @@ export default function Cadastro() {
                   const selectedDepartment = departments.find(
                     (department) => department.id === parseInt(e.target.value)
                   );
-                  setFieldValue("department", selectedDepartment);
+                  setFieldValue(
+                    "department",
+                    selectedDepartment || { id: 0, name: "" }
+                  );
                 }}
               >
                 <option value="" disabled>
@@ -205,11 +212,6 @@ export default function Cadastro() {
                   </option>
                 ))}
               </Field>
-              <ErrorMessage
-                name="department"
-                component="div"
-                className="text-red-500 text-sm mt-2"
-              />
               <ErrorMessage
                 name="department"
                 component="div"
@@ -230,7 +232,7 @@ export default function Cadastro() {
               <section className="mt-16">
                 <button
                   type="submit"
-                  className="bg-green-300 border-[0.125rem] border-gray-500 p-2 rounded-lg hover:scale-110 duration-200 w-40 h-12 text-xl"
+                  className="bg-green-300 border-[0.125rem] border-gray-500 p-2 rounded-lg hover:scale-110 duration-200 w-40 h-12 text-xl text-black"
                 >
                   Criar Conta
                 </button>

@@ -3,10 +3,12 @@ export interface User {
     name: string;
     email: string;
     password: string;
+    programId?: number;
     program?: {
       id: number;
       name: string;
     };
+    departmentId?: number;
     department?: {
       id: number;
       name: string;
@@ -32,11 +34,7 @@ export interface Comment {
     text: string;
     userId: number;
     avaliacaoId: number;
-    user?: {
-      id: number;
-      name: string;
-    };
-  }
+}
 
 export interface Professor {
     id: number;
