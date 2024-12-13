@@ -1,21 +1,21 @@
 export interface User {
-    id?: number;
+  id?: number;
+  name: string;
+  email: string;
+  password: string;
+  programId?: number;
+  program?: {
+    id: number;
     name: string;
-    email: string;
-    password: string;
-    programId?: number;
-    program?: {
-      id: number;
-      name: string;
-    };
-    departmentId?: number;
-    department?: {
-      id: number;
-      name: string;
-    };
-    profilepic?: string;
-    avaliacoes?: Avaliacao[];
-  }
+  };
+  departmentId?: number;
+  department?: {
+    id: number;
+    name: string;
+  };
+  profilepic?: string;
+  avaliacoes?: Avaliacao[];
+}
   
   export interface Avaliacao {
     id?: number;

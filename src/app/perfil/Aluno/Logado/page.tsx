@@ -21,7 +21,10 @@ export default function PerfilAlunoLogado() {
     name: "",
     email: "",
     password: "",
+    programId: 0,
     program: { id: 0, name: "Carregando..." },
+    departmentId: 0,
+    department: { id: 0, name: "Carregando..." },
     profilepic: "/default-profile.png",
     avaliacoes: [],
   });
@@ -38,7 +41,10 @@ export default function PerfilAlunoLogado() {
           name: userData.name || "",
           email: userData.email || "",
           password: userData.password || "",
+          programId: userData.programId || 0,
           program: userData.program || { id: 0, name: "Carregando..." },
+          departmentId: userData.departmentId || 0,
+          department: userData.department || { id: 0, name: "Carregando..." }, // Converte `Department` para `department`
           profilepic: userData.profilepic || "/default-profile.png",
           avaliacoes: userData.avaliacoes || [],
         });
@@ -143,7 +149,15 @@ export default function PerfilAlunoLogado() {
                   height={24}
                   className="w-6 h-6 object-cover"
                 />
-                <p className="text-sm text-gray-700">{userInfo.program?.name || "Carregando..."}</p>
+                <p className="text-sm text-gray-700">
+                  {userInfo.program?.name || "Carregando..."}
+                  {userInfo.department?.name && (
+                    <>
+                      {" "}
+                      / <span className="text-gray-500">{userInfo.department.name}</span>
+                    </>
+                  )}
+                </p>
               </div>
               <div className="flex items-center gap-2">
                 <Image
