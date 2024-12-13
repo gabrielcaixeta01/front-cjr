@@ -33,7 +33,7 @@ const initialValues = {
   name: "",
   password: "",
   department: "",
-  course: "",
+  program: "",
   profilePicture: null,
 };
 
@@ -90,7 +90,7 @@ const EditarPerfil = () => {
     if (values.name) payload.name = values.name;
     if (values.password) payload.password = values.password;
     if (values.department) payload.departmentId = parseInt(values.department, 10);
-    if (values.course) payload.programId = parseInt(values.course, 10);
+    if (values.program) payload.programId = parseInt(values.program, 10);
     if (values.profilePicture) payload.profilepic = values.profilePicture;
 
     try {
@@ -151,7 +151,7 @@ const EditarPerfil = () => {
                 <label htmlFor="password" className="block text-sm font-medium text-gray-700">
                   Senha
                 </label>
-                <div className="flex items-center">
+                <div className="flex items-center relative">
                   <Field
                     id="password"
                     name="password"
@@ -161,7 +161,7 @@ const EditarPerfil = () => {
                   <button
                     type="button"
                     onClick={() => setShowPassword((prev) => !prev)}
-                    className="absolute right-3 top-8 text-gray-500 hover:text-gray-800 transition"
+                    className="absolute inset-y-0 right-3 flex items-center text-gray-500 hover:text-gray-800 transition"
                   >
                     {showPassword ? "👁️" : "🙈"}
                   </button>
@@ -176,7 +176,7 @@ const EditarPerfil = () => {
                 <Field
                   as="select"
                   name="department"
-                  className="mt-1 text-sm block w-full border-0 border-b-2 border-gray-50 focus:outline-none focus:border-blue-400 focus:ring-0 transition duration-300"
+                  className="mt-1 text-xs block w-full border-0 border-b-2 border-gray-50 focus:outline-none focus:border-blue-400 focus:ring-0 transition duration-300"
                 >
                   <option value="" disabled>Selecione o Departamento</option>
                   {departments.map((department: { id: number; name: string }) => (
@@ -195,7 +195,7 @@ const EditarPerfil = () => {
                 <Field
                   as="select"
                   name="program"
-                  className="mt-1 text-sm block w-full border-0 border-b-2 border-gray-50 focus:outline-none focus:border-blue-400 focus:ring-0 transition duration-300"
+                  className="mt-1 text-xs block w-full border-0 border-b-2 border-gray-50 focus:outline-none focus:border-blue-400 focus:ring-0 transition duration-300"
                 >
                   <option value="" disabled>Selecione o Curso</option>
                   {programs.map((program: { id: number; name: string }) => (
