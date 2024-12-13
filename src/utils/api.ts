@@ -33,12 +33,13 @@ export const getAllCourses = async () => {
 }
 
 export const createUser = async (user: Partial<User>) => {
+  console.log("dshdfhsxd")
   const response= await api.post("/user",{
   name: user.name,
   email: user.email,
   password: user.password,
-  departmentId: user.department?.id,
-  programId: user.program?.id,
+  departmentId: user.departmentId,
+  programId: user.programId,
   profilepic: user.profilepic,
   })
   return response.data;
