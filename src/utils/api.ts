@@ -92,6 +92,10 @@ export const updateAval = async (aval: Partial<Avaliacao>, id: number) => {
   return response.data;
 };
 
+export const findAval = async (id:number) => {
+  const response = await api.get(`/avaliacao/${id}`);
+  return response.data;
+}
 // ** Funções relacionadas a comentários **
 
 export const createComment = async (comment: Partial<Comment>) => {

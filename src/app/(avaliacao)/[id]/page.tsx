@@ -2,16 +2,17 @@
 import Image from "next/image";
 import { BellIcon } from "@heroicons/react/24/solid";
 import { ArrowRightOnRectangleIcon } from "@heroicons/react/20/solid";
-import { getAval } from "@/utils/page";
 import { useParams } from "next/navigation";
 import { useRouter } from "next/compat/router";
 import ModalComentario from "@/app/modals/comentario/page";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import { createComment } from "@/utils/api";
-import { Avaliacao, Avaliacao, Comment } from "@/types";
+import { Avaliacao, Comment, User } from "@/types";
 import { updateAval } from "@/utils/api";
+import { findAval, getUserDetails } from "@/utils/api";
+import { Avaliacao } from "@prisma/client";
 
 export default function Avaliacao() {
   
@@ -20,7 +21,28 @@ export default function Avaliacao() {
   const [isModalCommentOpen, setIsModalCommentOpenmentOpen] = useState(false);
   const [textoComment, setTextoComment]= useState("");
   const [isModalEditOpen, setIsModalEditOpen] = useState(false);
+  const [isModalDeleteAvalOpen, setIsToggleDeleteAvalOpen] = useState(false);
   const [textoEdit, setTextoEdit] = useState("");
+  const [localAval, setLocalAval] = useState<Avaliacao>({
+      id: 0,
+      nota: 0,
+      userId: 1,
+      date: undefined,
+      professorId: 0,
+      text: "",
+      courseId:0,
+      comments:[]
+    });
+    const [userInfo, setUserInfo] = useState<User>({
+      id: 0,
+      name: "",
+      email: "",
+      password: "",
+      program: { id: 0, name: "Carregando..." },
+      profilepic: "/default-profile.png",
+      avaliacoes: [],
+    });
+    
 
   const creatingComment = async (comment: Partial<Comment>) => {
     try {
@@ -31,6 +53,54 @@ export default function Avaliacao() {
     }
   }
 
+  const {id} = useParams();
+
+  const findingAval = async () =>{
+    try {
+      const avalFound = (await findAval(2)) as Avaliacao;
+      setLocalAval({
+        id: avalFound.id || 2,
+        nota: avalFound.nota || 0,
+        text: avalFound.text || "",
+        userId: avalFound.userId ||1,
+        date: avalFound.date || undefined,
+        professorId: avalFound.professorId || 1,
+        courseId: avalFound.courseId || 2,
+      });
+    }
+    catch (error){
+      toast.error("Erro ao procurar avaliação", {autoClose:2200})
+    }
+    finally{
+    }
+  }
+
+    useEffect(() => {
+      const loadUserInfo = async () => {
+        try {
+          const userData = (await getUserDetails(localAval.userId)) as User;
+          setUserInfo({
+            id: userData.id || 0,
+            name: userData.name || "",
+            email: userData.email || "",
+            password: userData.password || "",
+            program: userData.program || { id: 0, name: "Carregando..." },
+            profilepic: userData.profilepic || "/default-profile.png",
+            avaliacoes: userData.avaliacoes || [],
+          });
+        } catch (error) {
+          console.error("Erro ao carregar as informações do usuário:", error);
+        } 
+      };
+    
+      loadUserInfo();
+    }, []);
+  
+  useEffect (()=>{
+      findingAval()
+      console.log(localAval)
+  },[])
+  
   const editingAval = async (aval: Partial <Avaliacao>, id:number) => {
     try {
       const created = await updateAval(aval,id);
@@ -48,8 +118,17 @@ export default function Avaliacao() {
     setIsModalEditOpen(!isModalEditOpen);
   }
 
+  const toggleDeleteAval = () => {
+    setIsToggleDeleteAvalOpen(!isModalDeleteAvalOpen);
+  }
+
+  useEffect (()=>{
+    console.log("foi")
+    console.log(localAval)
+  },[localAval]) 
   return (
     <>
+    
       <div className="flex flex-col h-screen bg-gray-100">
                <header className="flex justify-between bg-customGreen pb-1 items-center mb-2">
                  <div className="flex bg-azulUnb pb-1">
@@ -102,13 +181,13 @@ export default function Avaliacao() {
                       onClick={() => router.push("/perfil/Aluno/Logado")}
                     />
                     </div>
-                    <span className="font-sans text-black ml-2 text-[15px] font-[500] leading-[16.94px] items-center hover:bg-blue-200 transition duration-300 ease-in-out cursor-pointer" onClick={()=> router.push("/perfil/Aluno/Logado")}> Morty Gamer </span>
+                    <span className="font-sans text-black ml-2 text-[15px] font-[500] leading-[16.94px] items-center hover:bg-blue-200 transition duration-300 ease-in-out cursor-pointer" onClick={()=> router.push("/perfil/Aluno/Logado")}> {userInfo.name} </span>
                     <span className="font-sans text-[#71767B] text-[12px] font-[350] leading-[16.94px] flex pl-1.5 items-center"> · 08/04/2024, ás 21:42 </span>
                     <span className="font-sans text-[#71767B] text-[12px] font-[350] leading-[16.94px] flex pl-1 items-center"> · Homer Simpson </span>
                     <span className="font-sans text-[#71767B] text-[12px] font-[350] leading-[16.94px] flex pl-1 items-center"> · Engenharia Química </span>
                 </div>
                 <div className="pl-[6.8rem]"> 
-                  <p className="text-[#222E50] text-[15px] font-[500] leading-[18.15px] pb-2"> Professor bacana. Adoro quando falta! </p>
+                  <p className="text-[#222E50] text-[15px] font-[500] leading-[18.15px] pb-2"> {localAval.text} </p>
                 </div>
                 <div className="flex items-center justify-between pl-[6.5rem]">
                   <div className="flex"> 
@@ -173,9 +252,42 @@ export default function Avaliacao() {
                         alt="Excluir"
                         width={64} 
                         height={64}
+                        onClick = {()=> toggleDeleteAval()}
                         className="w-4 h-4 object-cover mx-2 shadow-md hover:bg-blue-200 transition duration-300 hover:scale-110  ease-in-out cursor-pointer"
                       />   
                     </div>
+
+                    {isModalDeleteAvalOpen && (
+                      <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
+                        <div className="bg-black pt-3 pl-6 pr-6 pb-6 max-h-fit flex flex-col items-center rounded-lg w-full max-w-md shadow-lg">
+                          <div className="text-center mb-5 p-2">
+                            <h1 className="text-3xl font-bold text-white mb-4">
+                            </h1>
+                            <p className="text-lg text-ellipsis text-white">
+                              Tem certeza de que deseja excluir a avaliação?
+                            </p>
+                            <p className="text-xs italic text-white"> Essa ação não poderá ser desfeita</p>
+                          </div>
+                          <div className="flex space-x-6">
+                            <button
+                              onClick={()=> {
+                                              toggleDeleteAval();
+                                              toast.success("Avaliação excluída com sucesso!",{autoClose:2200})}}
+                              className="bg-red-600 text-white font-semibold px-7 py-2 rounded-lg hover:bg-red-900 hover:text-white transition duration-300 ease-in-out"
+                            >
+                              Sim 
+                            </button>
+                            <button
+                              onClick={()=> toggleDeleteAval()}
+                              className=" text-white font-semibold px-7 py-2 rounded-lg hover:bg-white border-[0.5px] border-gray-300 hover:text-black transition duration-300 ease-in-out"
+                            >
+                              Cancelar 
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
                     {isModalEditOpen && (
                       <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
                               <div className="h-screen  w-1/2 max-h-[47%]  flex flex-col mx-auto bg-[#3EEE9A] rounded-md items-center">
