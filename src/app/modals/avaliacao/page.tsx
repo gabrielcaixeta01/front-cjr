@@ -61,24 +61,24 @@ export default function ModalAvaliacao() {
   return ( 
   <>
     <div className="flex flex-col h-screen bg-gray-100 justify-center">
-        <div className="h-screen  w-1/2 max-h-[58%]  flex flex-col mx-auto bg-[#3EEE9A] rounded-md items-center">
+        <div className="h-screen  w-[45%] max-h-[60%]  flex flex-col mx-auto bg-[#3EEE9A] rounded-md items-center">
 
-          <select value= {profSelected} className="flex flex-col bg-white h-[2rem] w-[90%] justify-between items-left hover:cursor-pointer rounded-md text-[#999797] font-[300] text-[18px]  mt-6 leading-[3rem]" onChange={(event)=> {setIdProfAvaliacao(event.target.value); setProfSelected(event.target.value)}}>
+          <select value= {profSelected} className="flex flex-col bg-white h-[2rem] w-[90%] justify-between items-left hover:cursor-pointer rounded-md text-[#999797] font-[300] text-[18px] mt-6 leading-[3rem]" onChange={(event)=> {setIdProfAvaliacao(event.target.value); setProfSelected(event.target.value)}}>
             <option value="-1"  className="text-[#999797] font-[300] text-[18px] leading-[29.05px] pl-2">
               Nome do professor
             </option>
             {listaProfs.map((prof) => (
-              <option key={prof.id} value={prof.id} className="text-black">
+              <option key={prof.id} value={prof.id} className="text-black text-[18px] leading-[29.05px] font-[200] ">
                 {prof.name}
               </option>))}
           </select>
         
           <select value={courseSelected} className="flex flex-col bg-white h-[2rem] w-[90%] justify-between items-left hover:cursor-pointer rounded-md text-[#999797] font-[300] text-[18px]  mt-6 leading-[3rem]" onChange={(event)=> {setIdCourseAvaliacao(event.target.value); setCourseSelected(event.target.value)}}>
-            <option value="-1"  className="text-[#999797] font-[300] text-[18px] leading-[29.05px] pl-2">
+            <option value="-1"  disabled selected className="text-[#999797] font-[300] text-[18px] leading-[29.05px] pl-2">
               Disciplina
             </option>
             {listaCourses.map((course) => (
-              <option key={course.id} value={course.id} className="text-black">
+              <option key={course.id} value={course.id} className="text-black text-[18px] leading-[29.05px] font-[200]">
                 {course.name}
               </option>))}           
           </select>

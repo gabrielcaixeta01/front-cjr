@@ -1,5 +1,14 @@
 "use client";
 
+"use client";
+import 'react-toastify/dist/ReactToastify.css';
+import { getAllProfs } from "@/utils/api";
+import { getAllCourses } from "@/utils/api";
+import { useParams } from 'next/navigation';
+import { Avaliacao } from "@/types";
+import { createAval } from "@/utils/api";
+import { create } from "domain";
+import { Avaliacao } from "@prisma/client";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React, { useState, useEffect } from "react";
@@ -10,11 +19,52 @@ import { BellIcon } from "@heroicons/react/24/solid";
 import { ArrowRightOnRectangleIcon } from "@heroicons/react/20/solid";
 
 export default function FeedLogado() {
-  const router = useRouter();
-  const [isPopupOpen, setIsPopupOpen] = useState(false);
-  const [professores, setProfessores] = useState<Professor[]>([]);
-  const [filteredProfessores, setFilteredProfessores] = useState<Professor[]>([]);
-  const [profilePic, setProfilePic] = useState("/default-profile.png");
+    const router = useRouter();
+    const [texto, setTexto] = useState("");
+    const [listaProfs, setListaProfs] = useState <any[]>([]);
+    const [listaCourses, setListaCourses] = useState <any[]> ([]);
+    const [idProfAvaliacao, setIdProfAvaliacao] = useState("-1");
+    const [idCourseAvaliacao, setIdCourseAvaliacao] = useState("-1");
+    const [profSelected, setProfSelected] = useState("-1");
+    const [courseSelected, setCourseSelected] = useState("-1")
+    const [isPopupOpen, setIsPopupOpen] = useState(false);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [professores, setProfessores] = useState<Professor[]>([]);
+    const [filteredProfessores, setFilteredProfessores] = useState<Professor[]>([]);
+    const [profilePic, setProfilePic] = useState("/default-profile.png");
+    
+    const getProfs = async () => {
+      try {
+        const professores = await getAllProfs();
+        setListaProfs (professores)
+      } catch (error){
+        console.log(error)
+      }
+    }
+    useEffect (()=>{
+      getProfs()
+    },[])
+  
+    const getCourses = async()=> {
+      try {
+        const courses = await getAllCourses();
+        setListaCourses(courses);
+      } catch (error){
+        console.log(error);
+      }
+    }
+    useEffect(()=>{
+      getCourses()
+    },[])
+  
+    const creatingAval = async (aval:Partial<Avaliacao>) => {
+      try {
+        const created = await createAval(aval);
+      }
+      catch (error){
+        console.log(error);
+      }
+    }
 
   // Busca apenas o ID e a foto de perfil do usuário
   useEffect(() => {
@@ -33,6 +83,10 @@ export default function FeedLogado() {
 
   const togglePopup = () => {
     setIsPopupOpen(!isPopupOpen);
+  };
+
+  const toggleModal= () => {
+    setIsModalOpen(!isModalOpen);
   };
 
   // Função para buscar professores
@@ -84,9 +138,6 @@ export default function FeedLogado() {
     setFilteredProfessores(sortedProfessores);
     setIsPopupOpen(false);
   };
-
-
-
 
   return (
     <div className="bg-gray-100 min-h-screen">
@@ -148,6 +199,7 @@ export default function FeedLogado() {
             Ordenar
           </button>
         </div>
+        
         {isPopupOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded-lg shadow-md w-80">
@@ -196,6 +248,93 @@ export default function FeedLogado() {
         </div>
       )}
     
+      </div>
+      <div className="flex  mx-auto w-[20%] max-w-[30%] max-h-[2%]">
+        <button
+            className="bg-azulCjr text-white px-6 py-4 ml-2 rounded-lg shadow-md hover:shadow-lg hover:bg-blue-600 transition duration-500"
+            onClick={toggleModal}>
+            Criar nova avaliação
+        </button>
+        
+        {isModalOpen && (
+                <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50 ">
+                    <div className="h-screen  w-[60%] max-h-[62%]  flex flex-col mx-auto bg-[#3EEE9A] rounded-md items-center">
+            
+                      <select value= {profSelected} className="flex flex-col bg-white h-[2rem] w-[90%] justify-between items-left hover:cursor-pointer rounded-md text-[#999797] font-[300] text-[18px] mt-6 leading-[3rem]" onChange={(event)=> {setIdProfAvaliacao(event.target.value); setProfSelected(event.target.value)}}>
+                        <option value="-1"  className="text-[#999797] font-[300] text-[18px] leading-[29.05px] pl-2">
+                          Nome do professor
+                        </option>
+                        {listaProfs.map((prof) => (
+                          <option key={prof.id} value={prof.id} className="text-black text-[18px] leading-[29.05px] font-[200] ">
+                            {prof.name}
+                          </option>))}
+                      </select>
+                    
+                      <select value={courseSelected} className="flex flex-col bg-white h-[2rem] w-[90%] justify-between items-left hover:cursor-pointer rounded-md text-[#999797] font-[300] text-[18px]  mt-6 leading-[3rem]" onChange={(event)=> {setIdCourseAvaliacao(event.target.value); setCourseSelected(event.target.value)}}>
+                        <option value="-1"  disabled selected className="text-[#999797] font-[300] text-[18px] leading-[29.05px] pl-2">
+                          Disciplina
+                        </option>
+                        {listaCourses.map((course) => (
+                          <option key={course.id} value={course.id} className="text-black text-[18px] leading-[29.05px] font-[200]">
+                            {course.name}
+                          </option>))}           
+                      </select>
+            
+                      <div className="flex flex-col h-[12rem] w-[90%] bg-[#A4FED3] mt-[1.5rem] rounded-md">
+                          <input type="text" value={texto} onChange={(event)=> setTexto(event.target.value)} className=" text-black h-16 w-full pt-[0.5px] pl-[1rem] rounded-md bg-[#A4FED3] leading-tight focus:outline-none"/> 
+                      </div>
+            
+                        <div className="ml-auto items-right pr-5 mt-6">
+                          <button onClick={()=> {setTexto("");
+                            setProfSelected("-1");
+                            setCourseSelected("-1");
+                            toggleModal();
+                            }}
+                            className="bg-transparent rounded-lg hover:scale-110 duration-200 w-20 h-10 text-xl text-[23px] font-400 leading-[54.46px] mr-9"
+                            >
+                            Cancelar
+                          </button>
+            
+                          <button     onClick={() => {
+                              if (texto === "") {
+                                toast.error("A avaliação não pode ser vazia");
+                              } else if (parseInt(idProfAvaliacao, 10) === -1) {
+                                toast.error("Selecione um professor");
+                              } else if (parseInt(idCourseAvaliacao, 10) === -1) {
+                                toast.error("Selecione uma disciplina");
+                              } else {
+                                const newAval: Partial<Avaliacao>={
+                                  text: texto,
+                                  professorId: parseInt(idProfAvaliacao, 10),
+                                  courseId: parseInt(idCourseAvaliacao,10),
+                                  userId:2
+                                };
+                                
+                                creatingAval(newAval);
+                                setTexto("");
+                                toast.success("A avaliação foi criada com sucesso", { autoClose: 2200 });
+                                setIdCourseAvaliacao("-1");
+                                setIdProfAvaliacao("-1");
+                                setProfSelected("-1");
+                                setCourseSelected("-1");
+                                toggleModal();
+                              }
+                            }}
+                              className="bg-[#A4FED3] text-[#2B895C] font-400 text-[20px] rounded-lg hover:scale-110 duration-200 w-32 h-10 text-xl leading-[42.36px]  mr-12 ml-2"
+                              >
+                              Avaliar
+                          </button>
+                        </div>
+            
+                    </div>
+                </div>
+              
+              
+            )
+            }                        
+                            
+                          
+        
       </div>
 
       {/* Grid de Professores */}
