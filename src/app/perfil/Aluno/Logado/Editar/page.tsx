@@ -1,11 +1,14 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { api } from "@/utils/api";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+
+// ID fixo do usuário
+const fixedUserId = 1;
 
 // Validação usando Yup
 const validationSchema = Yup.object({
@@ -38,6 +41,36 @@ const EditarPerfil = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [selectedFile, setSelectedFile] = useState<string | null>(null);
 
+  // Estados para armazenar as opções de departamentos e programas
+  const [departments, setDepartments] = useState<{ id: number; name: string }[]>([]);
+  const [programs, setPrograms] = useState<{ id: number; name: string }[]>([]);
+
+  // Função para buscar departamentos
+  const fetchDepartments = async () => {
+    try {
+      const response = await api.get("/departments");
+      setDepartments(response.data as { id: number; name: string }[]);
+    } catch (error) {
+      console.error("Erro ao carregar departamentos:", error);
+    }
+  };
+
+  // Função para buscar programas
+  const fetchPrograms = async () => {
+    try {
+      const response = await api.get("/programs");
+      setPrograms(response.data as { id: number; name: string }[]);
+    } catch (error) {
+      console.error("Erro ao carregar programas:", error);
+    }
+  };
+
+  // Carregar departamentos e programas ao montar o componente
+  useEffect(() => {
+    fetchDepartments();
+    fetchPrograms();
+  }, []);
+
   const onSubmit = async (
     values: typeof initialValues,
     {
@@ -45,22 +78,23 @@ const EditarPerfil = () => {
       resetForm,
     }: { setSubmitting: (isSubmitting: boolean) => void; resetForm: () => void }
   ) => {
-    const formData = new FormData();
+    const payload: {
+      name?: string;
+      password?: string;
+      departmentId?: number;
+      programId?: number;
+      profilepic?: File | null;
+    } = {};
 
-    // Adiciona os valores do formulário ao FormData
-    Object.entries(values).forEach(([key, value]) => {
-      if (value) {
-        formData.append(key, value as string | Blob);
-      }
-    });
+    // Adiciona ao payload apenas os valores preenchidos
+    if (values.name) payload.name = values.name;
+    if (values.password) payload.password = values.password;
+    if (values.department) payload.departmentId = parseInt(values.department, 10);
+    if (values.course) payload.programId = parseInt(values.course, 10);
+    if (values.profilePicture) payload.profilepic = values.profilePicture;
 
     try {
-      const response = await api.put("/users/me", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
-
+      const response = await api.patch(`/user/${fixedUserId}`, payload);
       console.log("Dados enviados com sucesso:", response.data);
       toast.success("Perfil atualizado com sucesso!");
       resetForm();
@@ -74,11 +108,10 @@ const EditarPerfil = () => {
 
   const handleDeleteProfile = async () => {
     try {
-      await api.delete("/users/me"); // Substitua pela rota correta de exclusão do perfil
+      await api.delete(`/user/${fixedUserId}`);
       toast.success("Perfil excluído com sucesso.");
-      // Redirecionar ou limpar estado após exclusão
       setTimeout(() => {
-        window.location.href = "/"; // Redireciona para a página inicial
+        window.location.href = "/";
       }, 2000);
     } catch (error) {
       console.error("Erro ao excluir o perfil:", error);
@@ -87,18 +120,12 @@ const EditarPerfil = () => {
   };
 
   return (
-    <div className="flex flex-row h-screen bg-gray-100 pt-32 justify-center p-6">
-      {/* ToastContainer para exibir as mensagens */}
+    <div className="flex flex-row h-screen w-full bg-gray-100 pt-32 justify-center p-6">
       <ToastContainer />
-
-      <div className="bg-customGreen p-6 rounded-lg max-w-md max-h-fit shadow-lg">
+      <div className="bg-customGreen p-6 rounded-lg w-[28%] max-h-fit shadow-lg">
         <div className="text-center mb-6">
-          <h1 className="text-3xl font-bold text-azulCjr">
-            Atualize seu Perfil
-          </h1>
-          <p className="text-sm italic text-gray-600">
-            Mantenha suas informações sempre atualizadas
-          </p>
+          <h1 className="text-3xl font-bold text-azulCjr">Atualize seu Perfil</h1>
+          <p className="text-sm italic text-gray-600">Mantenha suas informações sempre atualizadas</p>
         </div>
         <Formik
           initialValues={initialValues}
@@ -107,37 +134,21 @@ const EditarPerfil = () => {
         >
           {({ isSubmitting, setFieldValue }) => (
             <Form className="space-y-4 text-black">
-              {[
-                { id: "name", label: "Nome", type: "text" },
-                { id: "department", label: "Departamento", type: "text" },
-                { id: "course", label: "Curso", type: "text" },
-              ].map(({ id, label, type }) => (
-                <div key={id} className="bg-white p-4 rounded-[30px] shadow-md">
-                  <label
-                    htmlFor={id}
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    {label}
-                  </label>
-                  <Field
-                    id={id}
-                    name={id}
-                    type={type}
-                    className="mt-1 block w-full border-0 border-b-2 border-gray-50 focus:outline-none focus:border-blue-400 focus:ring-0 transition duration-300"
-                  />
-                  <ErrorMessage
-                    name={id}
-                    component="div"
-                    className="text-red-500 text-sm mt-1"
-                  />
-                </div>
-              ))}
+              <div className="bg-white p-4 rounded-[30px] shadow-md">
+                <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+                  Nome
+                </label>
+                <Field
+                  id="name"
+                  name="name"
+                  type="text"
+                  className="mt-1 block w-full border-0 border-b-2 border-gray-50 focus:outline-none focus:border-blue-400 focus:ring-0 transition duration-300"
+                />
+                <ErrorMessage name="name" component="div" className="text-red-500 text-sm mt-1" />
+              </div>
 
-              <div className="bg-white p-4 rounded-[30px] shadow-md relative">
-                <label
-                  htmlFor="password"
-                  className="block text-sm font-medium text-gray-700"
-                >
+              <div className="bg-white p-4 rounded-[30px] shadow-md">
+                <label htmlFor="password" className="block text-sm font-medium text-gray-700">
                   Senha
                 </label>
                 <div className="flex items-center">
@@ -155,13 +166,49 @@ const EditarPerfil = () => {
                     {showPassword ? "👁️" : "🙈"}
                   </button>
                 </div>
+                <ErrorMessage name="password" component="div" className="text-red-500 text-sm mt-1" />
+              </div>
+
+              <div className="bg-white p-4 rounded-[30px] shadow-md">
+                <label htmlFor="department" className="block text-sm font-medium text-gray-700">
+                  Departamento
+                </label>
+                <Field
+                  as="select"
+                  name="department"
+                  className="mt-1 text-sm block w-full border-0 border-b-2 border-gray-50 focus:outline-none focus:border-blue-400 focus:ring-0 transition duration-300"
+                >
+                  <option value="" disabled>Selecione o Departamento</option>
+                  {departments.map((department: { id: number; name: string }) => (
+                    <option key={department.id} value={department.id}>
+                      {department.name}
+                    </option>
+                  ))}
+                </Field>
+                <ErrorMessage name="department" component="div" className="text-red-500 text-sm mt-1" />
+              </div>
+
+              <div className="bg-white p-4 rounded-[30px] shadow-md">
+                <label htmlFor="course" className="block text-sm font-medium text-gray-700">
+                  Curso
+                </label>
+                <Field
+                  as="select"
+                  name="program"
+                  className="mt-1 text-sm block w-full border-0 border-b-2 border-gray-50 focus:outline-none focus:border-blue-400 focus:ring-0 transition duration-300"
+                >
+                  <option value="" disabled>Selecione o Curso</option>
+                  {programs.map((program: { id: number; name: string }) => (
+                    <option key={program.id} value={program.id}>
+                      {program.name}
+                    </option>
+                  ))}
+                </Field>
+                <ErrorMessage name="course" component="div" className="text-red-500 text-sm mt-1" />
               </div>
 
               <div className="bg-white p-8 rounded-[30px] justify-center shadow-md flex flex-col">
-                <label
-                  htmlFor="profilePicture"
-                  className="block text-sm font-medium text-gray-700"
-                >
+                <label htmlFor="profilePicture" className="block text-sm font-medium text-gray-700">
                   Foto de Perfil
                 </label>
                 <div className="mt-2 flex items-center">
@@ -182,24 +229,17 @@ const EditarPerfil = () => {
                       }
                     }}
                   />
-
                   <label
                     htmlFor="profilePicture"
                     className="bg-azulCjr text-white text-sm px-4 py-2 rounded cursor-pointer hover:bg-blue-600 transition duration-300"
                   >
                     Escolher arquivo
                   </label>
-
                   <span className="ml-4 text-sm text-gray-600">
                     {selectedFile || "Nenhum arquivo selecionado"}
                   </span>
                 </div>
-
-                <ErrorMessage
-                  name="profilePicture"
-                  component="div"
-                  className="text-red-500 text-sm mt-1"
-                />
+                <ErrorMessage name="profilePicture" component="div" className="text-red-500 text-sm mt-1" />
               </div>
 
               <div className="flex items-center justify-around p-5">
@@ -223,11 +263,10 @@ const EditarPerfil = () => {
       </div>
       <div className="bg-red-500 ml-5 p-6 max-h-fit flex flex-col items-center rounded-lg w-full max-w-md shadow-lg">
         <div className="text-center mb-6 p-2">
-          <h1 className="text-3xl font-bold text-white mb-4">
-            Excluir Perfil
-          </h1>
+          <h1 className="text-3xl font-bold text-white mb-4">Excluir Perfil</h1>
           <p className="text-xs italic text-white">
-            Tem certeza de que deseja excluir seu perfil? Sentiremos sua falta, mas respeitamos sua decisão. Lembre-se: esta ação não pode ser desfeita.
+            Tem certeza de que deseja excluir seu perfil? Sentiremos sua falta, mas respeitamos sua decisão. Lembre-se:
+            esta ação não pode ser desfeita.
           </p>
         </div>
         <button
