@@ -5,7 +5,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import { User } from "@/types";
-import { getUserDetails } from "@/utils/api";
+import { fetchUserInfo } from "@/utils/api";
 import { BellIcon } from "@heroicons/react/24/solid";
 import { ArrowRightOnRectangleIcon } from "@heroicons/react/24/solid";
 import axios from "axios";
@@ -32,7 +32,7 @@ export default function PerfilAlunoLogado() {
   useEffect(() => {
     const loadUserInfo = async () => {
       try {
-        const userData = (await getUserDetails(fixedUserId)) as User;
+        const userData = (await fetchUserInfo(fixedUserId)) as User;
         setUserInfo({
           id: userData.id || 0,
           name: userData.name || "",
