@@ -11,6 +11,8 @@ import {
   getUserByEmail,
 } from "@/utils/api";
 import { User } from "@/types";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const validationSchema = Yup.object({
   name: Yup.string().required("Insira o seu nome"),
@@ -109,9 +111,11 @@ export default function Cadastro() {
     try {
       const response = await createUser(newUser);
       console.log("Usuário criado:", response);
-      router.push("/feed/Logado");
+      toast.success("Usuário criado com sucesso!", { autoClose: 3000 });
+      router.push("/login");
     } catch (error) {
       console.error("Erro ao criar o usuário:", error);
+      toast.error("Erro ao criar usuário", { autoClose: 3000 });
     }
   };
 
