@@ -33,6 +33,12 @@ const validationSchema = Yup.object({
     ),
   password: Yup.string()
     .min(6, "A senha deve ter pelo menos 6 caracteres")
+    .matches(/[A-Z]/, "A senha deve conter pelo menos uma letra maiúscula")
+    .matches(/[0-9]/, "A senha deve conter pelo menos um número")
+    .matches(
+      /[!@#$%^&*(),.?":{}|<>]/,
+      "A senha deve conter pelo menos um caractere especial"
+    )
     .required("A senha é obrigatória"),
   department: Yup.object()
     .shape({
