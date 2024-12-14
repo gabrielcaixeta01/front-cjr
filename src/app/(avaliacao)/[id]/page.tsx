@@ -3,8 +3,7 @@
 import Image from "next/image";
 import { BellIcon } from "@heroicons/react/24/solid";
 import { ArrowRightOnRectangleIcon } from "@heroicons/react/20/solid";
-import { useParams } from "next/navigation";
-import { useRouter } from "next/compat/router";
+import { useParams,useRouter } from "next/navigation";
 import ModalComentario from "@/app/modals/comentario/page";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
@@ -12,7 +11,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { createComment } from "@/utils/api";
 import { Avaliacao, Comment, User } from "@/types";
 import { updateAval } from "@/utils/api";
-import { findAval, fetchUserInfo, getOneProf } from "@/utils/api";
+import { findAval, fetchUserInfo, getOneProf, deleteAval, getOneCourse } from "@/utils/api";
 import { Avaliacao } from "@prisma/client";
 
 export default function TelaAvaliacao() {
@@ -24,6 +23,7 @@ export default function TelaAvaliacao() {
   const [isModalEditOpen, setIsModalEditOpen] = useState(false);
   const [isModalDeleteAvalOpen, setIsToggleDeleteAvalOpen] = useState(false);
   const [localProf, setLocalProf] = useState([])
+  const [localCourse, setLocalCourse] = useState([])
   const [textoEdit, setTextoEdit] = useState("");
   const [userComment, setUSerComment] = useState<User>({
     id: 0,
@@ -67,12 +67,9 @@ export default function TelaAvaliacao() {
 
   const {id} = useParams();
 
-
-  
-
   const findingAval = async () =>{
     try {
-      const avalFound = (await findAval(2)) as Avaliacao;
+      const avalFound = (await findAval(4)) as Avaliacao;
       setLocalAval({
         id: avalFound.id || 2,
         nota: avalFound.nota || 0,
@@ -102,25 +99,16 @@ export default function TelaAvaliacao() {
     }
   }
 
-  useEffect(() => {
-    const loadUserInfo = async () => {
-      try {
-        const userData = (await fetchUserInfo(localAval.userId)) as User;
-        setUserInfo({
-          id: userData.id || 0,
-          name: userData.name || "",
-          email: userData.email || "",
-          password: userData.password || "",
-          program: userData.program || { id: 0, name: "Carregando..." },
-          profilepic: userData.profilepic || "/default-profile.png",
-          avaliacoes: userData.avaliacoes || [],
-        });
-      } catch (error) {
-        console.error("Erro ao carregar as informações do usuário:", error);
-      } 
-    };
-    loadUserInfo();
-  }, []);
+  const findingCourse = async (id:number)=>{
+    try{
+      const course = await getOneCourse(id);
+      setLocalCourse(course);
+      console.log(course);
+    }
+    catch (error){
+      toast.error("Erro ao procurar curso")
+    }
+  }
 
 
   useEffect (()=>{
@@ -134,6 +122,15 @@ export default function TelaAvaliacao() {
     }
     catch (error) {
       toast.error("Erro ao editar a avaliação",{autoClose:2200})
+    }
+  }
+
+  const deletingAval = async (idAval:number) => {
+    try{
+      const deleted = await deleteAval(idAval);
+    }
+    catch (error){
+      toast.error("Erro ao excluir a avaliação",{autoClose:2200})
     }
   }
 
@@ -156,6 +153,33 @@ export default function TelaAvaliacao() {
   useEffect(()=> {
     findingProf(localAval.professorId)
   }, [localAval.professorId])
+
+  useEffect(()=>{
+    findingCourse(localAval.courseId)
+  },[localAval.courseId])
+
+  useEffect(() => {
+    const loadUserInfo = async () => {
+      try {
+        console.log("o id é")
+        console.log(localAval.userId)
+        const userData = (await fetchUserInfo(localAval.userId)) as User;
+        setUserInfo({
+          id: userData.id || 0,
+          name: userData.name || "",
+          email: userData.email || "",
+          password: userData.password || "",
+          program: userData.program || { id: 0, name: "Carregando..." },
+          profilepic: userData.profilepic || "/default-profile.png",
+          avaliacoes: userData.avaliacoes || [],
+        });
+      } catch (error) {
+        console.error("Erro ao carregar as informações do usuário:", error);
+      } 
+    };
+    loadUserInfo();
+  }, [localAval.userId]);
+
 
 
 
@@ -217,7 +241,7 @@ export default function TelaAvaliacao() {
                     <span className="font-sans text-black ml-2 text-[15px] font-[500] leading-[16.94px] items-center hover:bg-blue-200 transition duration-300 ease-in-out cursor-pointer" onClick={()=> router.push("/perfil/Aluno/Logado")}> {userInfo.name} </span>
                     <span className="font-sans text-[#71767B] text-[12px] font-[350] leading-[16.94px] flex pl-1.5 items-center"> · 08/04/2024, ás 21:42 </span>
                     <span className="font-sans text-[#71767B] text-[12px] font-[350] leading-[16.94px] flex pl-1 items-center"> · {localProf.name} </span>
-                    <span className="font-sans text-[#71767B] text-[12px] font-[350] leading-[16.94px] flex pl-1 items-center"> · Engenharia Química </span>
+                    <span className="font-sans text-[#71767B] text-[12px] font-[350] leading-[16.94px] flex pl-1 items-center"> · {localCourse.name} </span>
                 </div>
                 <div className="pl-[6.8rem]"> 
                   <p className="text-[#222E50] text-[15px] font-[500] leading-[18.15px] pb-2"> {localAval.text} </p>
@@ -253,8 +277,8 @@ export default function TelaAvaliacao() {
                                         else {
                                           const newComment: Partial<Comment> ={
                                             text:textoComment,
-                                            userId:5,
-                                            avaliacaoId: 2
+                                            userId:userInfo.id,
+                                            avaliacaoId: localAval.id
                                           }
                                           creatingComment(newComment);
                                           setTextoComment("");
@@ -305,6 +329,8 @@ export default function TelaAvaliacao() {
                             <button
                               onClick={()=> {
                                               toggleDeleteAval();
+                                              deleteAval(localAval.id);
+                                              router.push("/feed/Logado")
                                               toast.success("Avaliação excluída com sucesso!",{autoClose:2200})}}
                               className="bg-red-600 text-white font-semibold px-7 py-2 rounded-lg hover:bg-red-900 hover:text-white transition duration-300 ease-in-out"
                             >

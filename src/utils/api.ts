@@ -107,6 +107,11 @@ export const createComment = async (comment: Partial<Comment>) => {
   return response.data;
 };
 
+export const deleteAval = async (id:number) => {
+  const response = await api.delete(`/avaliacao/${id}`);
+  return response.data;
+}
+
 // ** Funções relacionadas a professores, cursos e departamentos **
 
 export const getAllProfs = async () => {
@@ -123,6 +128,11 @@ export const getAllCourses = async () => {
   const response = await api.get("/courses");
   return response.data;
 };
+
+export const getOneCourse = async (id:number) => {
+  const response = await api.get(`/courses/${id}`);
+  return response.data;
+}
 
 export const getAllDepartments = async () => {
   const response = await api.get("/departments");
