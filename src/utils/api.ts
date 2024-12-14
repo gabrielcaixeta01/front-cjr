@@ -133,3 +133,8 @@ export const getAllPrograms = async () => {
   const response = await api.get("/programs");
   return response.data;
 };
+
+export const getUserByEmail = async (email:string) => {
+  const response = await api.get(`/user/email/${email}`);
+  return response.data;
+}

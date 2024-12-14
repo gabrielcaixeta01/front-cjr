@@ -4,14 +4,33 @@ import { useRouter } from "next/navigation";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { useEffect, useRef, useState } from "react";
-import { getAllDepartments, getAllPrograms, createUser } from "@/utils/api";
+import {
+  getAllDepartments,
+  getAllPrograms,
+  createUser,
+  getUserByEmail,
+} from "@/utils/api";
 import { User } from "@/types";
 
 const validationSchema = Yup.object({
   name: Yup.string().required("Insira o seu nome"),
   email: Yup.string()
     .email("Insira um email válido")
-    .required("O e-mail é obrigatório"),
+    .required("O e-mail é obrigatório")
+    .test(
+      "checkEmailExists",
+      "Este e-mail já está cadastrado",
+      async (email) => {
+        if (!email) return false;
+        try {
+          const existingUser = await getUserByEmail(email);
+          return !existingUser;
+        } catch (error) {
+          console.error("Erro ao verificar email:", error);
+          return true;
+        }
+      }
+    ),
   password: Yup.string()
     .min(6, "A senha deve ter pelo menos 6 caracteres")
     .required("A senha é obrigatória"),
@@ -80,7 +99,6 @@ export default function Cadastro() {
       departmentId: values.department?.id || undefined,
       profilepic: values.profilepic || undefined,
     };
-
 
     try {
       const response = await createUser(newUser);
