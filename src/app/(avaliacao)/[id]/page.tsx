@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 import Image from "next/image";
 import { BellIcon } from "@heroicons/react/24/solid";
@@ -14,7 +15,7 @@ import { updateAval } from "@/utils/api";
 import { findAval, fetchUserInfo, getOneProf } from "@/utils/api";
 import { Avaliacao } from "@prisma/client";
 
-export default function Avaliacao() {
+export default function TelaAvaliacao() {
   
   const [profilePic, setProfilePic] = useState("/default-profile.png");
   const router = useRouter();
@@ -24,6 +25,16 @@ export default function Avaliacao() {
   const [isModalDeleteAvalOpen, setIsToggleDeleteAvalOpen] = useState(false);
   const [localProf, setLocalProf] = useState([])
   const [textoEdit, setTextoEdit] = useState("");
+  const [userComment, setUSerComment] = useState<User>({
+    id: 0,
+    name: "",
+    email: "",
+    password: "",
+    program: { id: 0, name: "Carregando..." },
+    profilepic: "/default-profile.png",
+    avaliacoes: [],
+  });
+
   const [localAval, setLocalAval] = useState<Avaliacao>({
       id: 0,
       nota: 0,
@@ -56,6 +67,9 @@ export default function Avaliacao() {
 
   const {id} = useParams();
 
+
+  
+
   const findingAval = async () =>{
     try {
       const avalFound = (await findAval(2)) as Avaliacao;
@@ -87,27 +101,28 @@ export default function Avaliacao() {
       toast.error("Erro ao procurar professor")
     }
   }
-    useEffect(() => {
-      const loadUserInfo = async () => {
-        try {
-          const userData = (await fetchUserInfo(localAval.userId)) as User;
-          setUserInfo({
-            id: userData.id || 0,
-            name: userData.name || "",
-            email: userData.email || "",
-            password: userData.password || "",
-            program: userData.program || { id: 0, name: "Carregando..." },
-            profilepic: userData.profilepic || "/default-profile.png",
-            avaliacoes: userData.avaliacoes || [],
-          });
-        } catch (error) {
-          console.error("Erro ao carregar as informações do usuário:", error);
-        } 
-      };
-    
-      loadUserInfo();
-    }, []);
-  
+
+  useEffect(() => {
+    const loadUserInfo = async () => {
+      try {
+        const userData = (await fetchUserInfo(localAval.userId)) as User;
+        setUserInfo({
+          id: userData.id || 0,
+          name: userData.name || "",
+          email: userData.email || "",
+          password: userData.password || "",
+          program: userData.program || { id: 0, name: "Carregando..." },
+          profilepic: userData.profilepic || "/default-profile.png",
+          avaliacoes: userData.avaliacoes || [],
+        });
+      } catch (error) {
+        console.error("Erro ao carregar as informações do usuário:", error);
+      } 
+    };
+    loadUserInfo();
+  }, []);
+
+
   useEffect (()=>{
       findingAval()
       console.log(localAval)
@@ -141,6 +156,8 @@ export default function Avaliacao() {
   useEffect(()=> {
     findingProf(localAval.professorId)
   }, [localAval.professorId])
+
+
 
   return (
     <>
@@ -353,9 +370,12 @@ export default function Avaliacao() {
                   
                 </div>
                 
-              <div className=" pt-[1rem] w-full max-w-[70%] flex flex-col mx-auto border-b-[1.6px] border-b-gray-300 mb-2 justify-center">
-                <div className="flex mx-left pb-[0.2rem] items-center">         
-                  <div className="items-center">
+              <div className=" pt-[1rem] w-full max-w-[70%] flex flex-col mx-auto  mb-2 justify-center">
+                {localAval.comments?.map((comentario, index)=> (
+                              
+                  <div key={comentario.id}>
+                  <div  className="flex mx-left mb-[0.2rem] items-center"> 
+                      <div className="items-center">
                       <Image
                         src="/gabigol.jpg"
                         alt="Foto de perfil"
@@ -364,32 +384,21 @@ export default function Avaliacao() {
                         className="w-7 h-7 rounded-full shadow-md bg-white object-cover cursor-pointer"
                         onClick={() => router.push("/perfil/Aluno/Logado")}
                       />
+                    </div>
+                    <span className="font-sans text-black ml-2 text-[13px] font-[500] leading-[15.73px] text-center items-center hover:bg-blue-200 transition duration-300 ease-in-out cursor-pointer"> {comentario.user?.name} </span> 
+                    <span className="font-sans text-[#71767B] pl-2 text-[13px] font-[350] leading-[15.73px] text-center items-center"> · 08/04/2024, ás 21:43  </span>                                
                   </div>
-                  <span className="font-sans text-black ml-2 text-[13px] font-[500] leading-[15.73px] text-center items-center hover:bg-blue-200 transition duration-300 ease-in-out cursor-pointer"> El Gabi </span> 
-                  <span className="font-sans text-[#71767B] pl-2 text-[13px] font-[350] leading-[15.73px] text-center items-center"> · 08/04/2024, ás 21:43  </span>                                   
-                </div>
-                <div className="pl-[2.3rem]"> 
-                  <p className="text-[#222E50] text-[14px] text-[500] leading-[16.94px] pb-2"> Vou pro Cruzeiro! </p>
-                </div>
-              </div>
-              <div className="pt-[0.3rem] w-full max-w-[70%] flex flex-col mx-auto mb-2 justify-center">
-                <div className="flex mx-left mb-[0.2rem] items-center">         
-                  <div className="items-center">
-                      <Image
-                        src="/felipeluis.jpeg"
-                        alt="Foto de perfil"
-                        width={48}
-                        height={48}
-                        className="w-7 h-7 rounded-full shadow-md bg-white object-cover cursor-pointer"
-                        onClick={() => router.push("/perfil/Aluno/Logado")}
-                      />
+                  <div className="pl-[2.3rem]"> 
+                    <p className="text-[#222E50] text-[14px] text-[500] leading-[16.94px] pb-2"> {comentario.text} </p>
                   </div>
-                  <span className="font-sans text-black ml-2 text-[13px] font-[500] leading-[15.73px] text-center items-center hover:bg-blue-200 transition duration-300 ease-in-out cursor-pointer"> Guardiola Cabeludo </span> 
-                  <span className="font-sans text-[#71767B] ml-2 text-[13px] font-[350] leading-[15.73px] text-center items-center"> · 08/04/2024, ás 21:43  </span>                                   
+                  {index !== localAval.comments.length - 1 && (
+                    <div className="border-b border-gray-300 w-full mb-[0.5rem]" >
+                    </div>
+                  )}
                 </div>
-                <div className="pl-[2.3rem]"> 
-                  <p className="text-[#222E50] text-[14px] text-[500] leading-[16.94px] mb-2 "> Entreguei pro criciuma nassaum  </p>
-                </div>
+                )
+                  
+                )}
               </div>
           </div>
         </div>
