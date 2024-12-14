@@ -114,6 +114,11 @@ export const getAllProfs = async () => {
   return response.data;
 };
 
+export const getOneProf = async (id:number) => {
+  const response = await api.get(`/professors/${id}`);
+  return response.data;
+}
+
 export const getAllCourses = async () => {
   const response = await api.get("/courses");
   return response.data;

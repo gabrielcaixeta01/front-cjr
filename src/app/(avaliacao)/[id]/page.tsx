@@ -11,7 +11,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { createComment } from "@/utils/api";
 import { Avaliacao, Comment, User } from "@/types";
 import { updateAval } from "@/utils/api";
-import { findAval, getUserDetails } from "@/utils/api";
+import { findAval, fetchUserInfo, getOneProf } from "@/utils/api";
 import { Avaliacao } from "@prisma/client";
 
 export default function Avaliacao() {
@@ -22,6 +22,7 @@ export default function Avaliacao() {
   const [textoComment, setTextoComment]= useState("");
   const [isModalEditOpen, setIsModalEditOpen] = useState(false);
   const [isModalDeleteAvalOpen, setIsToggleDeleteAvalOpen] = useState(false);
+  const [localProf, setLocalProf] = useState([])
   const [textoEdit, setTextoEdit] = useState("");
   const [localAval, setLocalAval] = useState<Avaliacao>({
       id: 0,
@@ -42,7 +43,7 @@ export default function Avaliacao() {
       profilepic: "/default-profile.png",
       avaliacoes: [],
     });
-    
+
 
   const creatingComment = async (comment: Partial<Comment>) => {
     try {
@@ -66,6 +67,7 @@ export default function Avaliacao() {
         date: avalFound.date || undefined,
         professorId: avalFound.professorId || 1,
         courseId: avalFound.courseId || 2,
+        comments: avalFound.comments
       });
     }
     catch (error){
@@ -75,10 +77,20 @@ export default function Avaliacao() {
     }
   }
 
+  const findingProf = async (id:number) => {
+    try{
+      const prof =await getOneProf(id);
+      setLocalProf(prof);
+      console.log(prof)
+    }
+    catch(error){
+      toast.error("Erro ao procurar professor")
+    }
+  }
     useEffect(() => {
       const loadUserInfo = async () => {
         try {
-          const userData = (await getUserDetails(localAval.userId)) as User;
+          const userData = (await fetchUserInfo(localAval.userId)) as User;
           setUserInfo({
             id: userData.id || 0,
             name: userData.name || "",
@@ -123,9 +135,13 @@ export default function Avaliacao() {
   }
 
   useEffect (()=>{
-    console.log("foi")
     console.log(localAval)
   },[localAval]) 
+
+  useEffect(()=> {
+    findingProf(localAval.professorId)
+  }, [localAval.professorId])
+
   return (
     <>
     
@@ -183,7 +199,7 @@ export default function Avaliacao() {
                     </div>
                     <span className="font-sans text-black ml-2 text-[15px] font-[500] leading-[16.94px] items-center hover:bg-blue-200 transition duration-300 ease-in-out cursor-pointer" onClick={()=> router.push("/perfil/Aluno/Logado")}> {userInfo.name} </span>
                     <span className="font-sans text-[#71767B] text-[12px] font-[350] leading-[16.94px] flex pl-1.5 items-center"> · 08/04/2024, ás 21:42 </span>
-                    <span className="font-sans text-[#71767B] text-[12px] font-[350] leading-[16.94px] flex pl-1 items-center"> · Homer Simpson </span>
+                    <span className="font-sans text-[#71767B] text-[12px] font-[350] leading-[16.94px] flex pl-1 items-center"> · {localProf.name} </span>
                     <span className="font-sans text-[#71767B] text-[12px] font-[350] leading-[16.94px] flex pl-1 items-center"> · Engenharia Química </span>
                 </div>
                 <div className="pl-[6.8rem]"> 
@@ -199,7 +215,7 @@ export default function Avaliacao() {
                         className="w-6 h-6 rounded-full shadow-md hover:bg-blue-200 transition duration-300 hover:scale-110  ease-in-out cursor-pointer"
                         onClick= {()=>toggleModalComment()}
                       />
-                      <span className="font-sans text-[#222E50] text-[12px] font-[600] leading-[14.52px] flex pl-1 items-center"> 2 comentários</span>
+                      <span className="font-sans text-[#222E50] text-[12px] font-[600] leading-[14.52px] flex pl-1 items-center"> {localAval.comments?.length} comentários</span>
                   </div>
                           {isModalCommentOpen && (
                               <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
@@ -292,7 +308,7 @@ export default function Avaliacao() {
                       <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
                               <div className="h-screen  w-1/2 max-h-[47%]  flex flex-col mx-auto bg-[#3EEE9A] rounded-md items-center">
                                   <div className="flex flex-col h-[12rem] w-[90%] bg-[#A4FED3] mt-[2rem] rounded-md">
-                                    <input type="text" value={textoEdit} onChange={(event)=> setTextoEdit(event.target.value)} className=" text-black h-16 w-full pt-[0.5px] pl-[1rem] rounded-md bg-[#A4FED3] leading-tight focus:outline-none"/> 
+                                    <input type="text" value={localAval.text} onChange={(event)=> setTextoEdit(event.target.value)} className=" text-black h-16 w-full pt-[0.5px] pl-[1rem] rounded-md bg-[#A4FED3] leading-tight focus:outline-none"/> 
                                   </div>
                                   <div className="ml-auto items-right pr-5 mt-6">
                                     <button onClick={()=> 
