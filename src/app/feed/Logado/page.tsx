@@ -280,7 +280,7 @@ export default function FeedLogado() {
                   </select>
         
                   <div className="flex flex-col h-[12rem] w-[90%] bg-[#A4FED3] mt-[1.5rem] rounded-md">
-                    <textarea value={texto} placeholder= "Digite sua avaliação" onChange={(event)=> setTexto(event.target.value)} className=" text-black placeholder-black mt-2 mr-[0.3px]h-full w-full pt-[0.5px] pl-[1rem] rounded-md bg-[#A4FED3] leading-tight focus:outline-none resize-none overflow-y-auto" > </textarea>
+                    <textarea value={texto} placeholder= "Digite sua avaliação" onChange={(event)=> setTexto(event.target.value)} className=" text-black placeholder-black placeholder-opacity-50 mt-2 mr-[0.3px]h-full w-full pt-[0.5px] pl-[1rem] rounded-md bg-[#A4FED3] leading-tight focus:outline-none resize-none overflow-y-auto" > </textarea>
                   </div>
         
                     <div className="ml-auto items-right pr-5 mt-6">

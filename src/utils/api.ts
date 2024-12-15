@@ -110,6 +110,13 @@ export const deleteComment = async (id:number)=>{
   return response.data;
 }
 
+export const updateComment = async (comment: Partial<Comment>, id:number) => {
+  const response = await api.patch(`/avaliacao/${id}`, {
+    text:comment.text
+  });
+  return response.data;
+}
+
 export const deleteAval = async (id:number) => {
   const response = await api.delete(`/avaliacao/${id}`);
   return response.data;
