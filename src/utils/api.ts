@@ -111,7 +111,7 @@ export const deleteComment = async (id:number)=>{
 }
 
 export const updateComment = async (comment: Partial<Comment>, id:number) => {
-  const response = await api.patch(`/avaliacao/${id}`, {
+  const response = await api.patch(`/comment/${id}`, {
     text:comment.text
   });
   return response.data;
