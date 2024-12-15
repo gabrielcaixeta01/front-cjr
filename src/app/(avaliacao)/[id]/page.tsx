@@ -37,7 +37,6 @@ export default function TelaAvaliacao() {
 
   const [localAval, setLocalAval] = useState<Avaliacao>({
       id: 0,
-      nota: 0,
       userId: 1,
       date: undefined,
       professorId: 0,
@@ -69,10 +68,9 @@ export default function TelaAvaliacao() {
 
   const findingAval = async () =>{
     try {
-      const avalFound = (await findAval(4)) as Avaliacao;
+      const avalFound = (await findAval(7)) as Avaliacao;
       setLocalAval({
         id: avalFound.id || 2,
-        nota: avalFound.nota || 0,
         text: avalFound.text || "",
         userId: avalFound.userId ||1,
         date: avalFound.date || undefined,
@@ -90,9 +88,10 @@ export default function TelaAvaliacao() {
 
   const findingProf = async (id:number) => {
     try{
+      if (id>0){
       const prof =await getOneProf(id);
       setLocalProf(prof);
-      console.log(prof)
+      console.log(prof)}
     }
     catch(error){
       toast.error("Erro ao procurar professor")
@@ -101,9 +100,11 @@ export default function TelaAvaliacao() {
 
   const findingCourse = async (id:number)=>{
     try{
+      if (id>0){
       const course = await getOneCourse(id);
       setLocalCourse(course);
       console.log(course);
+    }
     }
     catch (error){
       toast.error("Erro ao procurar curso")
@@ -180,6 +181,9 @@ export default function TelaAvaliacao() {
     loadUserInfo();
   }, [localAval.userId]);
 
+  useEffect(()=>{
+    setTextoEdit(localAval.text)
+  })
 
 
 
@@ -262,8 +266,8 @@ export default function TelaAvaliacao() {
                               <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
                                   <div className="h-screen  w-1/2 max-h-[45%]  flex flex-col mx-auto bg-[#3EEE9A] rounded-md items-center">
                                       <div className="flex flex-col h-[12rem] w-[90%] bg-[#A4FED3] mt-[2rem] rounded-md">
-                                        <input type="text" value={textoComment} onChange={(event)=> setTextoComment(event.target.value)} className=" text-black h-16 w-full pt-[0.5px] pl-[1rem] rounded-md bg-[#A4FED3] leading-tight focus:outline-none"/> 
-                                      </div>
+                                        <textarea value={textoComment} onChange={(event)=> setTextoComment(event.target.value)} className="text-black h-full placeholder-black mt-2 pt-[2px] border-none pl-[1rem] bg-[#A4FED3] leading-tight focus:outline-none w-full p-2 resize-none overflow-y-auto  border rounded-md" placeholder="Digite seu comentário aqui"> </textarea>
+                                    </div>
                                       <div className="ml-auto items-right pr-5 mt-6">
                                         <button onClick={()=> {setTextoComment(""); toggleModalComment()}}
                                           className="bg-transparent rounded-lg hover:scale-110  duration-200 w-20 h-10 text-xl text-[23px] font-400 leading-[54.46px] mr-9"
@@ -282,6 +286,7 @@ export default function TelaAvaliacao() {
                                           }
                                           creatingComment(newComment);
                                           setTextoComment("");
+                                          toggleModalComment();
                                           toast.success("O comentário foi criado com sucesso", {autoClose:2200})
                                         }
                                       }}
@@ -329,7 +334,7 @@ export default function TelaAvaliacao() {
                             <button
                               onClick={()=> {
                                               toggleDeleteAval();
-                                              deleteAval(localAval.id);
+                                              deletingAval(localAval.id);
                                               router.push("/feed/Logado")
                                               toast.success("Avaliação excluída com sucesso!",{autoClose:2200})}}
                               className="bg-red-600 text-white font-semibold px-7 py-2 rounded-lg hover:bg-red-900 hover:text-white transition duration-300 ease-in-out"
@@ -351,7 +356,8 @@ export default function TelaAvaliacao() {
                       <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
                               <div className="h-screen  w-1/2 max-h-[47%]  flex flex-col mx-auto bg-[#3EEE9A] rounded-md items-center">
                                   <div className="flex flex-col h-[12rem] w-[90%] bg-[#A4FED3] mt-[2rem] rounded-md">
-                                    <input type="text" value={localAval.text} onChange={(event)=> setTextoEdit(event.target.value)} className=" text-black h-16 w-full pt-[0.5px] pl-[1rem] rounded-md bg-[#A4FED3] leading-tight focus:outline-none"/> 
+                                  <textarea value={textoEdit} onChange={(event)=> setTextoEdit(event.target.value)} className="text-black h-full placeholder-black mt-2 pt-[2px] border-none pl-[1rem] bg-[#A4FED3] leading-tight focus:outline-none w-full p-2 resize-none overflow-y-auto  border rounded-md"> </textarea>
+                                  <input type="text" value={textoEdit} onChange={(event)=> setTextoEdit(event.target.value)} className=" text-black h-16 w-full pt-[0.5px] pl-[1rem] rounded-md bg-[#A4FED3] leading-tight focus:outline-none"/> 
                                   </div>
                                   <div className="ml-auto items-right pr-5 mt-6">
                                     <button onClick={()=> 
@@ -362,14 +368,15 @@ export default function TelaAvaliacao() {
                                       >
                                       Cancelar
                                     </button>
-                                    <button   onClick={() => {if (textoEdit===""){
+                                    <button   onClick={() => {
+                                    if (textoEdit===""){
                                       toast.error("O comentário não pode ser vazio");
                                     }
                                     else {
                                       setTextoEdit(textoEdit);          
                                       const avalEdited: Partial <Avaliacao> = {
                                         text: textoEdit,
-                                        nota: 3
+                                        isEdited:true,
                                       }
                                       editingAval(avalEdited,4);
                                       toast.success("A avaliação foi editada com sucesso", {autoClose:2200});

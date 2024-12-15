@@ -24,7 +24,6 @@ export interface User {
     professorId: number;
     courseId:number;
     userId: number;
-    nota:number;
     comments?: Comment[];
     isEdited?: boolean;
 }
