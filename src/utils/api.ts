@@ -78,7 +78,6 @@ export const createAval = async (aval: Partial<Avaliacao>) => {
     userId: aval.userId,
     professorId: aval.professorId,
     courseId: aval.courseId,
-    nota: 5,
   });
   return response.data;
 };
@@ -86,7 +85,6 @@ export const createAval = async (aval: Partial<Avaliacao>) => {
 export const updateAval = async (aval: Partial<Avaliacao>, id: number) => {
   const response = await api.patch(`/avaliacao/${id}`, {
     text: aval.text,
-    nota: aval.nota,
     isEdited: true,
   });
   return response.data;
@@ -106,6 +104,11 @@ export const createComment = async (comment: Partial<Comment>) => {
   });
   return response.data;
 };
+
+export const deleteComment = async (id:number)=>{
+  const response = await api.delete(`/comment/${id}`);
+  return response.data;
+}
 
 export const deleteAval = async (id:number) => {
   const response = await api.delete(`/avaliacao/${id}`);

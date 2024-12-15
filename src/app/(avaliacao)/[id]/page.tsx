@@ -8,10 +8,8 @@ import ModalComentario from "@/app/modals/comentario/page";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
-import { createComment } from "@/utils/api";
 import { Avaliacao, Comment, User } from "@/types";
-import { updateAval } from "@/utils/api";
-import { findAval, fetchUserInfo, getOneProf, deleteAval, getOneCourse } from "@/utils/api";
+import { findAval, fetchUserInfo, getOneProf, deleteAval, getOneCourse, createComment, updateAval, deleteComment } from "@/utils/api";
 import { Avaliacao } from "@prisma/client";
 
 export default function TelaAvaliacao() {
@@ -22,6 +20,7 @@ export default function TelaAvaliacao() {
   const [textoComment, setTextoComment]= useState("");
   const [isModalEditOpen, setIsModalEditOpen] = useState(false);
   const [isModalDeleteAvalOpen, setIsToggleDeleteAvalOpen] = useState(false);
+  const [isModalDeleteCommentOpen, setIsModalDeleteCommentOpen] = useState(false);
   const [localProf, setLocalProf] = useState([])
   const [localCourse, setLocalCourse] = useState([])
   const [textoEdit, setTextoEdit] = useState("");
@@ -53,16 +52,6 @@ export default function TelaAvaliacao() {
       profilepic: "/default-profile.png",
       avaliacoes: [],
     });
-
-
-  const creatingComment = async (comment: Partial<Comment>) => {
-    try {
-      const created = await createComment(comment);
-    }
-    catch (error){
-      console.log(error);
-    }
-  }
 
   const {id} = useParams();
 
@@ -111,30 +100,11 @@ export default function TelaAvaliacao() {
     }
   }
 
-
   useEffect (()=>{
       findingAval()
       console.log(localAval)
   },[])
   
-  const editingAval = async (aval: Partial <Avaliacao>, id:number) => {
-    try {
-      const created = await updateAval(aval,id);
-    }
-    catch (error) {
-      toast.error("Erro ao editar a avaliação",{autoClose:2200})
-    }
-  }
-
-  const deletingAval = async (idAval:number) => {
-    try{
-      const deleted = await deleteAval(idAval);
-    }
-    catch (error){
-      toast.error("Erro ao excluir a avaliação",{autoClose:2200})
-    }
-  }
-
   const toggleModalComment = () => {
     setIsModalCommentOpenmentOpen(!isModalCommentOpen);
   }
@@ -145,6 +115,10 @@ export default function TelaAvaliacao() {
 
   const toggleDeleteAval = () => {
     setIsToggleDeleteAvalOpen(!isModalDeleteAvalOpen);
+  }
+
+  const toggleDeleteComment = ()=> {
+    setIsModalDeleteCommentOpen(!isModalDeleteCommentOpen);
   }
 
   useEffect (()=>{
@@ -180,12 +154,6 @@ export default function TelaAvaliacao() {
     };
     loadUserInfo();
   }, [localAval.userId]);
-
-  useEffect(()=>{
-    setTextoEdit(localAval.text)
-  })
-
-
 
   return (
     <>
@@ -276,7 +244,7 @@ export default function TelaAvaliacao() {
                                       </button>
                                       <button   onClick={() => {
                                         if (textoComment ==""){
-                                          toast.error("O comentário não pode ser vazio");
+                                          toast.error("O comentário não pode ser vazio", {autoClose:2200});
                                         }
                                         else {
                                           const newComment: Partial<Comment> ={
@@ -284,10 +252,14 @@ export default function TelaAvaliacao() {
                                             userId:userInfo.id,
                                             avaliacaoId: localAval.id
                                           }
-                                          creatingComment(newComment);
+                                          try {
+                                          createComment(newComment);
                                           setTextoComment("");
                                           toggleModalComment();
-                                          toast.success("O comentário foi criado com sucesso", {autoClose:2200})
+                                          toast.success("O comentário foi criado com sucesso", {autoClose:2200})}
+                                          catch (error){
+                                            toast.success("Erro ao criar comentário")
+                                          }
                                         }
                                       }}
                                       className="bg-[#A4FED3] text-[#2B895C] font-400 text-[20px] rounded-lg hover:scale-110 duration-200 w-32 h-10 text-xl leading-[42.36px]  mr-10 ml-2"
@@ -301,17 +273,16 @@ export default function TelaAvaliacao() {
                     <div className="flex pr-2">             
                       <Image
                         src="/editar.png"
-                        alt="Icone de editar"
+                        alt="Editar avaliação"
                         width={64} 
                         height={64}
                         onClick = {()=> toggleModalEdit()}
-                        className="w-4 h-4 object-cover mx-2 shadow-md hover:bg-blue-200 transition duration-300 hover:scale-110 ease-in-out cursor-pointer"
-            
+                        className="w-4 h-4 object-cover mx-2 shadow-md hover:bg-blue-200 transition duration-300 hover:scale-110 ease-in-out cursor-pointer"   
                       />
                         
                       <Image
                         src="/lixeira.png"
-                        alt="Excluir"
+                        alt="Excluir avaliação"
                         width={64} 
                         height={64}
                         onClick = {()=> toggleDeleteAval()}
@@ -334,9 +305,15 @@ export default function TelaAvaliacao() {
                             <button
                               onClick={()=> {
                                               toggleDeleteAval();
-                                              deletingAval(localAval.id);
-                                              router.push("/feed/Logado")
-                                              toast.success("Avaliação excluída com sucesso!",{autoClose:2200})}}
+                                              try{                                              
+                                                deleteAval(localAval.id);
+                                                router.push("/feed/Logado")
+                                                toast.success("Avaliação excluída com sucesso!",{autoClose:2200})}
+                                              catch(error){
+                                                toast.error("Erro ao excluir avaliação")
+                                              }
+                                            }
+                                          }
                               className="bg-red-600 text-white font-semibold px-7 py-2 rounded-lg hover:bg-red-900 hover:text-white transition duration-300 ease-in-out"
                             >
                               Sim 
@@ -369,19 +346,24 @@ export default function TelaAvaliacao() {
                                       Cancelar
                                     </button>
                                     <button   onClick={() => {
-                                    if (textoEdit===""){
-                                      toast.error("O comentário não pode ser vazio");
-                                    }
-                                    else {
-                                      setTextoEdit(textoEdit);          
-                                      const avalEdited: Partial <Avaliacao> = {
-                                        text: textoEdit,
-                                        isEdited:true,
+                                      if (textoEdit===""){
+                                        toast.error("O comentário não pode ser vazio");
                                       }
-                                      editingAval(avalEdited,4);
-                                      toast.success("A avaliação foi editada com sucesso", {autoClose:2200});
-                                      toggleModalEdit();                                   
-                                    }}}
+                                      else {
+                                        setTextoEdit(textoEdit);          
+                                        const avalEdited: Partial <Avaliacao> = {
+                                          text: textoEdit,
+                                          isEdited:true,
+                                        }
+                                        try{
+                                          updateAval(avalEdited,localAval.id);
+                                          toast.success("A avaliação foi editada com sucesso", {autoClose:2200});
+                                          toggleModalEdit(); }
+                                        catch(error){
+                                          toast.error("Erro ao editar avaliação", {autoClose:2200})
+                                        }                                  
+                                      }
+                                    }}
                                           className="bg-[#A4FED3] text-[#2B895C] font-400 text-[20px] rounded-lg hover:scale-110 duration-200 w-32 h-10 text-xl leading-[42.36px]  mr-10 ml-2"
                                           >
                                           Editar
@@ -419,11 +401,58 @@ export default function TelaAvaliacao() {
                       />
                     </div>
                     <span className="font-sans text-black ml-2 text-[13px] font-[500] leading-[15.73px] text-center items-center hover:bg-blue-200 transition duration-300 ease-in-out cursor-pointer"> {comentario.user?.name} </span> 
-                    <span className="font-sans text-[#71767B] pl-2 text-[13px] font-[350] leading-[15.73px] text-center items-center"> · 08/04/2024, ás 21:43  </span>                                
+                    <span className="font-sans text-[#71767B] pl-2 text-[13px] font-[350] leading-[15.73px] text-center items-center"> · 08/04/2024, ás 21:43  </span>  
+                    <Image
+                      src="/lixeira.png"
+                      alt="Excluir comentário"
+                      width={64} 
+                      height={64}
+                      onClick = {()=> toggleDeleteComment()}
+                      className="w-4 h-4 object-cover ml-auto shadow-md hover:bg-blue-200 transition duration-300 hover:scale-110  ease-in-out cursor-pointer">
+                    </Image>                              
                   </div>
                   <div className="pl-[2.3rem]"> 
                     <p className="text-[#222E50] text-[14px] text-[500] leading-[16.94px] pb-2"> {comentario.text} </p>
                   </div>
+                  {isModalDeleteCommentOpen && (
+                      <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
+                        <div className="bg-black pt-3 pl-6 pr-6 pb-6 max-h-fit flex flex-col items-center rounded-lg w-full max-w-md shadow-lg">
+                          <div className="text-center mb-5 p-2">
+                            <h1 className="text-3xl font-bold text-white mb-4">
+                            </h1>
+                            <p className="text-lg text-ellipsis text-white">
+                              Tem certeza de que deseja excluir o comentário?
+                            </p>
+                            <p className="text-xs italic text-white"> Essa ação não poderá ser desfeita</p>
+                          </div>
+                          <div className="flex space-x-6">
+                            <button
+                              onClick={()=> {
+                                              toggleDeleteComment();
+                                              try{                                              
+                                                deleteComment(comentario.id);
+                                                console.log("entrou")
+                                                window.location.reload()
+                                                toast.success("Comentário excluído com sucesso!",{autoClose:2200})}
+                                              catch(error){
+                                                toast.error("Erro ao excluir comentário",{autoClose:2200})
+                                              }
+                                            }
+                                          }
+                              className="bg-red-600 text-white font-semibold px-7 py-2 rounded-lg hover:bg-red-900 hover:text-white transition duration-300 ease-in-out"
+                            >
+                              Sim 
+                            </button>
+                            <button
+                              onClick={()=> toggleDeleteComment()}
+                              className=" text-white font-semibold px-7 py-2 rounded-lg hover:bg-white border-[0.5px] border-gray-300 hover:text-black transition duration-300 ease-in-out"
+                            >
+                              Cancelar 
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    )}
                   {index !== localAval.comments.length - 1 && (
                     <div className="border-b border-gray-300 w-full mb-[0.5rem]" >
                     </div>
