@@ -90,19 +90,41 @@ export default function PerfilProfessorDeslogado() {
           />
         </section>
 
-        <section className="p-4 bg-white">
-          <h1 className="text-xl font-bold text-black mb-2">
-            {professorInfo.name}
-          </h1>
-          <p className="text-sm text-gray-700 mb-2">
-            Departamento: {professorInfo.department?.name || "Departamento não encontrado"}
-          </p>
-          <p className="text-sm text-gray-700">
-            Cursos:{" "}
-            {(professorInfo.courses ?? [])
-              .map((course) => course.name)
-              .join(", ") || "Nenhum curso associado"}
-          </p>
+        <section className="p-4 bg-white flex justify-between">
+          <div className="flex justify-between w-full mx-5">
+            <div className="flex flex-col">
+              <h1 className="text-xl font-bold text-black mb-2">
+                {professorInfo.name}
+              </h1>
+              <div className="flex items-center gap-2 mb-2">
+                <Image
+                  src="/building.png"
+                  alt="Ícone de departamento"
+                  width={24}
+                  height={24}
+                  className="w-6 h-6"
+                />
+                <p className="text-sm text-gray-700">
+                  {professorInfo.department?.name || "Departamento não encontrado"}
+                </p>
+              </div>
+              <div className="flex items-center gap-2 mb-2">
+                <Image
+                  src="/livro.png"
+                  alt="Ícone de curso"
+                  width={24}
+                  height={24}
+                  className="w-6 h-6"
+                />
+                <p className="text-sm text-gray-700">
+                  Cursos:{" "}
+                  {professorInfo.courses
+                    ? professorInfo.courses.map((course) => course.name).join(", ")
+                    : "Nenhum curso associado"}
+                </p>
+              </div>
+            </div>
+          </div>
         </section>
 
         {/* Avaliações */}
@@ -128,18 +150,24 @@ export default function PerfilProfessorDeslogado() {
 
                 {/* Detalhes da Avaliação */}
                 <div className="max-w-[550px]">
+                  {/* Nome do Autor */}
                   <p className="font-bold text-gray-800">
                     {avaliacao.user?.name || "Usuário desconhecido"}
                   </p>
+
+                  {/* Data e Curso */}
                   <p className="text-sm text-gray-500">
                     {new Date(avaliacao.createdAt || "").toLocaleDateString()} -{" "}
                     {avaliacao.course?.name || "Curso desconhecido"}
                   </p>
+
+                  {/* Texto da Avaliação */}
                   <p className="text-gray-700 mt-2">{avaliacao.text}</p>
 
                   {/* Comentários */}
                   {avaliacao.comments && avaliacao.comments.length > 0 && (
                     <div className="mt-2">
+                      {/* Botão para mostrar/ocultar comentários */}
                       <button
                         className="text-gray-500 text-sm font-medium cursor-pointer mb-2"
                         onClick={() =>
@@ -153,16 +181,27 @@ export default function PerfilProfessorDeslogado() {
                           : `Ver comentários (${avaliacao.comments.length})`}
                       </button>
 
+                      {/* Lista de Comentários */}
                       {openComments === avaliacao.id &&
                         avaliacao.comments.map((comment) => (
                           <div
                             key={comment.id}
                             className="bg-gray-100 rounded-[50px] text-sm p-4 mt-1"
                           >
-                            <p className="font-semibold text-gray-700">
-                              {comment.user?.name || "Usuário desconhecido"}:
+                            {/* Nome e Foto do Usuário do Comentário */}
+                            <p className="font-semibold text-gray-700 flex items-center">
+                              <Image
+                                src={comment.user?.profilepic || "/default-profile.png"}
+                                alt="Foto do autor do comentário"
+                                width={24}
+                                height={24}
+                                className="w-6 h-6 object-cover rounded-full bg-white mr-2"
+                              />
+                              {comment.user?.name || "Usuário desconhecido"}
                             </p>
-                            <p className="text-gray-600">{comment.text}</p>
+                            <p className="text-gray-600 text-sm mt-1">
+                              {comment.text}
+                            </p>
                           </div>
                         ))}
                     </div>

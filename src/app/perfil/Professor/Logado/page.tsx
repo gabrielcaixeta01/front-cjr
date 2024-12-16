@@ -120,8 +120,8 @@ export default function PerfilProfessorDeslogado() {
                 <p className="text-sm text-gray-700">
                   Cursos:{" "}
                   {professorInfo.courses
-                    .map((course) => course.name)
-                    .join(", ") || "Nenhum curso associado"}
+                    ? professorInfo.courses.map((course) => course.name).join(", ")
+                    : "Nenhum curso associado"}
                 </p>
               </div>
             </div>
@@ -138,34 +138,42 @@ export default function PerfilProfessorDeslogado() {
                 key={avaliacao.id}
                 className="bg-customGreen rounded-lg shadow mb-4 flex flex-row p-3"
               >
+                {/* Foto do Autor */}
                 <div className="flex items-start justify-center w-16 h-16 mr-2">
                   <Image
-                    src="/default-profile.png"
-                    alt="Avatar"
+                    src={avaliacao.user?.profilepic || "/default-profile.png"}
+                    alt="Foto do autor"
                     width={64}
                     height={64}
                     className="w-12 h-12 object-cover rounded-full bg-white"
                   />
                 </div>
+
+                {/* Detalhes da Avaliação */}
                 <div className="max-w-[550px]">
+                  {/* Nome do Autor */}
                   <p className="font-bold text-gray-800">
                     {avaliacao.user?.name || "Usuário desconhecido"}
                   </p>
-                  <p className="text-sm text-gray-500">
-                    {new Date(avaliacao.createdAt || "").toLocaleDateString()}
-                  </p>
-                  <p className="text-gray-700 mt-2">{avaliacao.text}</p>
-                  {avaliacao.isEdited && (
-                    <p className="text-sm text-gray-500 italic mt-1">* Editado</p>
-                  )}
 
+                  {/* Data e Curso */}
+                  <p className="text-sm text-gray-500">
+                    {new Date(avaliacao.createdAt || "").toLocaleDateString()} -{" "}
+                    {avaliacao.course?.name || "Curso desconhecido"}
+                  </p>
+
+                  {/* Texto da Avaliação */}
+                  <p className="text-gray-700 mt-2">{avaliacao.text}</p>
+
+                  {/* Comentários */}
                   {avaliacao.comments && avaliacao.comments.length > 0 && (
                     <div className="mt-2">
+                      {/* Botão para mostrar/ocultar comentários */}
                       <button
                         className="text-gray-500 text-sm font-medium cursor-pointer mb-2"
                         onClick={() =>
-                          setOpenComments((prev) => 
-                            prev === avaliacao.id ? null : avaliacao.id as number | null
+                          setOpenComments((prev) =>
+                            prev === avaliacao.id ? null : avaliacao.id
                           )
                         }
                       >
@@ -174,16 +182,27 @@ export default function PerfilProfessorDeslogado() {
                           : `Ver comentários (${avaliacao.comments.length})`}
                       </button>
 
+                      {/* Lista de Comentários */}
                       {openComments === avaliacao.id &&
                         avaliacao.comments.map((comment) => (
                           <div
                             key={comment.id}
                             className="bg-gray-100 rounded-[50px] text-sm p-4 mt-1"
                           >
-                            <p className="font-semibold text-gray-700">
-                              {comment.user?.name || "Usuário desconhecido"}:
+                            {/* Nome e Foto do Usuário do Comentário */}
+                            <p className="font-semibold text-gray-700 flex items-center">
+                              <Image
+                                src={comment.user?.profilepic || "/default-profile.png"}
+                                alt="Foto do autor do comentário"
+                                width={24}
+                                height={24}
+                                className="w-6 h-6 object-cover rounded-full bg-white mr-2"
+                              />
+                              {comment.user?.name || "Usuário desconhecido"}
                             </p>
-                            <p className="text-gray-600 text-sm">{comment.text}</p>
+                            <p className="text-gray-600 text-sm mt-1">
+                              {comment.text}
+                            </p>
                           </div>
                         ))}
                     </div>
