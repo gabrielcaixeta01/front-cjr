@@ -60,12 +60,12 @@ export const fetchUserInfo = async (userId: number): Promise<User> => {
   }
 };
 
-// ** Funções relacionadas a avaliações **
 
-export const getAval = async (idAval: number) => {
-  const response = await api.get("/avaliacao", { params: { id: idAval } });
+// ** Funções relacionadas a avaliações **
+export const findAval = async (id:number) => {
+  const response = await api.get(`/avaliacao/${id}`);
   return response.data;
-};
+}
 
 export const getAllAval = async () => {
   const response = await api.get("/avaliacao");
@@ -90,10 +90,12 @@ export const updateAval = async (aval: Partial<Avaliacao>, id: number) => {
   return response.data;
 };
 
-export const findAval = async (id:number) => {
-  const response = await api.get(`/avaliacao/${id}`);
+export const deleteAval = async (id:number) => {
+  const response = await api.delete(`/avaliacao/${id}`);
   return response.data;
 }
+
+
 // ** Funções relacionadas a comentários **
 
 export const createComment = async (comment: Partial<Comment>) => {
@@ -114,11 +116,6 @@ export const updateComment = async (comment: Partial<Comment>, id:number) => {
   const response = await api.patch(`/comment/${id}`, {
     text:comment.text
   });
-  return response.data;
-}
-
-export const deleteAval = async (id:number) => {
-  const response = await api.delete(`/avaliacao/${id}`);
   return response.data;
 }
 

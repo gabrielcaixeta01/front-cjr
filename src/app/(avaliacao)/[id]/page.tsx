@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
+import { format } from 'date-fns';
 import Image from "next/image";
 import { BellIcon } from "@heroicons/react/24/solid";
 import { ArrowRightOnRectangleIcon } from "@heroicons/react/20/solid";
 import { useParams,useRouter } from "next/navigation";
-import ModalComentario from "@/app/modals/comentario/page";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
@@ -26,26 +26,19 @@ export default function TelaAvaliacao() {
   const [localCourse, setLocalCourse] = useState([])
   const [textoEdit, setTextoEdit] = useState("");
   const [textoEditComment, setTextoEditComment] = useState("");
-  const [userComment, setUSerComment] = useState<User>({
-    id: 0,
-    name: "",
-    email: "",
-    password: "",
-    program: { id: 0, name: "Carregando..." },
-    profilepic: "/default-profile.png",
-    avaliacoes: [],
-  });
 
   const [localAval, setLocalAval] = useState<Avaliacao>({
       id: 0,
       userId: 1,
-      date: undefined,
       professorId: 0,
       text: "",
       courseId:0,
-      comments:[]
+      comments:[],
+      createdAt: undefined,
+      updatedAt: undefined
     });
-    const [userInfo, setUserInfo] = useState<User>({
+
+    const [userAvalInfo, setUserAvalInfo] = useState<User>({
       id: 0,
       name: "",
       email: "",
@@ -54,6 +47,18 @@ export default function TelaAvaliacao() {
       profilepic: "/default-profile.png",
       avaliacoes: [],
     });
+
+    const [userInfo, setUserInfo] = useState<User> (
+      {
+        id:0,
+        name: "",
+        email:"",
+        password:"",
+        program: { id: 0, name: "Carregando..." },
+        profilepic: "/default-profile.png",
+        avaliacoes: [],
+      }
+    );
 
   const {id} = useParams();
 
@@ -64,10 +69,11 @@ export default function TelaAvaliacao() {
         id: avalFound.id || 2,
         text: avalFound.text || "",
         userId: avalFound.userId ||1,
-        date: avalFound.date || undefined,
         professorId: avalFound.professorId || 1,
         courseId: avalFound.courseId || 2,
-        comments: avalFound.comments
+        comments: avalFound.comments,
+        createdAt: avalFound.createdAt,
+        updatedAt: avalFound.updatedAt
       });
     }
     catch (error){
@@ -105,6 +111,19 @@ export default function TelaAvaliacao() {
       findingAval()
   },[])
   
+  const formatData = (dataPrisma:Date) => {
+    if (dataPrisma!==undefined){
+    const dataFormatada = format(dataPrisma, 'yyyy/MM/dd HH:mm');
+    const dataSeparada = dataFormatada.split(" ");
+    const data = dataSeparada[0];
+    const hora = dataSeparada[1];
+    return {data,hora};
+    }
+    else{
+      return {data:-1, hora:-1}
+    }
+  }
+
   const toggleModalComment = () => {
     setIsModalCommentOpenmentOpen(!isModalCommentOpen);
   }
@@ -139,13 +158,13 @@ export default function TelaAvaliacao() {
               Cancelar
             </button>
             <button   onClick={() => {
-              if (textoComment ==""){
+              if (textoComment ===""){
                 toast.error("O comentário não pode ser vazio", {autoClose:2200});
               }
               else {
                 const newComment: Partial<Comment> ={
                 text:textoComment,
-                userId:userInfo.id,
+                userId:userAvalInfo.id,
                 avaliacaoId: localAval.id
                 }
                 try {
@@ -212,8 +231,7 @@ export default function TelaAvaliacao() {
     const modal = <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
     <div className="h-screen  w-1/2 max-h-[47%]  flex flex-col mx-auto bg-[#3EEE9A] rounded-md items-center">
         <div className="flex flex-col h-[12rem] w-[90%] bg-[#A4FED3] mt-[2rem] rounded-md">
-          <textarea value={textoEdit} onChange={(event)=> setTextoEdit(event.target.value)} className="text-black h-full placeholder-black mt-2 pt-[2px] border-none pl-[1rem] bg-[#A4FED3] leading-tight focus:outline-none w-full p-2 resize-none overflow-y-auto  border rounded-md"> </textarea>
-          <input type="text" value={textoEdit} onChange={(event)=> setTextoEdit(event.target.value)} className=" text-black h-16 w-full pt-[0.5px] pl-[1rem] rounded-md bg-[#A4FED3] leading-tight focus:outline-none"/> 
+          <textarea value={textoEdit} onChange={(event)=> setTextoEdit(event.target.value)} className="text-black h-full placeholder-black placeholder-opacity-50 mt-2 pt-[2px] border-none pl-[1rem] bg-[#A4FED3] leading-tight focus:outline-none w-full p-2 resize-none overflow-y-auto  border rounded-md"> </textarea>
           </div>
           <div className="ml-auto items-right pr-5 mt-6">
             <button onClick={()=> 
@@ -320,9 +338,29 @@ export default function TelaAvaliacao() {
   },[localAval.courseId])
 
   useEffect(() => {
-    const loadUserInfo = async () => {
+    const loadUserAvalInfo = async () => {
       try {
         const userData = (await fetchUserInfo(localAval.userId)) as User;
+        setUserAvalInfo({
+          id: userData.id || 0,
+          name: userData.name || "",
+          email: userData.email || "",
+          password: userData.password || "",
+          program: userData.program || { id: 0, name: "Carregando..." },
+          profilepic: userData.profilepic || "/default-profile.png",
+          avaliacoes: userData.avaliacoes || [],
+        });
+      } catch (error) {
+        toast.error("Erro ao carregar as informações do usuário:", {autoClose:2200});
+      } 
+    };
+    loadUserAvalInfo();
+  }, [localAval.userId]);
+
+  useEffect(() => {
+    const loadUserInfo = async () => {
+      try {
+        const userData = (await fetchUserInfo(8)) as User;
         setUserInfo({
           id: userData.id || 0,
           name: userData.name || "",
@@ -337,7 +375,8 @@ export default function TelaAvaliacao() {
       } 
     };
     loadUserInfo();
-  }, [localAval.userId]);
+  }, []);
+
 
   return (
     <>
@@ -385,7 +424,7 @@ export default function TelaAvaliacao() {
                 <div className="flex mx-auto items-center p-3 pb-1 ">
                     <div className="pl-1 items-center">
                     <Image
-                      src="/morty.png"
+                      src={userAvalInfo.profilepic}
                       alt="Foto de perfil"
                       width={48}
                       height={48}
@@ -393,8 +432,8 @@ export default function TelaAvaliacao() {
                       onClick={() => router.push("/perfil/Aluno/Logado")}
                     />
                     </div>
-                    <span className="font-sans text-black ml-2 text-[15px] font-[500] leading-[16.94px] items-center hover:bg-blue-200 transition duration-300 ease-in-out cursor-pointer" onClick={()=> router.push("/perfil/Aluno/Logado")}> {userInfo.name} </span>
-                    <span className="font-sans text-[#71767B] text-[12px] font-[350] leading-[16.94px] flex pl-1.5 items-center"> · 08/04/2024, ás 21:42 </span>
+                    <span className="font-sans text-black ml-2 text-[15px] font-[500] leading-[16.94px] items-center hover:bg-blue-200 transition duration-300 ease-in-out cursor-pointer" onClick={()=> router.push("/perfil/Aluno/Logado")}> {userAvalInfo.name} </span>
+                    <span className="font-sans text-[#71767B] text-[12px] font-[350] leading-[16.94px] flex pl-1.5 items-center"> · {formatData(localAval.updatedAt).data}, às {formatData(localAval.updatedAt).hora} </span>
                     <span className="font-sans text-[#71767B] text-[12px] font-[350] leading-[16.94px] flex pl-1 items-center"> · {localProf.name} </span>
                     <span className="font-sans text-[#71767B] text-[12px] font-[350] leading-[16.94px] flex pl-1 items-center"> · {localCourse.name} </span>
                 </div>
@@ -402,7 +441,7 @@ export default function TelaAvaliacao() {
                   <p className="text-[#222E50] text-[15px] font-[500] leading-[18.15px] pb-2 pr-2 overflow-wrap: break-word white-space: normal max-width: 100%"> a {localAval.text} </p>
                 </div>
                 <div className="flex items-center justify-between pl-[6.5rem]">
-                  <div className="flex"> 
+                <div className="flex"> 
                     <Image
                         src="/comente.png"
                         alt="Comentários"
@@ -413,9 +452,7 @@ export default function TelaAvaliacao() {
                       />
                       <span className="font-sans text-[#222E50] text-[12px] font-[600] leading-[14.52px] flex pl-1 items-center"> {localAval.comments?.length} comentários</span>
                   </div>
-                          {isModalCommentOpen && (
-                               modalCreateComment()                           
-                            )}
+                  {localAval.userId===userInfo.id && (
                     <div className="flex pr-2">             
                       <Image
                         src="/editar.png"
@@ -434,19 +471,20 @@ export default function TelaAvaliacao() {
                         onClick = {()=> toggleDeleteAval()}
                         className="w-4 h-4 object-cover mx-2 shadow-md hover:bg-blue-200 transition duration-300 hover:scale-110  ease-in-out cursor-pointer"
                       />   
-                    </div>
+                  </div>
+                  )}
 
+                          {isModalCommentOpen && (
+                               modalCreateComment()                           
+                            )}
                     {isModalDeleteAvalOpen && (
                       modalDeleteAval()
                     )}
-
                     {isModalEditOpen && (
                         modalEditAval()
                         )}                             
-                  </div>            
-                  
-                </div>
-                
+                  </div>                         
+                </div>             
               <div className=" pt-[1rem] w-full max-w-[70%] flex flex-col mx-auto  mb-2 justify-center">
                 {localAval.comments?.map((comentario, index)=> (                       
                   <div key={comentario.id}>

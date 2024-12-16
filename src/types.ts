@@ -19,13 +19,18 @@ export interface User {
   
   export interface Avaliacao {
     id?: number;
-    date?: string;
     text: string;
     professorId: number;
     courseId:number;
     userId: number;
+    user?:{
+      id:number;
+      name:string;
+    }
     comments?: Comment[];
     isEdited?: boolean;
+    createdAt?: Date;
+    updatedAt?: Date;
 }
   
 export interface Comment {
@@ -34,6 +39,7 @@ export interface Comment {
     user?: {
         id: number;
         name: string;
+        profilepic: string;
     };
     userId: number;
     avaliacaoId: number;
