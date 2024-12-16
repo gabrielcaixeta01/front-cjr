@@ -157,8 +157,8 @@ export default function FeedLogado() {
   const modalAvaliacao = () => {
     const modal = <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50 ">
     <div className="h-screen  w-[60%] max-h-[62%]  flex flex-col mx-auto bg-[#3EEE9A] rounded-md items-center">
-      <select value= {profSelected} className="flex flex-col bg-white h-[2rem] w-[90%] justify-between items-left hover:cursor-pointer rounded-md text-[#999797] font-[300] text-[18px] mt-6 leading-[3rem]" onChange={(event)=> {setIdProfAvaliacao(event.target.value); setProfSelected(event.target.value)}}>
-        <option value="-1"  className="text-[#999797] font-[300] text-[18px] leading-[29.05px] pl-2">
+      <select value= {profSelected} className="flex flex-col bg-white h-[2rem] w-[90%] justify-between items-left hover:cursor-pointer rounded-md text-[#999797] font-[300] text-[18px] mt-6 leading-[3rem] pt-1" onChange={(event)=> {setIdProfAvaliacao(event.target.value); setProfSelected(event.target.value)}}>
+        <option value="-1"  disabled className="text-[#999797] font-[300] text-[18px] leading-[29.05px] pl-2">
           Nome do professor
         </option>
         {listaProfs.map((prof) => (
@@ -167,8 +167,8 @@ export default function FeedLogado() {
           </option>))}
       </select>
     
-      <select value={courseSelected} className="flex flex-col bg-white h-[2rem] w-[90%] justify-between items-left hover:cursor-pointer rounded-md text-[#999797] font-[300] text-[18px]  mt-6 leading-[3rem]" onChange={(event)=> {setIdCourseAvaliacao(event.target.value); setCourseSelected(event.target.value)}}>
-        <option value="-1"  disabled className="text-[#999797] font-[300] text-[18px] leading-[29.05px] pl-2">
+      <select value={courseSelected} className="flex flex-col bg-white h-[2rem] w-[90%] justify-between items-left hover:cursor-pointer rounded-md text-[#999797] font-[300] text-[18px]  mt-6 leading-[3rem] pt-1" onChange={(event)=> {setIdCourseAvaliacao(event.target.value); setCourseSelected(event.target.value)}}>
+        <option value="-1"  disabled  className="text-[#999797] font-[300] text-[18px] leading-[29.05px] pl-2">
           Disciplina
         </option>
         {listaCourses.map((course) => (
@@ -192,9 +192,9 @@ export default function FeedLogado() {
             if (texto === "") {
               toast.error("A avaliação não pode ser vazia", {autoClose:2200});
             } else if (parseInt(idProfAvaliacao, 10) === -1) {
-              toast.error("Selecione um professor");
+              toast.error("Selecione um professor", {autoClose:2200});
             } else if (parseInt(idCourseAvaliacao, 10) === -1) {
-              toast.error("Selecione uma disciplina");
+              toast.error("Selecione uma disciplina", {autoClose:2200});
             } else {
               const newAval: Partial<Avaliacao> = {
                 text: texto,
@@ -329,7 +329,7 @@ export default function FeedLogado() {
 
       <div className="flex  mx-auto w-[20%] max-w-[30%] max-h-[2%]">
         <button
-            className="bg-azulCjr text-white px-6 py-4 ml-2 mx-auto rounded-lg shadow-md hover:shadow-lg hover:bg-blue-600 transition duration-500"
+            className="bg-azulCjr text-white w-[11rem] h-[3.5rem] mx-auto rounded-lg shadow-md hover:shadow-lg hover:bg-blue-600 transition duration-500"
             onClick={toggleModal}>
             Criar nova avaliação
         </button>
