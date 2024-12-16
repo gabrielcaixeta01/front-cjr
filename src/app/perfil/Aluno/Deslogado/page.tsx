@@ -107,7 +107,6 @@ export default function PerfilAlunoDeslogado() {
 
       {/* Conteúdo Principal */}
       <main className="w-full max-w-[40%] h-full mx-auto bg-white rounded shadow-md my-5">
-        {/* Perfil */}
         <section className="bg-customGreen border-b rounded-t p-5 flex items-center">
           <Image
             src={userInfo.profilepic || "/default-profile.png"}
@@ -185,7 +184,6 @@ export default function PerfilAlunoDeslogado() {
                   </p>
                   <p className="text-gray-700 mt-2">{avaliacao.text}</p>
 
-                  {/* Botão para mostrar mais comentários */}
                   {avaliacao.comments && avaliacao.comments.length > 0 && (
                     <div className="mt-1">
                       <button

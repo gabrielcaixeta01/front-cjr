@@ -12,7 +12,7 @@ export default function PerfilProfessorDeslogado() {
   const [openComments, setOpenComments] = useState<number | null>(null);
   const [professorInfo, setProfessorInfo] = useState<Professor | null>(null);
 
-  const fixedProfessorId = 1; // ID fixo para teste, ajuste conforme necessário
+  const fixedProfessorId = 1;
 
   // Busca informações do professor
   useEffect(() => {
@@ -132,21 +132,17 @@ export default function PerfilProfessorDeslogado() {
                   />
                 </div>
                 <div className="max-w-[550px]">
-                  {/* Nome do usuário */}
                   <p className="font-bold text-gray-800">
                     {avaliacao.user?.name || "Usuário desconhecido"}
                   </p>
-                  {/* Data da avaliação */}
                   <p className="text-sm text-gray-500">
                     {new Date(avaliacao.createdAt || "").toLocaleDateString()}
                   </p>
-                  {/* Texto da avaliação */}
                   <p className="text-gray-700 mt-2">{avaliacao.text}</p>
                   {avaliacao.isEdited && (
                     <p className="text-sm text-gray-500 italic mt-1">* Editado</p>
                   )}
 
-                  {/* Botão para mostrar/ocultar comentários */}
                   {avaliacao.comments && avaliacao.comments.length > 0 && (
                     <div className="mt-2">
                       <button
@@ -162,17 +158,16 @@ export default function PerfilProfessorDeslogado() {
                           : `Ver comentários (${avaliacao.comments.length})`}
                       </button>
 
-                      {/* Lista de comentários abertos */}
                       {openComments === avaliacao.id &&
                         avaliacao.comments.map((comment) => (
                           <div
                             key={comment.id}
-                            className="bg-gray-100 rounded-lg p-3 mt-2"
+                            className="bg-gray-100 rounded-[50px] text-sm p-4 mt-1"
                           >
                             <p className="font-semibold text-gray-700">
                               {comment.user?.name || "Usuário desconhecido"}:
                             </p>
-                            <p className="text-gray-600">{comment.text}</p>
+                            <p className="text-gray-600 text-sm">{comment.text}</p>
                           </div>
                         ))}
                     </div>

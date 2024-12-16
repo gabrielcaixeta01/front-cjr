@@ -7,10 +7,8 @@ import { api } from "@/utils/api";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-// ID fixo do usuário
 const fixedUserId = 2;
 
-// Validação usando Yup
 const validationSchema = Yup.object({
   name: Yup.string(),
   password: Yup.string().min(6, "A senha deve ter pelo menos 6 caracteres"),
@@ -28,7 +26,6 @@ const validationSchema = Yup.object({
     ),
 });
 
-// Valores iniciais do formulário
 const initialValues = {
   name: "",
   password: "",
@@ -41,11 +38,9 @@ const EditarPerfil = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [selectedFile, setSelectedFile] = useState<string | null>(null);
 
-  // Estados para armazenar as opções de departamentos e programas
   const [departments, setDepartments] = useState<{ id: number; name: string }[]>([]);
   const [programs, setPrograms] = useState<{ id: number; name: string }[]>([]);
 
-  // Função para buscar departamentos
   const fetchDepartments = async () => {
     try {
       const response = await api.get("/departments");
@@ -55,7 +50,6 @@ const EditarPerfil = () => {
     }
   };
 
-  // Função para buscar programas
   const fetchPrograms = async () => {
     try {
       const response = await api.get("/programs");
@@ -65,7 +59,6 @@ const EditarPerfil = () => {
     }
   };
 
-  // Carregar departamentos e programas ao montar o componente
   useEffect(() => {
     fetchDepartments();
     fetchPrograms();
@@ -86,7 +79,6 @@ const EditarPerfil = () => {
       profilepic?: File | null;
     } = {};
 
-    // Adiciona ao payload apenas os valores preenchidos
     if (values.name) payload.name = values.name;
     if (values.password) payload.password = values.password;
     if (values.department) payload.departmentId = parseInt(values.department, 10);
