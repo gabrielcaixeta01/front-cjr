@@ -86,13 +86,14 @@ const EditarPerfil = () => {
     if (values.profilePicture) payload.profilepic = values.profilePicture;
 
     try {
+      console.log("Payload enviado:", payload); // Ver o conteúdo do payload
       const response = await api.patch(`/user/${fixedUserId}`, payload);
-      console.log("Dados enviados com sucesso:", response.data);
+      console.log("Dados recebidos com sucesso:", response.data);
       toast.success("Perfil atualizado com sucesso!");
       resetForm();
     } catch (error) {
-      console.error("Erro ao atualizar perfil:", error);
-      toast.error("Erro ao atualizar o perfil. Tente novamente.");
+      console.error("Erro ao atualizar o perfil:", error);
+      toast.error("Erro ao atualizar o perfil.");
     } finally {
       setSubmitting(false);
     }
