@@ -43,6 +43,8 @@ export interface Comment {
     };
     userId: number;
     avaliacaoId: number;
+    createdAt?: Date;
+    updatedAt?: Date;
 }
 
 export interface Professor {

@@ -26,6 +26,9 @@ export default function TelaAvaliacao() {
   const [localCourse, setLocalCourse] = useState([])
   const [textoEdit, setTextoEdit] = useState("");
   const [textoEditComment, setTextoEditComment] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [idCommentDeleted, setIdCommentDeleted] = useState(0);
+  const [idCommentEdited, setIdCommentEdited] = useState(0);
 
   const [localAval, setLocalAval] = useState<Avaliacao>({
       id: 0,
@@ -62,6 +65,7 @@ export default function TelaAvaliacao() {
 
   const {id} = useParams();
 
+  //funções para achar objetos de acordo com os ids
   const findingAval = async () =>{
     try {
       const avalFound = (await findAval(8)) as Avaliacao;
@@ -71,16 +75,15 @@ export default function TelaAvaliacao() {
         userId: avalFound.userId ||1,
         professorId: avalFound.professorId || 1,
         courseId: avalFound.courseId || 2,
-        comments: avalFound.comments,
+        comments: avalFound.comments || [],
         createdAt: avalFound.createdAt,
         updatedAt: avalFound.updatedAt
-      });
+      })
     }
     catch (error){
       toast.error("Erro ao procurar avaliação", {autoClose:2200})
     }
-    finally{
-    }
+    
   }
 
   const findingProf = async (id:number) => {
@@ -107,23 +110,21 @@ export default function TelaAvaliacao() {
     }
   }
 
-  useEffect (()=>{
-      findingAval()
-  },[])
-  
+  //função para tratar da data
   const formatData = (dataPrisma:Date) => {
     if (dataPrisma!==undefined){
-    const dataFormatada = format(dataPrisma, 'yyyy/MM/dd HH:mm');
-    const dataSeparada = dataFormatada.split(" ");
-    const data = dataSeparada[0];
-    const hora = dataSeparada[1];
-    return {data,hora};
+      const dataFormatada = format(dataPrisma, 'yyyy/MM/dd HH:mm');
+      const dataSeparada = dataFormatada.split(" ");
+      const data = dataSeparada[0];
+      const hora = dataSeparada[1];
+      return {data,hora};
     }
     else{
       return {data:-1, hora:-1}
     }
   }
 
+  //toggles dos modais
   const toggleModalComment = () => {
     setIsModalCommentOpenmentOpen(!isModalCommentOpen);
   }
@@ -144,6 +145,7 @@ export default function TelaAvaliacao() {
     setIsModalEditCommentOpen(!isModalEditCommentOpen);
   }
 
+  //modais usados na página
   const modalCreateComment = () =>  {
     const modal = 
       <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
@@ -307,10 +309,13 @@ export default function TelaAvaliacao() {
                   text: textoEditComment,
                 }
                 try{
-                  updateComment(commentEdited,commentId);
-                  toast.success("A avaliação foi editada com sucesso", {autoClose:2200});
-                  window.location.reload()
-                  toggleEditComment(); }
+                  if (commentId>0){
+                    updateComment(commentEdited,commentId);
+                    toast.success("A avaliação foi editada com sucesso", {autoClose:2200});
+                    window.location.reload();
+                    toggleEditComment(); 
+                  }
+                }
                 catch(error){
                   toast.error("Erro ao editar avaliação", {autoClose:2200})
                 }                                  
@@ -326,8 +331,54 @@ export default function TelaAvaliacao() {
     return modal;  
   }
 
+  const modalDeleteComment = (commentId:number) => {
+    const modal = 
+    <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
+        <div className="bg-black pt-3 pl-6 pr-6 pb-6 max-h-fit flex flex-col items-center rounded-lg w-full max-w-md shadow-lg">
+          <div className="text-center mb-5 p-2">
+            <h1 className="text-3xl font-bold text-white mb-4">
+            </h1>
+            <p className="text-lg text-ellipsis text-white">
+              Tem certeza de que deseja excluir o comentário?
+            </p>
+            <p className="text-xs italic text-white"> Essa ação não poderá ser desfeita</p>
+          </div>
+          <div className="flex space-x-6">
+            <button
+              onClick={()=> {
+                toggleDeleteComment();
+                try{
+                  if (commentId>0){                                              
+                  deleteComment(commentId);
+                  window.location.reload();
+                  toast.success("Comentário excluído com sucesso!",{autoClose:2200})}}
+                catch(error){
+                  toast.error("Erro ao excluir comentário",{autoClose:2200})
+                }
+              }}
+      
+              className="bg-red-600 text-white font-semibold px-7 py-2 rounded-lg hover:bg-red-900 hover:text-white transition duration-300 ease-in-out"
+            >
+              Sim 
+            </button>
+            <button
+              onClick={()=> {toggleDeleteComment()
+              }}
+              className=" text-white font-semibold px-7 py-2 rounded-lg hover:bg-white border-[0.5px] border-gray-300 hover:text-black transition duration-300 ease-in-out"
+            >
+              Cancelar 
+            </button>
+          </div>
+        </div>
+      </div>
+    return modal
+  }
+
+
+  //useEffects para inicializar a tela
   useEffect (()=>{
-  },[localAval]) 
+    findingAval()
+  },[])
 
   useEffect(()=> {
     findingProf(localAval.professorId)
@@ -373,11 +424,64 @@ export default function TelaAvaliacao() {
       } catch (error) {
         toast.error("Erro ao carregar as informações do usuário:", {autoClose:2200});
       } 
+      finally{
+        setLoading(false);
+      }
     };
     loadUserInfo();
   }, []);
 
+  useEffect (()=>{
+    console.log(localAval)
+    console.log(localAval.comments)
+  },[localAval.comments, localAval]) 
 
+
+  //tela de carregamento
+  if (loading) {
+    return       <div className="flex flex-col h-screen min-h-screen overflow-y-scroll bg-gray-100">
+      <header className="flex justify-between bg-customGreen pb-1 items-center mb-2">
+                 <div className="flex bg-azulUnb pb-1">
+                   <div className="flex justify-between w-screen bg-white py-3 items-center">
+                     <Image
+                       src="/logounb.png"
+                       alt="Logo da UnB"
+                       width={80}
+                       height={80}
+                       className="w-20 h-10 cursor-pointer ml-5 shadow-md"
+                       onClick={() => router.push("/feed/Deslogado")}
+                     />
+                     <div className="flex items-center space-x-5 mr-10">
+                       <button
+                         className="bg-azulCjr hover:bg-blue-600 p-2 rounded-[60px] transition duration-300 shadow-md hover:shadow-lg"
+                         onClick={() => toast.info("Sem notificações novas.")}
+                       >
+                         <BellIcon className="h-6 w-6 text-white" />
+                       </button>
+                       <Image
+                         src={profilePic}
+                         alt="Foto de perfil"
+                         width={48}
+                         height={48}
+                         className="w-10 h-10 rounded-full shadow-md bg-white object-cover cursor-pointer"
+                         onClick={() => router.push("/perfil/Aluno/Logado")}
+                       />
+                       <button
+                         className="flex items-center bg-azulCjr text-white rounded-[60px] px-4 py-2 hover:bg-blue-600 transition duration-300 ease-in-out shadow-md hover:shadow-lg"
+                         onClick={() => router.push("/feed/Deslogado")}
+                       >
+                         <ArrowRightOnRectangleIcon className="h-6 w-6 text-white" />
+                       </button>
+                     </div>
+                   </div>
+                 </div>
+            </header>
+            <div className='w-full max-w-[40%] mx-auto bg-white h-screen rounded shadow-md'>
+            </div>
+                  </div>
+  }
+
+  //tela ao terminar de carregar
   return (
     <>
       <div className="flex flex-col h-screen min-h-screen overflow-y-scroll bg-gray-100">
@@ -473,16 +577,15 @@ export default function TelaAvaliacao() {
                       />   
                   </div>
                   )}
-
-                          {isModalCommentOpen && (
-                               modalCreateComment()                           
-                            )}
-                    {isModalDeleteAvalOpen && (
-                      modalDeleteAval()
+                  {isModalCommentOpen && (
+                    modalCreateComment()                           
                     )}
-                    {isModalEditOpen && (
-                        modalEditAval()
-                        )}                             
+                  {isModalDeleteAvalOpen && (
+                    modalDeleteAval()
+                  )}
+                  {isModalEditOpen && (
+                    modalEditAval()
+                  )}                             
                   </div>                         
                 </div>             
               <div className=" pt-[1rem] w-full max-w-[70%] flex flex-col mx-auto  mb-2 justify-center">
@@ -499,16 +602,20 @@ export default function TelaAvaliacao() {
                         onClick={() => router.push("/perfil/Aluno/Logado")}
                       />
                     </div>
-                    <span className="font-sans text-black ml-2 text-[13px] font-[500] leading-[15.73px] text-center items-center hover:bg-blue-200 transition duration-300 ease-in-out cursor-pointer"> {comentario.user?.name} </span> 
-                    <span className="font-sans text-[#71767B] pl-2 text-[13px] font-[350] leading-[15.73px] text-center items-center"> · 08/04/2024, ás 21:43  </span>  
-                    {comentario.userId==localAval.userId && (
+                    <span onClick= {()=> {
+                    }} className="font-sans text-black ml-2 text-[13px] font-[500] leading-[15.73px] text-center items-center hover:bg-blue-200 transition duration-300 ease-in-out cursor-pointer"> {comentario.user?.name} </span> 
+                    <span className="font-sans text-[#71767B] pl-2 text-[13px] font-[350] leading-[15.73px] text-center items-center"> · {formatData(comentario.updatedAt).data}, ás {formatData(comentario.updatedAt).hora}  </span>  
+                    {comentario.userId===localAval.userId && (
                       <div className="ml-auto flex flex-row">
                         <Image
-                            src="/editar.png"
-                            alt="Editar comentário"
-                            width={64} 
-                            height={64}
-                            onClick={()=> toggleEditComment()}
+                          src="/editar.png"
+                          alt="Editar comentário"
+                          width={64} 
+                          height={64}
+                          onClick={()=> {
+                            setIdCommentEdited(comentario.id);
+                            toggleEditComment();}
+                          }
                             className="w-4 h-4 object-cover mx-2 shadow-md hover:bg-blue-200 transition duration-300 hover:scale-110 ease-in-out cursor-pointer"   
                         />
                         <Image
@@ -516,55 +623,26 @@ export default function TelaAvaliacao() {
                           alt="Excluir comentário"
                           width={64} 
                           height={64}
-                          onClick = {()=> toggleDeleteComment()}
+                          onClick = {()=> {
+                            setIdCommentDeleted(comentario.id); 
+                            toggleDeleteComment();
+                          }}
                           className="w-4 h-4 object-cover shadow-md hover:bg-blue-200 transition duration-300 hover:scale-110  ease-in-out cursor-pointer">
-                        </Image>    
+                        </Image>
+
+                        {isModalDeleteCommentOpen && (
+                          modalDeleteComment(idCommentDeleted)
+                        )}
+                        {isModalEditCommentOpen && (
+                          modalEditComment(idCommentEdited)
+                        )}       
                       </div>    
                     )}               
                   </div>
                   <div className="pl-[2.3rem] break-words"> 
                     <p className="text-[#222E50] text-[14px] text-[500] leading-[16.94px] pb-2"> {comentario.text} </p>
                   </div>
-                  {isModalDeleteCommentOpen && (
-                      <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
-                        <div className="bg-black pt-3 pl-6 pr-6 pb-6 max-h-fit flex flex-col items-center rounded-lg w-full max-w-md shadow-lg">
-                          <div className="text-center mb-5 p-2">
-                            <h1 className="text-3xl font-bold text-white mb-4">
-                            </h1>
-                            <p className="text-lg text-ellipsis text-white">
-                              Tem certeza de que deseja excluir o comentário?
-                            </p>
-                            <p className="text-xs italic text-white"> Essa ação não poderá ser desfeita</p>
-                          </div>
-                          <div className="flex space-x-6">
-                            <button
-                              onClick={()=> {
-                                        toggleDeleteComment();
-                                        try{                                              
-                                          deleteComment(comentario.id);
-                                          window.location.reload()
-                                          toast.success("Comentário excluído com sucesso!",{autoClose:2200})}
-                                        catch(error){
-                                          toast.error("Erro ao excluir comentário",{autoClose:2200})
-                                        }
-                                      }}
-                              className="bg-red-600 text-white font-semibold px-7 py-2 rounded-lg hover:bg-red-900 hover:text-white transition duration-300 ease-in-out"
-                            >
-                              Sim 
-                            </button>
-                            <button
-                              onClick={()=> toggleDeleteComment()}
-                              className=" text-white font-semibold px-7 py-2 rounded-lg hover:bg-white border-[0.5px] border-gray-300 hover:text-black transition duration-300 ease-in-out"
-                            >
-                              Cancelar 
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    )}
-                    {isModalEditCommentOpen && (
-                      modalEditComment(comentario.id)
-                    )}
+                    
                   {index !== localAval.comments.length - 1 && (
                     <div className="border-b border-gray-300 w-full mb-[0.5rem]" >
                     </div>

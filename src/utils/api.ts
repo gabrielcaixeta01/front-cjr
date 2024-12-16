@@ -108,6 +108,7 @@ export const createComment = async (comment: Partial<Comment>) => {
 };
 
 export const deleteComment = async (id:number)=>{
+  console.log("id do backend" + id)
   const response = await api.delete(`/comment/${id}`);
   return response.data;
 }
