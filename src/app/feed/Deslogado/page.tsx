@@ -7,7 +7,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { Professor } from "@/types";
 
-export default function FeedLogado() {
+export default function FeedDeslogado() {
   const router = useRouter();
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [professores, setProfessores] = useState<Professor[]>([]);
@@ -179,15 +179,16 @@ export default function FeedLogado() {
           {filteredProfessores.map((professor) => (
             <div
               key={professor.id}
-              className="flex flex-col items-center bg-white p-6 shadow-lg rounded-lg h-60 transform transition duration-300 hover:translate-y-[-5px] hover:shadow-xl"
+              className="flex flex-col items-center bg-white p-6 shadow-lg rounded-lg cursor-pointer h-60 transform transition duration-300 hover:translate-y-[-5px] hover:shadow-xl"
+              onClick={() => router.push(`/perfil/Professor/Deslogado`)}
             >
               <div className="w-20 h-20 bg-gray-200 rounded-full mb-4">
                 <Image
                   src={professor.profilepic || "/default-profile.png"}
-                  alt={`Foto de ${professor.name}`} // Corrigida a interpolação de string
+                  alt={`Foto de ${professor.name}`}
                   className="w-full h-full rounded-full object-cover"
-                  width={80} // Adicione largura para Next.js Image
-                  height={80} // Adicione altura para Next.js Image
+                  width={80}
+                  height={80}
                 />
               </div>
               <h2 className="font-semibold text-lg text-center text-azulCjr">
