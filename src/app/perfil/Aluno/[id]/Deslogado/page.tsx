@@ -2,71 +2,46 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 import { User } from "@/types";
 import { fetchUserInfo } from "@/utils/api";
 import axios from "axios";
 
-export default function PerfilAlunoDeslogado() {
+export default function PerfilAlunoLogado() {
   const router = useRouter();
+  const { id } = useParams(); // Captura o ID da URL
   const [loading, setLoading] = useState(true);
   const [openComments, setOpenComments] = useState<number | null>(null);
   const [professores, setProfessores] = useState<{ id: number; name: string }[]>([]);
   const [cursos, setCursos] = useState<{ id: number; name: string }[]>([]);
-  const [userInfo, setUserInfo] = useState<User>({
-    id: 0,
-    name: "",
-    email: "",
-    password: "",
-    programId: 0,
-    program: { id: 0, name: "Carregando..." },
-    departmentId: 0,
-    department: { id: 0, name: "Carregando..." },
-    profilepic: "/default-profile.png",
-    avaliacoes: [],
-  });
+  const [userInfo, setUserInfo] = useState<User | null>(null);
 
-  const fixedUserId = 2;
-
-  // Busca informações do usuário
+  // Busca informações do usuário dinamicamente
   useEffect(() => {
     const loadUserInfo = async () => {
       try {
-        const userData = (await fetchUserInfo(fixedUserId)) as User;
-        setUserInfo({
-          id: userData.id || 0,
-          name: userData.name || "",
-          email: userData.email || "",
-          password: userData.password || "",
-          programId: userData.programId || 0,
-          program: userData.program || { id: 0, name: "Carregando..." },
-          departmentId: userData.departmentId || 0,
-          department: userData.department || { id: 0, name: "Carregando..." }, // Converte `Department` para `department`
-          profilepic: userData.profilepic || "/default-profile.png",
-          avaliacoes: userData.avaliacoes || [],
-        });
+        const userData = await fetchUserInfo(Number(id)); // Converte o ID para número
+        setUserInfo(userData);
       } catch (error) {
         console.error("Erro ao carregar as informações do usuário:", error);
       } finally {
         setLoading(false);
       }
     };
-  
-    loadUserInfo();
-  }, []);
+
+    if (id) loadUserInfo();
+  }, [id]);
 
   // Busca professores e cursos
   useEffect(() => {
     const fetchProfessoresECursos = async () => {
       try {
-        const professoresResponse = await axios.get<{ id: number; name: string }[]>(
-          "http://localhost:4000/professors"
-        );
-        const cursosResponse = await axios.get<{ id: number; name: string }[]>(
-          "http://localhost:4000/courses"
-        );
-        setProfessores(professoresResponse.data);
-        setCursos(cursosResponse.data);
+        const [professoresResponse, cursosResponse] = await Promise.all([
+          axios.get("http://localhost:4000/professors"),
+          axios.get("http://localhost:4000/courses"),
+        ]);
+        setProfessores(professoresResponse.data as { id: number; name: string }[]);
+        setCursos(cursosResponse.data as { id: number; name: string }[]);
       } catch (error) {
         console.error("Erro ao buscar professores ou cursos:", error);
       }
@@ -75,12 +50,12 @@ export default function PerfilAlunoDeslogado() {
     fetchProfessoresECursos();
   }, []);
 
-  if (loading) {
+  if (loading || !userInfo) {
     return <div>Carregando...</div>;
   }
 
   return (
-    <div className="flex flex-col min-h-fit bg-gray-100">
+    <div className="flex flex-col h-screen min-h-fit bg-gray-100">
       {/* Header */}
       <header className="flex justify-between bg-customGreen pb-1 items-center mb-5">
         <div className="flex bg-azulUnb pb-1">
@@ -100,13 +75,13 @@ export default function PerfilAlunoDeslogado() {
               >
                 Login
               </button>
-                </div>
+            </div>
           </div>
         </div>
       </header>
 
       {/* Conteúdo Principal */}
-      <main className="w-full max-w-[40%] min-h-fit h-screen mx-auto bg-white rounded shadow-md my-5">
+      <main className="w-full max-w-[40%] min-h-fit mx-auto bg-white rounded shadow-md my-5">
         <section className="bg-customGreen border-b rounded-t p-5 flex items-center">
           <Image
             src={userInfo.profilepic || "/default-profile.png"}
@@ -157,7 +132,7 @@ export default function PerfilAlunoDeslogado() {
 
         {/* Avaliações */}
         <section className="mt-3 p-4">
-          <h2 className="text-l font-semibold mb-3 text-black">Avaliações</h2>
+          <h2 className="text-l font-semibold mb-3 text-black">Publicações</h2>
 
           {userInfo.avaliacoes && userInfo.avaliacoes.length > 0 ? (
             userInfo.avaliacoes.map((avaliacao) => (
@@ -165,7 +140,7 @@ export default function PerfilAlunoDeslogado() {
                 key={avaliacao.id}
                 className="bg-customGreen rounded-lg shadow mb-4 flex flex-row p-3"
               >
-                <div className="flex items-start justify-center w-16 h-46 mr-2 overflow-hidden">
+                <div className="flex items-start justify-center w-16 h-16 mr-2">
                   <Image
                     src={userInfo.profilepic || "/default-profile.png"}
                     alt="Autor"
@@ -177,36 +152,42 @@ export default function PerfilAlunoDeslogado() {
                 <div className="max-w-[550px]">
                   <p className="font-bold text-gray-800">{userInfo.name}</p>
                   <p className="text-sm text-gray-500">
-                    {new Date(avaliacao.updatedAt || "").toLocaleDateString()} -{" "}
-                    {professores.find((prof) => prof.id === avaliacao.professorId)?.name || "Professor não encontrado"}{" "}
+                    {new Date(avaliacao.createdAt || "").toLocaleDateString()} -{" "}
+                    {professores.find((prof) => prof.id === avaliacao.professorId)?.name ||
+                      "Professor não encontrado"}{" "}
                     -{" "}
-                    {cursos.find((curso) => curso.id === avaliacao.courseId)?.name || "Curso não encontrado"}
+                    {cursos.find((curso) => curso.id === avaliacao.courseId)?.name ||
+                      "Curso não encontrado"}
                   </p>
                   <p className="text-gray-700 mt-2">{avaliacao.text}</p>
 
+                  {/* Botão para abrir/fechar comentários */}
                   {avaliacao.comments && avaliacao.comments.length > 0 && (
-                    <div className="mt-1">
+                    <div className="mt-2">
                       <button
                         className="text-gray-500 text-sm font-medium cursor-pointer mb-2"
                         onClick={() =>
                           setOpenComments((prev) =>
-                            prev === (avaliacao.id ?? null) ? null : avaliacao.id ?? null
+                            prev === avaliacao.id ? null : avaliacao.id
                           )
                         }
                       >
-                        {openComments === avaliacao.id ? "Ocultar comentários" : "Ver mais comentários"}
+                        {openComments === avaliacao.id
+                          ? "Ocultar comentários"
+                          : `Ver comentários (${avaliacao.comments.length})`}
                       </button>
 
+                      {/* Exibe os comentários caso estejam abertos */}
                       {openComments === avaliacao.id &&
                         avaliacao.comments.map((comment) => (
                           <div
                             key={comment.id}
-                            className="text-sm text-gray-500 bg-gray-100 rounded-[50px] p-4 mt-2"
+                            className="bg-gray-100 rounded-[50px] text-sm p-4 mt-1"
                           >
                             <p className="font-semibold text-gray-700">
                               {comment.user?.name || "Usuário desconhecido"}:
                             </p>
-                            <p>{comment.text}</p>
+                            <p className="text-gray-600 text-sm">{comment.text}</p>
                           </div>
                         ))}
                     </div>

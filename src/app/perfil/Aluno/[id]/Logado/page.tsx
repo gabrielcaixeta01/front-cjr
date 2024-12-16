@@ -2,74 +2,48 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 import { toast } from "react-toastify";
 import { User } from "@/types";
 import { fetchUserInfo } from "@/utils/api";
-import { BellIcon } from "@heroicons/react/24/solid";
-import { ArrowRightOnRectangleIcon } from "@heroicons/react/24/solid";
+import { BellIcon, ArrowRightOnRectangleIcon } from "@heroicons/react/24/solid";
 import axios from "axios";
 
 export default function PerfilAlunoLogado() {
   const router = useRouter();
+  const { id } = useParams(); // Captura o ID da URL
   const [loading, setLoading] = useState(true);
   const [openComments, setOpenComments] = useState<number | null>(null);
   const [professores, setProfessores] = useState<{ id: number; name: string }[]>([]);
   const [cursos, setCursos] = useState<{ id: number; name: string }[]>([]);
-  const [userInfo, setUserInfo] = useState<User>({
-    id: 0,
-    name: "",
-    email: "",
-    password: "",
-    programId: 0,
-    program: { id: 0, name: "Carregando..." },
-    departmentId: 0,
-    department: { id: 0, name: "Carregando..." },
-    profilepic: "/default-profile.png",
-    avaliacoes: [],
-  });
+  const [userInfo, setUserInfo] = useState<User | null>(null);
 
-  const fixedUserId = 2;
-
-  // Busca informações do usuário
+  // Busca informações do usuário dinamicamente
   useEffect(() => {
     const loadUserInfo = async () => {
       try {
-        const userData = (await fetchUserInfo(fixedUserId)) as User;
-        setUserInfo({
-          id: userData.id || 0,
-          name: userData.name || "",
-          email: userData.email || "",
-          password: userData.password || "",
-          programId: userData.programId || 0,
-          program: userData.program || { id: 0, name: "Carregando..." },
-          departmentId: userData.departmentId || 0,
-          department: userData.department || { id: 0, name: "Carregando..." }, // Converte `Department` para `department`
-          profilepic: userData.profilepic || "/default-profile.png",
-          avaliacoes: userData.avaliacoes || [],
-        });
+        const userData = await fetchUserInfo(Number(id)); // Converte o ID para número
+        setUserInfo(userData);
       } catch (error) {
         console.error("Erro ao carregar as informações do usuário:", error);
       } finally {
         setLoading(false);
       }
     };
-  
-    loadUserInfo();
-  }, []);
+
+    if (id) loadUserInfo();
+  }, [id]);
 
   // Busca professores e cursos
   useEffect(() => {
     const fetchProfessoresECursos = async () => {
       try {
-        const professoresResponse = await axios.get<{ id: number; name: string }[]>(
-          "http://localhost:4000/professors"
-        );
-        const cursosResponse = await axios.get<{ id: number; name: string }[]>(
-          "http://localhost:4000/courses"
-        );
-        setProfessores(professoresResponse.data);
-        setCursos(cursosResponse.data);
+        const [professoresResponse, cursosResponse] = await Promise.all([
+          axios.get("http://localhost:4000/professors"),
+          axios.get("http://localhost:4000/courses"),
+        ]);
+        setProfessores(professoresResponse.data as { id: number; name: string }[]);
+        setCursos(cursosResponse.data as { id: number; name: string }[]);
       } catch (error) {
         console.error("Erro ao buscar professores ou cursos:", error);
       }
@@ -78,7 +52,7 @@ export default function PerfilAlunoLogado() {
     fetchProfessoresECursos();
   }, []);
 
-  if (loading) {
+  if (loading || !userInfo) {
     return <div>Carregando...</div>;
   }
 
@@ -94,7 +68,7 @@ export default function PerfilAlunoLogado() {
               width={80}
               height={80}
               className="w-20 h-10 cursor-pointer ml-5 shadow-md"
-              onClick={() => router.push("/feed/Deslogado")}
+              onClick={() => router.push("/feed/Logado")}
             />
             <div className="flex items-center space-x-5 mr-10">
               <button
@@ -109,11 +83,11 @@ export default function PerfilAlunoLogado() {
                 width={48}
                 height={48}
                 className="w-10 h-10 rounded-full shadow-md bg-white object-cover cursor-pointer"
-                onClick={() => router.push("/perfil/Aluno/Logado")}
+                onClick={() => router.push(`/perfil/Aluno/${userInfo.id}/Logado`)}
               />
               <button
                 className="flex items-center bg-azulCjr text-white rounded-[60px] px-4 py-2 hover:bg-blue-600 transition duration-300 ease-in-out shadow-md hover:shadow-lg"
-                onClick={() => router.push("/feed/Deslogado")}
+                onClick={() => router.push("/feed/Logado")}
               >
                 <ArrowRightOnRectangleIcon className="h-6 w-6 text-white" />
               </button>
@@ -172,7 +146,7 @@ export default function PerfilAlunoLogado() {
             <div className="flex flex-col">
               <button
                 className="bg-azulCjr text-white rounded-[60px] px-4 py-2 hover:bg-blue-600 transition duration-300 ease-in-out shadow-md hover:shadow-lg"
-                onClick={() => router.push("/perfil/Aluno/Logado/Editar")}
+                onClick={() => router.push(`/perfil/Aluno/${userInfo.id}/Editar`)}
               >
                 Editar Perfil
               </button>
@@ -190,7 +164,7 @@ export default function PerfilAlunoLogado() {
                 key={avaliacao.id}
                 className="bg-customGreen rounded-lg shadow mb-4 flex flex-row p-3"
               >
-                <div className="flex items-start justify-center w-16 h-46 mr-2 overflow-hidden">
+                <div className="flex items-start justify-center w-16 h-16 mr-2">
                   <Image
                     src={userInfo.profilepic || "/default-profile.png"}
                     alt="Autor"
@@ -202,20 +176,23 @@ export default function PerfilAlunoLogado() {
                 <div className="max-w-[550px]">
                   <p className="font-bold text-gray-800">{userInfo.name}</p>
                   <p className="text-sm text-gray-500">
-                    {new Date(avaliacao.updatedAt || "").toLocaleDateString()} -{" "}
-                    {professores.find((prof) => prof.id === avaliacao.professorId)?.name || "Professor não encontrado"}{" "}
+                    {new Date(avaliacao.createdAt || "").toLocaleDateString()} -{" "}
+                    {professores.find((prof) => prof.id === avaliacao.professorId)?.name ||
+                      "Professor não encontrado"}{" "}
                     -{" "}
-                    {cursos.find((curso) => curso.id === avaliacao.courseId)?.name || "Curso não encontrado"}
+                    {cursos.find((curso) => curso.id === avaliacao.courseId)?.name ||
+                      "Curso não encontrado"}
                   </p>
                   <p className="text-gray-700 mt-2">{avaliacao.text}</p>
 
+                  {/* Botão para abrir/fechar comentários */}
                   {avaliacao.comments && avaliacao.comments.length > 0 && (
                     <div className="mt-2">
                       <button
                         className="text-gray-500 text-sm font-medium cursor-pointer mb-2"
                         onClick={() =>
-                          setOpenComments((prev) => 
-                            prev === avaliacao.id ? null : avaliacao.id as number | null
+                          setOpenComments((prev) =>
+                            prev === avaliacao.id ? null : avaliacao.id
                           )
                         }
                       >
@@ -224,6 +201,7 @@ export default function PerfilAlunoLogado() {
                           : `Ver comentários (${avaliacao.comments.length})`}
                       </button>
 
+                      {/* Exibe os comentários caso estejam abertos */}
                       {openComments === avaliacao.id &&
                         avaliacao.comments.map((comment) => (
                           <div
