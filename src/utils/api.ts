@@ -1,5 +1,5 @@
 import axios from "axios";
-import { User, Avaliacao, Comment } from "@/types";
+import { User, Avaliacao, Comment, Professor } from "@/types";
 
 // Configuração do Axios com a base URL correta
 export const api = axios.create({
@@ -114,9 +114,14 @@ export const getAllProfs = async () => {
   return response.data;
 };
 
-export const getOneProf = async (id: number) => {
-  const response = await api.get(`/professors/${id}`);
-  return response.data;
+export const fetchProfessorInfo = async (professorId: number): Promise<Professor> => {
+  try {
+    const response = await api.get<Professor>(`/professors/${professorId}`);
+    return response.data;
+  } catch (error) {
+    console.error("Erro ao buscar informações do professor:", error);
+    throw new Error("Erro ao buscar informações do professor.");
+  }
 };
 
 export const getAllCourses = async () => {

@@ -157,7 +157,7 @@ export default function PerfilAlunoDeslogado() {
 
         {/* Avaliações */}
         <section className="mt-3 p-4">
-          <h2 className="text-l font-semibold mb-3 text-black">Publicações</h2>
+          <h2 className="text-l font-semibold mb-3 text-black">Avaliações</h2>
 
           {userInfo.avaliacoes && userInfo.avaliacoes.length > 0 ? (
             userInfo.avaliacoes.map((avaliacao) => (

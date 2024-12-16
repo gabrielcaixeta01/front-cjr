@@ -3,14 +3,23 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import axios from "axios";
 import { Professor } from "@/types";
+import { fetchProfessorInfo } from "@/utils/api";
 
 export default function PerfilProfessorDeslogado() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [openComments, setOpenComments] = useState<number | null>(null);
-  const [professorInfo, setProfessorInfo] = useState<Professor | null>(null);
+  const [professorInfo, setProfessorInfo] = useState<Professor>({
+    id: 0,
+    name: "",
+    departmentId: 0,
+    department: { id: 0, name: "Carregando..." },
+    profilepic: "/default-profile.png",
+    avaliacoes: [],
+    courses: [],
+    createdAt: new Date(),
+  });
 
   const fixedProfessorId = 1;
 
@@ -18,10 +27,16 @@ export default function PerfilProfessorDeslogado() {
   useEffect(() => {
     const loadProfessorInfo = async () => {
       try {
-        const response = await axios.get<Professor>(
-          `http://localhost:4000/professors/${fixedProfessorId}`
-        );
-        setProfessorInfo(response.data);
+        const professorData = (await fetchProfessorInfo(fixedProfessorId)) as Professor;
+        setProfessorInfo({
+          id: professorData.id || 0,
+          name: professorData.name || "",
+          department: professorData.department || { id: 0, name: "Carregando..." },
+          profilepic: professorData.profilepic || "/default-profile.png",
+          courses: professorData.courses || [],
+          avaliacoes: professorData.avaliacoes || [],
+          createdAt: professorData.createdAt || new Date(),
+        });
       } catch (error) {
         console.error("Erro ao carregar informações do professor:", error);
       } finally {
@@ -57,7 +72,7 @@ export default function PerfilProfessorDeslogado() {
               >
                 Login
               </button>
-                </div>
+            </div>
           </div>
         </div>
       </header>
@@ -75,41 +90,19 @@ export default function PerfilProfessorDeslogado() {
           />
         </section>
 
-        <section className="p-4 bg-white flex justify-between">
-          <div className="flex justify-between w-full mx-5">
-            <div className="flex flex-col">
-              <h1 className="text-xl font-bold text-black mb-2">
-                {professorInfo.name}
-              </h1>
-              <div className="flex items-center gap-2 mb-2">
-                <Image
-                  src="/building.png"
-                  alt="Ícone de departamento"
-                  width={24}
-                  height={24}
-                  className="w-6 h-6"
-                />
-                <p className="text-sm text-gray-700">
-                  {professorInfo.department?.name || "Departamento não encontrado"}
-                </p>
-              </div>
-              <div className="flex items-center gap-2 mb-2">
-                <Image
-                  src="/livro.png"
-                  alt="Ícone de curso"
-                  width={24}
-                  height={24}
-                  className="w-6 h-6"
-                />
-                <p className="text-sm text-gray-700">
-                  Cursos:{" "}
-                  {professorInfo.courses
-                    .map((course) => course.name)
-                    .join(", ") || "Nenhum curso associado"}
-                </p>
-              </div>
-            </div>
-          </div>
+        <section className="p-4 bg-white">
+          <h1 className="text-xl font-bold text-black mb-2">
+            {professorInfo.name}
+          </h1>
+          <p className="text-sm text-gray-700 mb-2">
+            Departamento: {professorInfo.department?.name || "Departamento não encontrado"}
+          </p>
+          <p className="text-sm text-gray-700">
+            Cursos:{" "}
+            {(professorInfo.courses ?? [])
+              .map((course) => course.name)
+              .join(", ") || "Nenhum curso associado"}
+          </p>
         </section>
 
         {/* Avaliações */}
@@ -122,34 +115,36 @@ export default function PerfilProfessorDeslogado() {
                 key={avaliacao.id}
                 className="bg-customGreen rounded-lg shadow mb-4 flex flex-row p-3"
               >
+                {/* Foto do Autor */}
                 <div className="flex items-start justify-center w-16 h-16 mr-2">
                   <Image
-                    src="/default-profile.png"
-                    alt="Avatar"
+                    src={avaliacao.user?.profilepic || "/default-profile.png"}
+                    alt="Foto do autor"
                     width={64}
                     height={64}
                     className="w-12 h-12 object-cover rounded-full bg-white"
                   />
                 </div>
+
+                {/* Detalhes da Avaliação */}
                 <div className="max-w-[550px]">
                   <p className="font-bold text-gray-800">
                     {avaliacao.user?.name || "Usuário desconhecido"}
                   </p>
                   <p className="text-sm text-gray-500">
-                    {new Date(avaliacao.createdAt || "").toLocaleDateString()}
+                    {new Date(avaliacao.createdAt || "").toLocaleDateString()} -{" "}
+                    {avaliacao.course?.name || "Curso desconhecido"}
                   </p>
                   <p className="text-gray-700 mt-2">{avaliacao.text}</p>
-                  {avaliacao.isEdited && (
-                    <p className="text-sm text-gray-500 italic mt-1">* Editado</p>
-                  )}
 
+                  {/* Comentários */}
                   {avaliacao.comments && avaliacao.comments.length > 0 && (
                     <div className="mt-2">
                       <button
                         className="text-gray-500 text-sm font-medium cursor-pointer mb-2"
                         onClick={() =>
-                          setOpenComments((prev) => 
-                            prev === avaliacao.id ? null : avaliacao.id as number | null
+                          setOpenComments((prev) =>
+                            prev === avaliacao.id ? null : avaliacao.id
                           )
                         }
                       >
@@ -167,7 +162,7 @@ export default function PerfilProfessorDeslogado() {
                             <p className="font-semibold text-gray-700">
                               {comment.user?.name || "Usuário desconhecido"}:
                             </p>
-                            <p className="text-gray-600 text-sm">{comment.text}</p>
+                            <p className="text-gray-600">{comment.text}</p>
                           </div>
                         ))}
                     </div>
