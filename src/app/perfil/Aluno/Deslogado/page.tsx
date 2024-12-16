@@ -80,7 +80,7 @@ export default function PerfilAlunoDeslogado() {
   }
 
   return (
-    <div className="flex flex-col h-screen min-h-fit bg-gray-100">
+    <div className="flex flex-col min-h-fit bg-gray-100">
       {/* Header */}
       <header className="flex justify-between bg-customGreen pb-1 items-center mb-5">
         <div className="flex bg-azulUnb pb-1">
@@ -106,7 +106,7 @@ export default function PerfilAlunoDeslogado() {
       </header>
 
       {/* Conteúdo Principal */}
-      <main className="w-full max-w-[40%] h-full mx-auto bg-white rounded shadow-md my-5">
+      <main className="w-full max-w-[40%] min-h-fit h-screen mx-auto bg-white rounded shadow-md my-5">
         <section className="bg-customGreen border-b rounded-t p-5 flex items-center">
           <Image
             src={userInfo.profilepic || "/default-profile.png"}

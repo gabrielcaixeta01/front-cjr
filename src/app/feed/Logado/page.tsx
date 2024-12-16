@@ -154,7 +154,7 @@ export default function FeedLogado() {
   };
 
   return (
-    <div className="bg-gray-100 min-h-screen">
+    <div className="bg-gray-100 min-h-fit">
       {/* Header */}
       <header className="flex justify-between bg-customGreen pb-1 items-center mb-5">
         <div className="flex bg-azulUnb pb-1">

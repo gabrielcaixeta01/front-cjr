@@ -80,7 +80,7 @@ export default function PerfilProfessorDeslogado() {
       </header>
 
       {/* Conteúdo Principal */}
-      <main className="w-full max-w-[40%] h-full mx-auto bg-white rounded shadow-md my-5">
+      <main className="w-full max-w-[40%] min-h-fit mx-auto bg-white rounded shadow-md my-5">
         <section className="bg-customGreen border-b rounded-t p-5 flex items-center">
           <Image
             src={professorInfo.profilepic || "/default-profile.png"}
