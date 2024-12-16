@@ -203,7 +203,7 @@ export default function PerfilAlunoLogado() {
                 <div className="max-w-[550px]">
                   <p className="font-bold text-gray-800">{userInfo.name}</p>
                   <p className="text-sm text-gray-500">
-                    {new Date(avaliacao.date || "").toLocaleDateString()} -{" "}
+                    {new Date(avaliacao.updatedAt || "").toLocaleDateString()} -{" "}
                     {professores.find((prof) => prof.id === avaliacao.professorId)?.name || "Professor não encontrado"}{" "}
                     -{" "}
                     {cursos.find((curso) => curso.id === avaliacao.courseId)?.name || "Curso não encontrado"}

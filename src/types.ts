@@ -28,6 +28,7 @@ export interface User {
       name:string;
     }
     comments?: Comment[];
+    nota: number;
     isEdited?: boolean;
     createdAt?: Date;
     updatedAt?: Date;
@@ -46,16 +47,17 @@ export interface Comment {
 }
 
 export interface Professor {
+  id: number;
+  name: string;
+  department: {
     id: number;
     name: string;
-    department: {
-        id: number;
-        name: string;
-    };
-    courses: {
-        id: number;
-        name: string;
-    }[];
-    createdAt: Date;
-    profilepic?: string;
+  };
+  courses: {
+    id: number;
+    name: string;
+  }[];
+  avaliacoes: Avaliacao[]; // Adicionado aqui
+  profilepic?: string;
+  createdAt: Date;
 }
