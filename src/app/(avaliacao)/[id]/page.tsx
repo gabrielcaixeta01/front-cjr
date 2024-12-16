@@ -11,6 +11,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { Avaliacao, Comment, User } from "@/types";
 import { findAval, fetchUserInfo, getOneProf, deleteAval, getOneCourse, createComment, updateAval, deleteComment, updateComment } from "@/utils/api";
 import { Avaliacao } from "@prisma/client";
+import { text } from 'stream/consumers';
 
 export default function TelaAvaliacao() {
   
@@ -29,6 +30,7 @@ export default function TelaAvaliacao() {
   const [loading, setLoading] = useState(true);
   const [idCommentDeleted, setIdCommentDeleted] = useState(0);
   const [idCommentEdited, setIdCommentEdited] = useState(0);
+  const [lengthComment, setLengthComment] = useState(textoComment.length)
 
   const [localAval, setLocalAval] = useState<Avaliacao>({
       id: 0,
@@ -113,7 +115,7 @@ export default function TelaAvaliacao() {
   //função para tratar da data
   const formatData = (dataPrisma:Date) => {
     if (dataPrisma!==undefined){
-      const dataFormatada = format(dataPrisma, 'yyyy/MM/dd HH:mm');
+      const dataFormatada = format(dataPrisma, 'dd/MM/yyyy HH:mm');
       const dataSeparada = dataFormatada.split(" ");
       const data = dataSeparada[0];
       const hora = dataSeparada[1];
@@ -151,10 +153,10 @@ export default function TelaAvaliacao() {
       <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
         <div className="h-screen  w-1/2 max-h-[45%]  flex flex-col mx-auto bg-[#3EEE9A] rounded-md items-center">
           <div className="flex flex-col h-[12rem] w-[90%] bg-[#A4FED3] mt-[2rem] rounded-md">
-            <textarea value={textoComment} onChange={(event)=> setTextoComment(event.target.value)} className="text-black h-full placeholder-black placeholder-opacity-50 mt-2 pt-[2px] border-none pl-[1rem] bg-[#A4FED3] leading-tight focus:outline-none w-full p-2 resize-none overflow-y-auto  border rounded-md" placeholder="Digite seu comentário aqui"> </textarea>
+            <textarea value={textoComment} maxLength={500} onChange={(event)=> {setTextoComment(event.target.value); setLengthComment(event.target.value.length)}} className="text-black h-full  shadow-sm placeholder-black placeholder-opacity-50 mt-2 pt-[2px] border-none pl-[1rem] bg-[#A4FED3] leading-tight focus:outline-none w-full p-2 resize-none overflow-y-auto  border rounded-md" placeholder="Digite seu comentário aqui"> </textarea>
         </div>
-          <div className="ml-auto items-right pr-5 mt-6">
-            <button onClick={()=> {setTextoComment(""); toggleModalComment()}}
+          <div className="ml-auto items-right mr-6 mt-6">
+            <button onClick={()=> {setTextoComment(""); toggleModalComment(); setLengthComment(textoComment.length)}}
               className="bg-transparent rounded-lg hover:scale-110  duration-200 w-20 h-10 text-xl text-[23px] font-400 leading-[54.46px] mr-9"
               >
               Cancelar
@@ -172,6 +174,7 @@ export default function TelaAvaliacao() {
                 try {
                   createComment(newComment);
                   setTextoComment("");
+                  setLengthComment(textoComment.length);
                   toggleModalComment();
                   window.location.reload()
                   toast.success("O comentário foi criado com sucesso", {autoClose:2200})}
@@ -232,52 +235,52 @@ export default function TelaAvaliacao() {
   const modalEditAval = () => {
     const modal = <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
     <div className="h-screen  w-1/2 max-h-[47%]  flex flex-col mx-auto bg-[#3EEE9A] rounded-md items-center">
-        <div className="flex flex-col h-[12rem] w-[90%] bg-[#A4FED3] mt-[2rem] rounded-md">
-          <textarea value={textoEdit} onChange={(event)=> setTextoEdit(event.target.value)} className="text-black h-full placeholder-black placeholder-opacity-50 mt-2 pt-[2px] border-none pl-[1rem] bg-[#A4FED3] leading-tight focus:outline-none w-full p-2 resize-none overflow-y-auto  border rounded-md"> </textarea>
-          </div>
-          <div className="ml-auto items-right pr-5 mt-6">
-            <button onClick={()=> 
-              {setTextoEdit("");
-                toggleModalEdit();
-              }}
-              className="bg-transparent rounded-lg hover:scale-110 duration-200 w-20 h-10 text-xl text-[23px] font-400 leading-[54.46px] mr-9"
-              >
-              Cancelar
-            </button>
-            <button onClick={() => {
-                if (textoEdit===""){
-                  toast.error("O comentário não pode ser vazio");
-                }
-                else {
-                  setTextoEdit(textoEdit);          
-                  const avalEdited: Partial <Avaliacao> = {
-                    text: textoEdit,
-                    isEdited:true,
-                  }
-                  try{
-                    updateAval(avalEdited,localAval.id);
-                    toast.success("A avaliação foi editada com sucesso", {autoClose:2200});
-                    window.location.reload()
-                    toggleModalEdit(); }
-                  catch(error){
-                    toast.error("Erro ao editar avaliação", {autoClose:2200})
-                  }                                  
-                }
-              }}
-                    className="bg-[#A4FED3] text-[#2B895C] font-400 text-[20px] rounded-lg hover:scale-110 duration-200 w-32 h-10 text-xl leading-[42.36px]  mr-10 ml-2"
-                    >
-                    Editar
-              </button>
-            </div>
-            <div className="flex mr-auto ml-4 items-left justify-start">
-              <Image
-                src="/lixeira.png"
-                alt="Excluir"
-                width={100} 
-                height={100}
-                className="w-8 h-8 mb-2 object-cover mx-2 shadow-md hover:bg-blue-200 transition duration-300 ease-in-out cursor-pointer"
-              />   
-            </div>
+      <div className="flex flex-col h-[12rem] w-[90%] bg-[#A4FED3] mt-[2rem] rounded-md">
+        <textarea value={textoEdit} onChange={(event)=> setTextoEdit(event.target.value)} className="text-black h-full placeholder-black placeholder-opacity-50 mt-2 pt-[2px] border-none pl-[1rem] bg-[#A4FED3] leading-tight focus:outline-none w-full p-2 resize-none overflow-y-auto  border rounded-md"> </textarea>
+      </div>
+      <div className="ml-auto items-right mr-6 mt-6">
+        <button onClick={()=> 
+          {setTextoEdit("");
+            toggleModalEdit();
+          }}
+          className="bg-transparent rounded-lg hover:scale-110 duration-200 w-20 h-10 text-xl text-[23px] font-400 leading-[54.46px] mr-9"
+          >
+          Cancelar
+        </button>
+        <button onClick={() => {
+            if (textoEdit===""){
+              toast.error("O comentário não pode ser vazio");
+            }
+            else {
+              setTextoEdit(textoEdit);          
+              const avalEdited: Partial <Avaliacao> = {
+                text: textoEdit,
+                isEdited:true,
+              }
+              try{
+                updateAval(avalEdited,localAval.id);
+                toast.success("A avaliação foi editada com sucesso", {autoClose:2200});
+                window.location.reload()
+                toggleModalEdit(); }
+              catch(error){
+                toast.error("Erro ao editar avaliação", {autoClose:2200})
+              }                                  
+            }
+          }}
+                className="bg-[#A4FED3] text-[#2B895C] font-400 text-[20px] rounded-lg hover:scale-110 duration-200 w-32 h-10 text-xl leading-[42.36px]  mr-10 ml-2"
+                >
+                Editar
+          </button>
+        </div>
+        <div className="flex mr-auto ml-4 items-left justify-start">
+          <Image
+            src="/lixeira.png"
+            alt="Excluir"
+            width={100} 
+            height={100}
+            className="w-8 h-8 mb-2 object-cover mx-2 shadow-md hover:bg-blue-200 transition duration-300 ease-in-out cursor-pointer"
+          />   
+        </div>
       </div>
     </div>
     return modal;                          
@@ -290,7 +293,7 @@ export default function TelaAvaliacao() {
         <div className="flex flex-col h-[12rem] w-[90%] bg-[#A4FED3] mt-[2rem] rounded-md">
           <textarea value= {textoEditComment} onChange={(event)=> setTextoEditComment(event.target.value)} className="text-black h-full placeholder-black mt-2 pt-[2px] border-none pl-[1rem] bg-[#A4FED3] leading-tight focus:outline-none w-full p-2 resize-none overflow-y-auto  border rounded-md"> </textarea>
         </div>
-        <div className="ml-auto items-right pr-5 mt-6">
+        <div className="ml-auto items-right mr-6 mt-6">
           <button onClick={()=> 
             {setTextoEditComment("");
               toggleEditComment();
@@ -431,11 +434,6 @@ export default function TelaAvaliacao() {
     loadUserInfo();
   }, []);
 
-  useEffect (()=>{
-    console.log(localAval)
-    console.log(localAval.comments)
-  },[localAval.comments, localAval]) 
-
 
   //tela de carregamento
   if (loading) {
@@ -484,7 +482,7 @@ export default function TelaAvaliacao() {
   //tela ao terminar de carregar
   return (
     <>
-      <div className="flex flex-col h-screen min-h-screen overflow-y-scroll bg-gray-100">
+      <div className="flex flex-col h-screen min-h-fit overflow-y-scroll bg-gray-100">
                <header className="flex justify-between bg-customGreen pb-1 items-center mb-2">
                  <div className="flex bg-azulUnb pb-1">
                    <div className="flex justify-between w-screen bg-white py-3 items-center">
@@ -522,11 +520,11 @@ export default function TelaAvaliacao() {
                  </div>
             </header>
 
-        <div className="w-full max-w-[40%] mx-auto bg-white h-screen rounded shadow-md ">
-          <div className=" w-full max-w-[95%] bg-[#3EEE9A] rounded-md mt-8 flex flex-col mx-auto">
+        <div className="w-full max-w-[40%] mx-auto min-h-fit bg-white h-screen rounded shadow-md ">
+          <div className=" w-full max-w-[95%] bg-[#3EEE9A] rounded-md mt-8 flex flex-col mx-auto mb-4" >
               <div className=" w-full max-w-[100%] flex flex-col mx-auto border-b-[1.5px] border-b-black pb-[0.7rem]">
                 <div className="flex mx-auto items-center p-3 pb-1 ">
-                    <div className="pl-1 items-center">
+                  <div className="pl-1 items-center">
                     <Image
                       src={userAvalInfo.profilepic}
                       alt="Foto de perfil"
@@ -535,26 +533,26 @@ export default function TelaAvaliacao() {
                       className="w-9 h-9 rounded-full shadow-md bg-white object-cover cursor-pointer"
                       onClick={() => router.push("/perfil/Aluno/Logado")}
                     />
-                    </div>
-                    <span className="font-sans text-black ml-2 text-[15px] font-[500] leading-[16.94px] items-center hover:bg-blue-200 transition duration-300 ease-in-out cursor-pointer" onClick={()=> router.push("/perfil/Aluno/Logado")}> {userAvalInfo.name} </span>
-                    <span className="font-sans text-[#71767B] text-[12px] font-[350] leading-[16.94px] flex pl-1.5 items-center"> · {formatData(localAval.updatedAt).data}, às {formatData(localAval.updatedAt).hora} </span>
-                    <span className="font-sans text-[#71767B] text-[12px] font-[350] leading-[16.94px] flex pl-1 items-center"> · {localProf.name} </span>
-                    <span className="font-sans text-[#71767B] text-[12px] font-[350] leading-[16.94px] flex pl-1 items-center"> · {localCourse.name} </span>
+                  </div>
+                  <span className="font-sans text-black ml-2 text-[15px] font-[500] leading-[16.94px] items-center hover:bg-blue-200 transition duration-300 ease-in-out cursor-pointer" onClick={()=> router.push("/perfil/Aluno/Logado")}> {userAvalInfo.name} </span>
+                  <span className="font-sans text-[#71767B] text-[12px] font-[350] leading-[16.94px] flex pl-1.5 items-center"> · {formatData(localAval.updatedAt).data}, às {formatData(localAval.updatedAt).hora} </span>
+                  <span className="font-sans text-[#71767B] text-[12px] font-[350] leading-[16.94px] flex pl-1 items-center"> · {localProf.name} </span>
+                  <span className="font-sans text-[#71767B] text-[12px] font-[350] leading-[16.94px] flex pl-1 items-center"> · {localCourse.name} </span>
                 </div>
                 <div className="pl-[6.8rem] max-w-[100%] break-words"> 
-                  <p className="text-[#222E50] text-[15px] font-[500] leading-[18.15px] pb-2 pr-2 overflow-wrap: break-word white-space: normal max-width: 100%"> a {localAval.text} </p>
+                  <p className="text-[#222E50] text-[15px] font-[500] leading-[18.15px] pb-2 pr-4 overflow-wrap: break-word white-space: normal max-width: 100%"> {localAval.text} </p>
                 </div>
                 <div className="flex items-center justify-between pl-[6.5rem]">
                 <div className="flex"> 
-                    <Image
-                        src="/comente.png"
-                        alt="Comentários"
-                        width={48}
-                        height={48}
-                        className="w-6 h-6 rounded-full shadow-md hover:bg-blue-200 transition duration-300 hover:scale-110  ease-in-out cursor-pointer"
-                        onClick= {()=>toggleModalComment()}
-                      />
-                      <span className="font-sans text-[#222E50] text-[12px] font-[600] leading-[14.52px] flex pl-1 items-center"> {localAval.comments?.length} comentários</span>
+                  <Image
+                      src="/comente.png"
+                      alt="Comentários"
+                      width={48}
+                      height={48}
+                      className="w-6 h-6 rounded-full shadow-md hover:bg-blue-200 transition duration-300 hover:scale-110  ease-in-out cursor-pointer"
+                      onClick= {()=>toggleModalComment()}
+                    />
+                    <span className="font-sans text-[#222E50] text-[12px] font-[600] leading-[14.52px] flex pl-1 items-center"> {localAval.comments?.length} comentários</span>
                   </div>
                   {localAval.userId===userInfo.id && (
                     <div className="flex pr-2">             
@@ -565,8 +563,7 @@ export default function TelaAvaliacao() {
                         height={64}
                         onClick = {()=> toggleModalEdit()}
                         className="w-4 h-4 object-cover mx-2 shadow-md hover:bg-blue-200 transition duration-300 hover:scale-110 ease-in-out cursor-pointer"   
-                      />
-                        
+                      />  
                       <Image
                         src="/lixeira.png"
                         alt="Excluir avaliação"
@@ -575,7 +572,7 @@ export default function TelaAvaliacao() {
                         onClick = {()=> toggleDeleteAval()}
                         className="w-4 h-4 object-cover mx-2 shadow-md hover:bg-blue-200 transition duration-300 hover:scale-110  ease-in-out cursor-pointer"
                       />   
-                  </div>
+                    </div>
                   )}
                   {isModalCommentOpen && (
                     modalCreateComment()                           
@@ -588,11 +585,11 @@ export default function TelaAvaliacao() {
                   )}                             
                   </div>                         
                 </div>             
-              <div className=" pt-[1rem] w-full max-w-[70%] flex flex-col mx-auto  mb-2 justify-center">
+              <div className="mt-3 w-full max-w-[70%] flex flex-col mx-auto  mb-4 justify-center">
                 {localAval.comments?.map((comentario, index)=> (                       
-                  <div key={comentario.id}>
+                  <div key={comentario.id} className='mt-1'>
                   <div  className="flex mx-left mb-[0.2rem] items-center"> 
-                      <div className="items-center">
+                    <div className="items-center">
                       <Image
                         src="/gabigol.jpg"
                         alt="Foto de perfil"
@@ -602,8 +599,7 @@ export default function TelaAvaliacao() {
                         onClick={() => router.push("/perfil/Aluno/Logado")}
                       />
                     </div>
-                    <span onClick= {()=> {
-                    }} className="font-sans text-black ml-2 text-[13px] font-[500] leading-[15.73px] text-center items-center hover:bg-blue-200 transition duration-300 ease-in-out cursor-pointer"> {comentario.user?.name} </span> 
+                    <span onClick= {()=> router.push("/perfil/aluno/Logado")} className="font-sans text-black ml-2 text-[13px] font-[500] leading-[15.73px] text-center items-center hover:bg-blue-200 transition duration-300 ease-in-out cursor-pointer"> {comentario.user?.name} </span> 
                     <span className="font-sans text-[#71767B] pl-2 text-[13px] font-[350] leading-[15.73px] text-center items-center"> · {formatData(comentario.updatedAt).data}, ás {formatData(comentario.updatedAt).hora}  </span>  
                     {comentario.userId===localAval.userId && (
                       <div className="ml-auto flex flex-row">
@@ -642,19 +638,17 @@ export default function TelaAvaliacao() {
                   <div className="pl-[2.3rem] break-words"> 
                     <p className="text-[#222E50] text-[14px] text-[500] leading-[16.94px] pb-2"> {comentario.text} </p>
                   </div>
-                    
                   {index !== localAval.comments.length - 1 && (
-                    <div className="border-b border-gray-300 w-full mb-[0.5rem]" >
+                    <div className="border-b border-[#71767B] w-full mb-[0.5rem]" >
                     </div>
                   )}
                 </div>
-                )
-                  
+                )  
                 )}
               </div>
           </div>
         </div>
-        </div>
-      </>
+      </div>
+    </>
   )
 }
