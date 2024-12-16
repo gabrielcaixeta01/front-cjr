@@ -10,6 +10,8 @@
   },
   "dependencies": {
     "@heroicons/react": "^2.2.0",
+    "@prisma/client": "^6.0.1",
+    "@types/axios": "^0.9.36",
     "axios": "^1.7.9",
     "bcrypt": "^5.1.1",
     "date-fns": "^4.1.0",

@@ -48,16 +48,32 @@ export interface Comment {
 }
 
 export interface Professor {
+  id: number;
+  name: string;
+  department: {
     id: number;
     name: string;
-    department: {
-        id: number;
-        name: string;
-    };
-    courses: {
-        id: number;
-        name: string;
-    }[];
-    createdAt: Date;
-    profilepic?: string;
+  };
+  courses: {
+    id: number;
+    name: string;
+  }[];
+  avaliacoes: Avaliacao[]; // Adicionado aqui
+  profilepic?: string;
+  createdAt: Date;
+}
+
+export interface Course {
+  id: number;
+  name: string;
+  department: {
+    id: number;
+    name: string;
+  };
+  professors: {
+    id: number;
+    name: string;
+  }[];
+  avaliacoes: Avaliacao[]; // Adicionado aqui
+  createdAt: Date;
 }

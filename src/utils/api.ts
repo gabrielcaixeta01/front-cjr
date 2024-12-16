@@ -8,39 +8,32 @@ export const api = axios.create({
 });
 
 // ** Funções relacionadas a usuários **
-
 export const getUsers = async (): Promise<User[]> => {
-  // Corrigido para usar 'user'
   const response = await api.get<User[]>("/user");
   return response.data;
 };
 
 export const getUser = async (id: number): Promise<User> => {
-  // Corrigido para usar 'user'
   const response = await api.get<User>(`/user/${id}`);
   return response.data;
 };
 
 export const createUser = async (user: Partial<User>): Promise<User> => {
-  // Corrigido para usar 'user'
   const response = await api.post<User>("/user", user);
   return response.data;
 };
 
 export const updateUser = async (user: User): Promise<User> => {
-  // Este já está correto
   const response = await api.patch<User>(`/user/${user.id}`, user);
   return response.data;
 };
 
 export const deleteUser = async (id: number): Promise<void> => {
-  // Corrigido para usar 'user'
   await api.delete<void>(`/user/${id}`);
 };
 
 export const fetchUserID = async (): Promise<number> => {
   try {
-    // Este já está correto
     const response = await api.get<{ id: number }>("/user/me");
     return response.data.id;
   } catch (error) {
@@ -51,7 +44,6 @@ export const fetchUserID = async (): Promise<number> => {
 
 export const fetchUserInfo = async (userId: number): Promise<User> => {
   try {
-    // Corrigido para usar 'user'
     const response = await api.get<User>(`/user/${userId}`);
     return response.data;
   } catch (error) {
@@ -60,12 +52,11 @@ export const fetchUserInfo = async (userId: number): Promise<User> => {
   }
 };
 
-
 // ** Funções relacionadas a avaliações **
-export const findAval = async (id:number) => {
+export const findAval = async (id: number) => {
   const response = await api.get(`/avaliacao/${id}`);
   return response.data;
-}
+};
 
 export const getAllAval = async () => {
   const response = await api.get("/avaliacao");
@@ -73,13 +64,13 @@ export const getAllAval = async () => {
 };
 
 export const createAval = async (aval: Partial<Avaliacao>) => {
-  const response = await api.post("/avaliacao", {
-    text: aval.text,
-    userId: aval.userId,
-    professorId: aval.professorId,
-    courseId: aval.courseId,
-  });
-  return response.data;
+    const response = await api.post("/avaliacao", {
+      text: aval.text,              // Texto da avaliação
+      userId: aval.userId,          // ID do usuário
+      professorId: aval.professorId,// ID do professor
+      courseId: aval.courseId,      // ID do curso
+    });
+    return response.data;
 };
 
 export const updateAval = async (aval: Partial<Avaliacao>, id: number) => {
@@ -90,14 +81,12 @@ export const updateAval = async (aval: Partial<Avaliacao>, id: number) => {
   return response.data;
 };
 
-export const deleteAval = async (id:number) => {
+export const deleteAval = async (id: number) => {
   const response = await api.delete(`/avaliacao/${id}`);
   return response.data;
-}
-
+};
 
 // ** Funções relacionadas a comentários **
-
 export const createComment = async (comment: Partial<Comment>) => {
   const response = await api.post("/comment", {
     text: comment.text,
@@ -107,40 +96,38 @@ export const createComment = async (comment: Partial<Comment>) => {
   return response.data;
 };
 
-export const deleteComment = async (id:number)=>{
-  console.log("id do backend" + id)
+export const deleteComment = async (id: number) => {
   const response = await api.delete(`/comment/${id}`);
   return response.data;
-}
+};
 
-export const updateComment = async (comment: Partial<Comment>, id:number) => {
+export const updateComment = async (comment: Partial<Comment>, id: number) => {
   const response = await api.patch(`/comment/${id}`, {
-    text:comment.text
+    text: comment.text,
   });
   return response.data;
-}
+};
 
 // ** Funções relacionadas a professores, cursos e departamentos **
-
 export const getAllProfs = async () => {
   const response = await api.get("/professors");
   return response.data;
 };
 
-export const getOneProf = async (id:number) => {
+export const getOneProf = async (id: number) => {
   const response = await api.get(`/professors/${id}`);
   return response.data;
-}
+};
 
 export const getAllCourses = async () => {
   const response = await api.get("/courses");
   return response.data;
 };
 
-export const getOneCourse = async (id:number) => {
+export const getOneCourse = async (id: number) => {
   const response = await api.get(`/courses/${id}`);
   return response.data;
-}
+};
 
 export const getAllDepartments = async () => {
   const response = await api.get("/departments");
@@ -152,7 +139,7 @@ export const getAllPrograms = async () => {
   return response.data;
 };
 
-export const getUserByEmail = async (email:string) => {
+export const getUserByEmail = async (email: string) => {
   const response = await api.get(`/user/email/${email}`);
   return response.data;
-}
+};

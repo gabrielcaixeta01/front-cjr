@@ -123,8 +123,7 @@ export default function PerfilAlunoLogado() {
       </header>
 
       {/* Conteúdo Principal */}
-      <main className="w-full max-w-[40%] h-full mx-auto bg-white rounded shadow-md my-5">
-        {/* Perfil */}
+      <main className="w-full max-w-[40%] min-h-fit mx-auto bg-white rounded shadow-md my-5">
         <section className="bg-customGreen border-b rounded-t p-5 flex items-center">
           <Image
             src={userInfo.profilepic || "/default-profile.png"}
@@ -203,37 +202,38 @@ export default function PerfilAlunoLogado() {
                 <div className="max-w-[550px]">
                   <p className="font-bold text-gray-800">{userInfo.name}</p>
                   <p className="text-sm text-gray-500">
-                    {new Date(avaliacao.date || "").toLocaleDateString()} -{" "}
+                    {new Date(avaliacao.updatedAt || "").toLocaleDateString()} -{" "}
                     {professores.find((prof) => prof.id === avaliacao.professorId)?.name || "Professor não encontrado"}{" "}
                     -{" "}
                     {cursos.find((curso) => curso.id === avaliacao.courseId)?.name || "Curso não encontrado"}
                   </p>
                   <p className="text-gray-700 mt-2">{avaliacao.text}</p>
 
-                  {/* Botão para mostrar mais comentários */}
                   {avaliacao.comments && avaliacao.comments.length > 0 && (
-                    <div className="mt-1">
+                    <div className="mt-2">
                       <button
                         className="text-gray-500 text-sm font-medium cursor-pointer mb-2"
                         onClick={() =>
-                          setOpenComments((prev) =>
-                            prev === (avaliacao.id ?? null) ? null : avaliacao.id ?? null
+                          setOpenComments((prev) => 
+                            prev === avaliacao.id ? null : avaliacao.id as number | null
                           )
                         }
                       >
-                        {openComments === avaliacao.id ? "Ocultar comentários" : "Ver mais comentários"}
+                        {openComments === avaliacao.id
+                          ? "Ocultar comentários"
+                          : `Ver comentários (${avaliacao.comments.length})`}
                       </button>
 
                       {openComments === avaliacao.id &&
                         avaliacao.comments.map((comment) => (
                           <div
                             key={comment.id}
-                            className="text-sm text-gray-500 bg-gray-100 rounded-[50px] p-4 mt-2"
+                            className="bg-gray-100 rounded-[50px] text-sm p-4 mt-1"
                           >
                             <p className="font-semibold text-gray-700">
                               {comment.user?.name || "Usuário desconhecido"}:
                             </p>
-                            <p>{comment.text}</p>
+                            <p className="text-gray-600 text-sm">{comment.text}</p>
                           </div>
                         ))}
                     </div>

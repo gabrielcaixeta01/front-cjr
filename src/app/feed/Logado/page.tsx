@@ -1,28 +1,20 @@
 "use client";
-
-"use client";
-import 'react-toastify/dist/ReactToastify.css';
-import { getAllProfs } from "@/utils/api";
-import { getAllCourses } from "@/utils/api";
-import { useParams } from 'next/navigation';
-import { Avaliacao } from "@/types";
-import { createAval } from "@/utils/api";
-import { create } from "domain";
-import { Avaliacao } from "@prisma/client";
 import Image from "next/image";
+import axios from "axios";
 import { useRouter } from "next/navigation";
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import { toast } from "react-toastify";
-import { Professor } from "@/types";
+import 'react-toastify/dist/ReactToastify.css';
+import { getAllProfs, getAllCourses, createAval, fetchUserInfo } from "@/utils/api";
+import { User, Professor, Course, Avaliacao } from "@/types";
 import { BellIcon } from "@heroicons/react/24/solid";
 import { ArrowRightOnRectangleIcon } from "@heroicons/react/20/solid";
 
 export default function FeedLogado() {
     const router = useRouter();
     const [texto, setTexto] = useState("");
-    const [listaProfs, setListaProfs] = useState <any[]>([]);
-    const [listaCourses, setListaCourses] = useState <any[]> ([]);
+    const [listaProfs, setListaProfs] = useState<Professor[]>([]);
+    const [listaCourses, setListaCourses] = useState<Course[]>([]);
     const [idProfAvaliacao, setIdProfAvaliacao] = useState("-1");
     const [idCourseAvaliacao, setIdCourseAvaliacao] = useState("-1");
     const [profSelected, setProfSelected] = useState("-1");
@@ -31,55 +23,67 @@ export default function FeedLogado() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [professores, setProfessores] = useState<Professor[]>([]);
     const [filteredProfessores, setFilteredProfessores] = useState<Professor[]>([]);
-    const [profilePic, setProfilePic] = useState("/default-profile.png");
+    const [userInfo, setUserInfo] = useState<User>({
+        id: 0,
+        name: "",
+        email: "",
+        password: "",
+        programId: 0,
+        program: { id: 0, name: "Carregando..." },
+        departmentId: 0,
+        department: { id: 0, name: "Carregando..." },
+        profilepic: "/default-profile.png",
+        avaliacoes: [],
+      });
     
-    const getProfs = async () => {
-      try {
-        const professores = await getAllProfs();
-        setListaProfs (professores)
-      } catch (error){
-        console.log(error)
-      }
-    }
-    useEffect (()=>{
-      getProfs()
-    },[])
+      const fixedUserId = 2;
+    
+      // Busca informações do usuário
+      useEffect(() => {
+        const loadUserInfo = async () => {
+          try {
+            const userData = (await fetchUserInfo(fixedUserId)) as User;
+            setUserInfo({
+              id: userData.id || 0,
+              name: userData.name || "",
+              email: userData.email || "",
+              password: userData.password || "",
+              programId: userData.programId || 0,
+              program: userData.program || { id: 0, name: "Carregando..." },
+              departmentId: userData.departmentId || 0,
+              department: userData.department || { id: 0, name: "Carregando..." }, // Converte `Department` para `department`
+              profilepic: userData.profilepic || "/default-profile.png",
+              avaliacoes: userData.avaliacoes || [],
+            });
+          } catch (error) {
+            console.error("Erro ao buscar dados do usuário:", error);
+          }
+        };
+      
+        loadUserInfo();
+      }, []);
+    
+      const fetchData = async () => {
+        try {
+          const [professores, courses] = await Promise.all([getAllProfs(), getAllCourses()]);
+          setListaProfs(professores as Professor[]);
+          setListaCourses(courses as Course[]);
+          setFilteredProfessores(professores as Professor[]);
+        } catch (error) {
+          console.error("Erro ao buscar dados:", error);
+        }
+      };
+      
+      useEffect(() => { fetchData(); }, []);
   
-    const getCourses = async()=> {
-      try {
-        const courses = await getAllCourses();
-        setListaCourses(courses);
-      } catch (error){
-        console.log(error);
-      }
-    }
-    useEffect(()=>{
-      getCourses()
-    },[])
-  
-    const creatingAval = async (aval:Partial<Avaliacao>) => {
-      try {
-        const created = await createAval(aval);
-      }
-      catch (error){
-        console.log(error);
-      }
-    }
-
-  // Busca apenas o ID e a foto de perfil do usuário
-  useEffect(() => {
-    const fetchUserInfo = async () => {
-      try {
-        const response = await axios.get("http://localhost:4000/users/me"); // Substitua pela URL correta
-        const userData = response.data as { profilepic?: string };
-        setProfilePic(userData.profilepic || "/default-profile.png");
-      } catch (error) {
-        toast.error("Erro ao carregar informações do usuário.");
-        console.error("Erro ao carregar informações do usuário:", error);
-      }
-    };
-    fetchUserInfo();
-  }, []);
+      const creatingAval = async (aval: Partial<Avaliacao>) => {
+        try {
+          await createAval(aval); // Remova a variável 'created' se não for necessária
+          console.log("Avaliação criada com sucesso.");
+        } catch (error) {
+          console.error("Erro ao criar avaliação:", error);
+        }
+      };
 
   const togglePopup = () => {
     setIsPopupOpen(!isPopupOpen);
@@ -91,17 +95,20 @@ export default function FeedLogado() {
 
   // Função para buscar professores
   useEffect(() => {
+    let isMounted = true;
     const fetchProfessores = async () => {
       try {
-        const response = await axios.get("http://localhost:4000/professors"); // Substitua pela URL correta
-        setProfessores(response.data as Professor[]);
-        setFilteredProfessores(response.data as Professor[]);
+        const response = await axios.get("http://localhost:4000/professors");
+        if (isMounted) {
+          setProfessores(response.data as Professor[]);
+          setFilteredProfessores(response.data as Professor[]);
+        }
       } catch (error) {
-        toast.error("Erro ao buscar professores.");
         console.error("Erro ao buscar professores:", error);
       }
     };
     fetchProfessores();
+    return () => { isMounted = false; }; // Cleanup
   }, []);
 
   // Função de busca
@@ -115,6 +122,13 @@ export default function FeedLogado() {
       professor.name.toLowerCase().includes(query.toLowerCase())
     );
     setFilteredProfessores(filtered);
+  };
+  const resetModalFields = () => {
+    setTexto("");
+    setProfSelected("-1");
+    setCourseSelected("-1");
+    setIdProfAvaliacao("-1");
+    setIdCourseAvaliacao("-1");
   };
 
   // Função de ordenação
@@ -140,7 +154,7 @@ export default function FeedLogado() {
   };
 
   return (
-    <div className="bg-gray-100 min-h-screen">
+    <div className="bg-gray-100 min-h-fit">
       {/* Header */}
       <header className="flex justify-between bg-customGreen pb-1 items-center mb-5">
         <div className="flex bg-azulUnb pb-1">
@@ -161,7 +175,7 @@ export default function FeedLogado() {
                 <BellIcon className="h-6 w-6 text-white" />
               </button>
               <Image
-                src={profilePic}
+                src={userInfo.profilepic || "/default-profile.png"}
                 alt="Foto de perfil"
                 width={48}
                 height={48}
@@ -199,7 +213,6 @@ export default function FeedLogado() {
             Ordenar
           </button>
         </div>
-        
         {isPopupOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded-lg shadow-md w-80">
@@ -245,10 +258,11 @@ export default function FeedLogado() {
               Fechar
             </button>
           </div>
+          
         </div>
       )}
-    
       </div>
+
       <div className="flex  mx-auto w-[20%] max-w-[30%] max-h-[2%]">
         <button
             className="bg-azulCjr text-white px-6 py-4 ml-2 rounded-lg shadow-md hover:shadow-lg hover:bg-blue-600 transition duration-500"
@@ -270,7 +284,7 @@ export default function FeedLogado() {
                   </select>
                 
                   <select value={courseSelected} className="flex flex-col bg-white h-[2rem] w-[90%] justify-between items-left hover:cursor-pointer rounded-md text-[#999797] font-[300] text-[18px]  mt-6 leading-[3rem]" onChange={(event)=> {setIdCourseAvaliacao(event.target.value); setCourseSelected(event.target.value)}}>
-                    <option value="-1"  disabled selected className="text-[#999797] font-[300] text-[18px] leading-[29.05px] pl-2">
+                    <option value="-1"  disabled className="text-[#999797] font-[300] text-[18px] leading-[29.05px] pl-2">
                       Disciplina
                     </option>
                     {listaCourses.map((course) => (
@@ -284,42 +298,32 @@ export default function FeedLogado() {
                   </div>
         
                     <div className="ml-auto items-right pr-5 mt-6">
-                      <button onClick={()=> {setTexto("");
-                        setProfSelected("-1");
-                        setCourseSelected("-1");
-                        toggleModal();
-                        }}
+                      <button onClick={() => { resetModalFields(); toggleModal(); }}
                         className="bg-transparent rounded-lg hover:scale-110 duration-200 w-20 h-10 text-xl text-[23px] font-400 leading-[54.46px] mr-9"
                         >
                         Cancelar
                       </button>
                       <button onClick={() => {
-                          if (texto === "") {
-                            toast.error("A avaliação não pode ser vazia");
-                          } else if (parseInt(idProfAvaliacao, 10) === -1) {
-                            toast.error("Selecione um professor");
-                          } else if (parseInt(idCourseAvaliacao, 10) === -1) {
-                            toast.error("Selecione uma disciplina");
-                          } else {
-                            const newAval: Partial<Avaliacao>={
-                              text: texto,
-                              professorId: parseInt(idProfAvaliacao, 10),
-                              courseId: parseInt(idCourseAvaliacao,10),
-                              userId:2
-                            };                       
-                            creatingAval(newAval);
-                            setTexto("");
-                            toast.success("A avaliação foi criada com sucesso", { autoClose: 2200 });
-                            setIdCourseAvaliacao("-1");
-                            setIdProfAvaliacao("-1");
-                            setProfSelected("-1");
-                            setCourseSelected("-1");
-                            toggleModal();
-                          }
-                        }}
-                          className="bg-[#A4FED3] text-[#2B895C] font-400 text-[20px] rounded-lg hover:scale-110 duration-200 w-32 h-10 text-xl leading-[42.36px]  mr-12 ml-2"
-                          >
-                          Avaliar
+                        if (texto === "") {
+                          toast.error("A avaliação não pode ser vazia");
+                        } else if (parseInt(idProfAvaliacao, 10) === -1) {
+                          toast.error("Selecione um professor");
+                        } else if (parseInt(idCourseAvaliacao, 10) === -1) {
+                          toast.error("Selecione uma disciplina");
+                        } else {
+                          const newAval: Partial<Avaliacao> = {
+                            text: texto,
+                            professorId: parseInt(idProfAvaliacao, 10),
+                            courseId: parseInt(idCourseAvaliacao, 10),
+                            userId: 2,
+                          };
+                          creatingAval(newAval);
+                          resetModalFields();
+                          toast.success("A avaliação foi criada com sucesso", { autoClose: 2200 });
+                          toggleModal();
+                        }
+                      }}>
+                        Avaliar
                       </button>
                     </div>
         
@@ -327,22 +331,22 @@ export default function FeedLogado() {
             </div>            
         )}                              
       </div>
-
       {/* Grid de Professores */}
       <section className="p-4 mx-auto max-w-screen-lg">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-5">
           {filteredProfessores.map((professor) => (
             <div
               key={professor.id}
-              className="flex flex-col items-center bg-white p-6 shadow-lg rounded-lg h-60 transform transition duration-300 hover:translate-y-[-5px] hover:shadow-xl"
+              className="flex flex-col items-center bg-white p-6 shadow-lg rounded-lg cursor-pointer h-60 transform transition duration-300 hover:translate-y-[-5px] hover:shadow-xl"
+              onClick={() => router.push(`/perfil/Professor/Deslogado`)}
             >
               <div className="w-20 h-20 bg-gray-200 rounded-full mb-4">
                 <Image
                   src={professor.profilepic || "/default-profile.png"}
-                  alt={`Foto de ${professor.name}`} // Corrigida a interpolação de string
+                  alt={`Foto de ${professor.name}`}
                   className="w-full h-full rounded-full object-cover"
-                  width={80} // Adicione largura para Next.js Image
-                  height={80} // Adicione altura para Next.js Image
+                  width={80}
+                  height={80}
                 />
               </div>
               <h2 className="font-semibold text-lg text-center text-azulCjr">
