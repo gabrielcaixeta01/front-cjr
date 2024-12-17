@@ -32,13 +32,13 @@ export default function TelaAvaliacao() {
   const [idCommentEdited, setIdCommentEdited] = useState(0);
   const [lengthComment, setLengthComment] = useState(textoComment.length)
   const {avalId} = useParams();
-
   const [localAval, setLocalAval] = useState<Avaliacao | null>(null);
   const [userAvalInfo, setUserAvalInfo] = useState<User | null>(null);
   const [userInfo, setUserInfo] = useState<User | null> (null);
 
   //useEffects pra inicializar a avaliação da tela
   useEffect(()=>{
+    console.log(avalId)
     if (!avalId) {
       toast.error("Não foi possível achar a avaliação");
       return;
@@ -216,7 +216,7 @@ export default function TelaAvaliacao() {
                             toggleDeleteAval();
                             try{                                              
                               deleteAval(localAval.id);
-                              router.push("/feed/Logado")
+                              router.push(`/feed/logado/${userInfo?.id}`)
                               toast.success("Avaliação excluída com sucesso!",{autoClose:2200})}
                             catch(error){
                               toast.error("Erro ao excluir avaliação")
@@ -404,7 +404,6 @@ export default function TelaAvaliacao() {
                        width={80}
                        height={80}
                        className="w-20 h-10 cursor-pointer ml-5 shadow-md"
-                       onClick={() => router.push("/feed/Deslogado")}
                      />
                      <div className="flex items-center space-x-5 mr-10">
                        <button
@@ -419,7 +418,7 @@ export default function TelaAvaliacao() {
                          width={48}
                          height={48}
                          className="w-10 h-10 rounded-full shadow-md bg-white object-cover cursor-pointer"
-                         onClick={() => router.push("/perfil/Aluno/Logado")}
+                         onClick={() => router.push(`user/aluno/${userInfo.id}`)}
                        />
                        <button
                          className="flex items-center bg-azulCjr text-white rounded-[60px] px-4 py-2 hover:bg-blue-600 transition duration-300 ease-in-out shadow-md hover:shadow-lg"
@@ -443,10 +442,10 @@ export default function TelaAvaliacao() {
                       width={48}
                       height={48}
                       className="w-9 h-9 rounded-full shadow-md bg-white object-cover cursor-pointer"
-                      onClick={() => router.push("/perfil/Aluno/Logado")}
+                      onClick={() => router.push(`/user/aluno/${userAvalInfo.id}`)}
                     />
                   </div>
-                  <span className="font-sans text-black ml-2 text-[15px] font-[500] leading-[16.94px] items-center hover:bg-blue-200 transition duration-300 ease-in-out cursor-pointer" onClick={()=> router.push("/perfil/Aluno/Logado")}> {userAvalInfo.name} </span>
+                  <span className="font-sans text-black ml-2 text-[15px] font-[500] leading-[16.94px] items-center hover:bg-blue-200 transition duration-300 ease-in-out cursor-pointer" onClick={()=> router.push(`/user/aluno/${userAvalInfo.id}`)}> {userAvalInfo.name} </span>
                   <span className="font-sans text-[#71767B] text-[12px] font-[350] leading-[16.94px] flex pl-1.5 items-center"> · {formatData(localAval.updatedAt).data}, às {formatData(localAval.updatedAt).hora} </span>
                   <span className="font-sans text-[#71767B] text-[12px] font-[350] leading-[16.94px] flex pl-1 items-center"> · {localProf.name} </span>
                   <span className="font-sans text-[#71767B] text-[12px] font-[350] leading-[16.94px] flex pl-1 items-center"> · {localCourse.name} </span>
@@ -508,10 +507,10 @@ export default function TelaAvaliacao() {
                         width={48}
                         height={48}
                         className="w-7 h-7 rounded-full shadow-md bg-white object-cover cursor-pointer"
-                        onClick={() => router.push("/perfil/Aluno/Logado")}
+                        onClick={() => router.push(`/user/aluno/${comentario.userId}`)}
                       />
                     </div>
-                    <span onClick= {()=> router.push("/perfil/aluno/Logado")} className="font-sans text-black ml-2 text-[13px] font-[500] leading-[15.73px] text-center items-center hover:bg-blue-200 transition duration-300 ease-in-out cursor-pointer"> {comentario.user?.name} </span> 
+                    <span onClick= {()=> router.push(`/user/aluno/${comentario.userId}`)} className="font-sans text-black ml-2 text-[13px] font-[500] leading-[15.73px] text-center items-center hover:bg-blue-200 transition duration-300 ease-in-out cursor-pointer"> {comentario.user?.name} </span> 
                     <span className="font-sans text-[#71767B] pl-2 text-[13px] font-[350] leading-[15.73px] text-center items-center"> · {formatData(comentario.updatedAt).data}, ás {formatData(comentario.updatedAt).hora}  </span>  
                     {comentario.userId===userInfo.id && (
                       <div className="ml-auto flex flex-row">
