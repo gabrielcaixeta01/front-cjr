@@ -182,7 +182,7 @@ export default function FeedLogado() {
                 <div
                   key={professor.id}
                   className="p-4 bg-white rounded-lg shadow cursor-pointer hover:shadow-md"
-                  onClick={() => router.push(`/user/professor/${professor.id}`)}
+                  onClick={() => router.push(`/user/aluno/${userid}/professor/${professor.id}`)}
                 >
                   <Image
                     src={professor.profilepic || "/default-profile.png"}
