@@ -148,3 +148,8 @@ export const getUserByEmail = async (email: string) => {
   const response = await api.get(`/user/email/${email}`);
   return response.data;
 };
+
+export const loginUser = async (email: string, password: string): Promise<{ access_token: string }> => {
+    const response = await api.post("/login", { email, password });
+    return response.data;
+};

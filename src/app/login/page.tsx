@@ -3,7 +3,8 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import { getUserByEmail } from "@/utils/api";
+import { getUserByEmail, loginUser } from "@/utils/api";
+import { useState } from "react";
 
 const validationSchema = Yup.object({
   name: Yup.string().required("Insira o seu nome"),
@@ -34,8 +35,11 @@ const initialValues = {
 
 export default function Login() {
   const router = useRouter();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   const onSubmit = async () => {
+    const { access_token } = await loginUser(email, password);
     router.push("/feed/Logado");
   };
   return (
