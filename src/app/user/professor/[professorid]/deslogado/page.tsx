@@ -1,30 +1,24 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
-import { toast } from "react-toastify";
-import { Professor } from "@/types";
-import { BellIcon } from "@heroicons/react/24/solid";
-import { ArrowRightOnRectangleIcon } from "@heroicons/react/24/solid";
+import { useEffect, useState } from "react";
+import { useRouter, useParams } from "next/navigation";
 import axios from "axios";
+import { Professor } from "@/types";
 
-export default function PerfilProfessorDeslogado() {
+export default function ProfessorDeslogado() {
+  const { id } = useParams(); // Captura o ID da URL dinâmica
   const router = useRouter();
   const [loading, setLoading] = useState(true);
-  const [openComments, setOpenComments] = useState<number | null>(null);
   const [professorInfo, setProfessorInfo] = useState<Professor | null>(null);
+  const [openComments, setOpenComments] = useState<number | null>(null);
 
-  const fixedProfessorId = 1; 
-
-  // Busca informações do professor
   useEffect(() => {
-    const loadProfessorInfo = async () => {
+    const loadProfessor = async () => {
       try {
-        const response = await axios.get<Professor>(
-          `http://localhost:4000/professors/${fixedProfessorId}`
-        );
-        setProfessorInfo(response.data);
+        if (!id) return; // Garantir que o ID existe
+        const response = await axios.get(`http://localhost:4000/professors/${id}`);
+        setProfessorInfo(response.data as Professor);
       } catch (error) {
         console.error("Erro ao carregar informações do professor:", error);
       } finally {
@@ -32,12 +26,11 @@ export default function PerfilProfessorDeslogado() {
       }
     };
 
-    loadProfessorInfo();
-  }, []);
+    loadProfessor();
+  }, [id]);
 
-  if (loading || !professorInfo) {
-    return <div className="flex justify-center items-center h-screen">Carregando...</div>;
-  }
+  if (loading) return <div className="flex justify-center items-center h-screen">Carregando...</div>;
+  if (!professorInfo) return <div className="flex justify-center items-center h-screen">Professor não encontrado.</div>;
 
   return (
     <div className="flex flex-col h-screen min-h-fit bg-gray-100">
@@ -55,24 +48,10 @@ export default function PerfilProfessorDeslogado() {
             />
             <div className="flex items-center space-x-5 mr-10">
               <button
-                className="bg-azulCjr hover:bg-blue-600 p-2 rounded-[60px] transition duration-300 shadow-md hover:shadow-lg"
-                onClick={() => toast.info("Sem notificações novas.")}
+                className="bg-azulCjr text-white rounded px-5 py-2 shadow-md hover:bg-blue-600 transition duration-300 ease-in-out"
+                onClick={() => router.push("/login")}
               >
-                <BellIcon className="h-6 w-6 text-white" />
-              </button>
-              <Image
-                src={professorInfo.profilepic || "/default-profile.png"}
-                alt="Foto de perfil"
-                width={48}
-                height={48}
-                className="w-10 h-10 rounded-full shadow-md bg-white object-cover cursor-pointer"
-                onClick={() => router.push("/perfil/Aluno/Logado")}
-              />
-              <button
-                className="flex items-center bg-azulCjr text-white rounded-[60px] px-4 py-2 hover:bg-blue-600 transition duration-300 ease-in-out shadow-md hover:shadow-lg"
-                onClick={() => router.push("/feed/Deslogado")}
-              >
-                <ArrowRightOnRectangleIcon className="h-6 w-6 text-white" />
+                Login
               </button>
             </div>
           </div>
@@ -81,6 +60,7 @@ export default function PerfilProfessorDeslogado() {
 
       {/* Conteúdo Principal */}
       <main className="w-full max-w-[40%] min-h-fit mx-auto bg-white rounded shadow-md my-5">
+        {/* Perfil */}
         <section className="bg-customGreen border-b rounded-t p-5 flex items-center">
           <Image
             src={professorInfo.profilepic || "/default-profile.png"}

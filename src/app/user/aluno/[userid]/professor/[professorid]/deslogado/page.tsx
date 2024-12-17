@@ -1,42 +1,24 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { useRouter, useParams } from "next/navigation";
+import axios from "axios";
 import { Professor } from "@/types";
-import { fetchProfessorInfo } from "@/utils/api";
 
-export default function PerfilProfessorDeslogado() {
+export default function ProfessorDeslogado() {
+  const { id } = useParams(); // Captura o ID da URL dinâmica
   const router = useRouter();
   const [loading, setLoading] = useState(true);
+  const [professorInfo, setProfessorInfo] = useState<Professor | null>(null);
   const [openComments, setOpenComments] = useState<number | null>(null);
-  const [professorInfo, setProfessorInfo] = useState<Professor>({
-    id: 0,
-    name: "",
-    departmentId: 0,
-    department: { id: 0, name: "Carregando..." },
-    profilepic: "/default-profile.png",
-    avaliacoes: [],
-    courses: [],
-    createdAt: new Date(),
-  });
 
-  const fixedProfessorId = 1;
-
-  // Busca informações do professor
   useEffect(() => {
-    const loadProfessorInfo = async () => {
+    const loadProfessor = async () => {
       try {
-        const professorData = (await fetchProfessorInfo(fixedProfessorId)) as Professor;
-        setProfessorInfo({
-          id: professorData.id || 0,
-          name: professorData.name || "",
-          department: professorData.department || { id: 0, name: "Carregando..." },
-          profilepic: professorData.profilepic || "/default-profile.png",
-          courses: professorData.courses || [],
-          avaliacoes: professorData.avaliacoes || [],
-          createdAt: professorData.createdAt || new Date(),
-        });
+        if (!id) return; // Garantir que o ID existe
+        const response = await axios.get(`http://localhost:4000/professors/${id}`);
+        setProfessorInfo(response.data as Professor);
       } catch (error) {
         console.error("Erro ao carregar informações do professor:", error);
       } finally {
@@ -44,12 +26,11 @@ export default function PerfilProfessorDeslogado() {
       }
     };
 
-    loadProfessorInfo();
-  }, []);
+    loadProfessor();
+  }, [id]);
 
-  if (loading || !professorInfo) {
-    return <div className="flex justify-center items-center h-screen">Carregando...</div>;
-  }
+  if (loading) return <div className="flex justify-center items-center h-screen">Carregando...</div>;
+  if (!professorInfo) return <div className="flex justify-center items-center h-screen">Professor não encontrado.</div>;
 
   return (
     <div className="flex flex-col h-screen min-h-fit bg-gray-100">
