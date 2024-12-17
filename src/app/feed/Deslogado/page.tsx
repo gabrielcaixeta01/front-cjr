@@ -88,48 +88,63 @@ export default function FeedDeslogado() {
     <div className="bg-gray-100 min-h-screen">
       {/* Header */}
       <header className="flex justify-between bg-customGreen pb-1 items-center mb-5">
-        <div className="flex justify-between w-screen bg-white py-3 items-center">
-          <Image
-            src="/logounb.png"
-            alt="Logo da UnB"
-            width={80}
-            height={80}
-            className="w-20 h-10 cursor-pointer ml-5 shadow-md"
-            onClick={() => router.push("/feed/deslogado")}
-          />
-          <div className="flex items-center space-x-4 mr-10">
-            {userInfo && (
-              <div className="flex items-center">
-                <Image
-                  src={userInfo.profilepic || "/default-profile.png"}
-                  alt="Foto do Usuário"
-                  width={40}
-                  height={40}
-                  className="rounded-full"
-                />
-                <span className="text-gray-800 ml-2">{userInfo.name}</span>
-              </div>
-            )}
-            <button
-              className="bg-azulCjr text-white px-5 py-2 rounded hover:bg-blue-600 transition"
-              onClick={() => router.push("/login")}
-            >
-              Login
-            </button>
+        <div className="flex justify-between bg-azulCjr pb-1 items-center">
+          <div className="flex justify-between w-screen bg-white py-3 items-center">
+            <Image
+              src="/logounb.png"
+              alt="Logo da UnB"
+              width={80}
+              height={80}
+              className="w-20 h-10 cursor-pointer ml-5 shadow-md"
+              onClick={() => router.push("/feed/deslogado")}
+            />
+            <div className="flex items-center space-x-4 mr-10">
+              {userInfo && (
+                <div className="flex items-center">
+                  <Image
+                    src={userInfo.profilepic || "/default-profile.png"}
+                    alt="Foto do Usuário"
+                    width={40}
+                    height={40}
+                    className="rounded-full"
+                  />
+                  <span className="text-gray-800 ml-2">{userInfo.name}</span>
+                </div>
+              )}
+              <button
+                className="bg-azulCjr text-white px-5 py-2 rounded hover:bg-blue-600 transition"
+                onClick={() => router.push("/login")}
+              >
+                Login
+              </button>
+            </div>
           </div>
         </div>
+        
       </header>
 
       {/* Buscar Professores */}
-      <div className="flex justify-center my-5">
-        <input
+      <div className="flex justify-center my-5 text-black">
+      <input
           type="text"
           placeholder="Buscar professor"
           onChange={handleSearch}
-          className="p-3 rounded-lg shadow w-1/2"
+          className="
+            p-3 
+            rounded-lg 
+            shadow 
+            w-1/2 
+            border-0 
+            border-b-2 
+            border-customGreen 
+            focus:outline-none 
+            focus:border-blue-500 
+            transition 
+            duration-300
+          "
         />
         <button
-          className="ml-3 px-4 py-2 bg-azulCjr text-white rounded hover:bg-blue-600"
+          className="ml-3 px-4 py-2 shadow-md bg-azulCjr text-white rounded hover:bg-blue-600 transition duration-300"
           onClick={togglePopup}
         >
           Ordenar
@@ -139,7 +154,7 @@ export default function FeedDeslogado() {
       {/* Pop-up de Ordenação */}
       {isPopupOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded shadow-lg">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-[20%] flex flex-col text-azulCjr justify-center items-center">
             <h3 className="font-semibold mb-4">Ordenar por:</h3>
             <button onClick={() => handleSort("name")} className="block mb-2">
               Nome
@@ -161,7 +176,7 @@ export default function FeedDeslogado() {
       )}
 
       {/* Grid de Professores */}
-      <section className="p-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+      <section className="p-4 grid w-[70%] min-h-fit mx-auto grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {filteredProfessores.map((professor) => (
           <div
             key={professor.id}
@@ -175,9 +190,14 @@ export default function FeedDeslogado() {
               height={80}
               className="rounded-full mx-auto"
             />
-            <h3 className="text-center font-semibold mt-2">{professor.name}</h3>
-            <p className="text-center text-gray-500 text-sm">
+            <h3 className="text-center text-black font-semibold mt-2">{professor.name}</h3>
+            <p className="text-center text-gray-400 text-sm mb-3 w-full truncate overflow-hidden">
               {professor.department?.name || "Departamento não informado"}
+            </p>
+            <p className=" text-center text-azulCjr text-xs w-full truncate overflow-hidden">
+              {professor.courses?.length
+                ? professor.courses.map((course) => course.name).join(", ")
+                : "Sem matérias informadas"}
             </p>
           </div>
         ))}
