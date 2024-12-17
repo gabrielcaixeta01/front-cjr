@@ -8,7 +8,7 @@ import { Professor } from "@/types";
 import { ArrowRightOnRectangleIcon } from "@heroicons/react/24/solid";
 
 export default function ProfessorLogado() {
-  const { userId, professorId } = useParams(); // Pega os IDs da URL
+  const { professorid } = useParams();
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [professorInfo, setProfessorInfo] = useState<Professor | null>(null);
@@ -21,7 +21,7 @@ export default function ProfessorLogado() {
   useEffect(() => {
     const loadProfessor = async () => {
       try {
-        const response = await axios.get(`http://localhost:4000/professors/${professorId}`);
+        const response = await axios.get(`http://localhost:4000/professors/${professorid}`);
         setProfessorInfo(response.data as Professor);
       } catch (error) {
         console.error("Erro ao carregar informações do professor:", error);
@@ -30,8 +30,8 @@ export default function ProfessorLogado() {
       }
     };
 
-    if (professorId) loadProfessor();
-  }, [professorId]);
+    if (professorid) loadProfessor();
+  }, [professorid]);
 
   if (loading) return <div>Carregando...</div>;
   if (!professorInfo) return <div>Professor não encontrado.</div>;
@@ -48,7 +48,7 @@ export default function ProfessorLogado() {
               width={80}
               height={80}
               className="w-20 h-10 cursor-pointer ml-5 shadow-md"
-              onClick={() => router.push(`/feed/${userId}`)} // Redireciona para o feed
+              onClick={() => router.push("/feed/Logado")} // Redireciona para o feed
             />
             <div className="flex items-center space-x-5 mr-10">
               <button

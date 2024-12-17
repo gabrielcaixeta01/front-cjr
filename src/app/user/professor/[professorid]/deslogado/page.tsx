@@ -7,7 +7,7 @@ import axios from "axios";
 import { Professor } from "@/types";
 
 export default function ProfessorDeslogado() {
-  const { id } = useParams(); // Captura o ID da URL dinâmica
+  const { professorid } = useParams();
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [professorInfo, setProfessorInfo] = useState<Professor | null>(null);
@@ -16,8 +16,8 @@ export default function ProfessorDeslogado() {
   useEffect(() => {
     const loadProfessor = async () => {
       try {
-        if (!id) return; // Garantir que o ID existe
-        const response = await axios.get(`http://localhost:4000/professors/${id}`);
+        if (!professorid) return; // Garantir que o ID existe
+        const response = await axios.get(`http://localhost:4000/professors/${professorid}`);
         setProfessorInfo(response.data as Professor);
       } catch (error) {
         console.error("Erro ao carregar informações do professor:", error);
@@ -27,7 +27,7 @@ export default function ProfessorDeslogado() {
     };
 
     loadProfessor();
-  }, [id]);
+  }, [professorid]);
 
   if (loading) return <div className="flex justify-center items-center h-screen">Carregando...</div>;
   if (!professorInfo) return <div className="flex justify-center items-center h-screen">Professor não encontrado.</div>;

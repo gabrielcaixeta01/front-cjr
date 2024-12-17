@@ -35,7 +35,7 @@ const initialValues = {
 
 const EditarPerfil = () => {
   const router = useRouter();
-  const { id } = useParams(); // Captura o ID dinâmico do caminho
+  const { userid } = useParams(); // Captura o ID dinâmico do caminho
   const [showPassword, setShowPassword] = useState(false);
   const [selectedFile, setSelectedFile] = useState<string | null>(null);
   const [departments, setDepartments] = useState<{ id: number; name: string }[]>([]);
@@ -83,11 +83,11 @@ const EditarPerfil = () => {
 
     try {
       console.log("Payload enviado:", payload);
-      const response = await api.patch(`/user/${id}`, payload);
+      const response = await api.patch(`/user/${userid}`, payload);
       console.log("Dados recebidos com sucesso:", response.data);
       toast.success("Perfil atualizado com sucesso!");
       resetForm();
-      router.push(`/perfil/Aluno/${id}/Logado`);
+      router.push(`/user/aluno/${userid}`);
     } catch (error) {
       console.error("Erro ao atualizar o perfil:", error);
       toast.error("Erro ao atualizar o perfil.");
@@ -98,7 +98,7 @@ const EditarPerfil = () => {
 
   const handleDeleteProfile = async () => {
     try {
-      await api.delete(`/user/${id}`);
+      await api.delete(`/user/${userid}`);
       toast.success("Perfil excluído com sucesso.");
       setTimeout(() => {
         router.push("/");

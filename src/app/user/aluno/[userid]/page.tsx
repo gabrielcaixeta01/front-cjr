@@ -11,7 +11,7 @@ import axios from "axios";
 
 export default function PerfilAlunoLogado() {
   const router = useRouter();
-  const { id } = useParams(); // Captura o ID da URL
+  const { userid } = useParams(); // Captura o ID da URL
   const [loading, setLoading] = useState(true);
   const [openComments, setOpenComments] = useState<number | null>(null);
   const [professores, setProfessores] = useState<{ id: number; name: string }[]>([]);
@@ -22,7 +22,7 @@ export default function PerfilAlunoLogado() {
   useEffect(() => {
     const loadUserInfo = async () => {
       try {
-        const userData = await fetchUserInfo(Number(id)); // Converte o ID para número
+        const userData = await fetchUserInfo(Number(userid)); // Converte o ID para número
         setUserInfo(userData);
       } catch (error) {
         console.error("Erro ao carregar as informações do usuário:", error);
@@ -31,8 +31,8 @@ export default function PerfilAlunoLogado() {
       }
     };
 
-    if (id) loadUserInfo();
-  }, [id]);
+    if (userid) loadUserInfo();
+  }, [userid]);
 
   // Busca professores e cursos
   useEffect(() => {
@@ -83,11 +83,11 @@ export default function PerfilAlunoLogado() {
                 width={48}
                 height={48}
                 className="w-10 h-10 rounded-full shadow-md bg-white object-cover cursor-pointer"
-                onClick={() => router.push(`/perfil/Aluno/${userInfo.id}/Logado`)}
+                onClick={() => router.push(`/user/aluno/${userInfo.id}`)}
               />
               <button
                 className="flex items-center bg-azulCjr text-white rounded-[60px] px-4 py-2 hover:bg-blue-600 transition duration-300 ease-in-out shadow-md hover:shadow-lg"
-                onClick={() => router.push("/feed/Logado")}
+                onClick={() => router.push("/feed/deslogado")}
               >
                 <ArrowRightOnRectangleIcon className="h-6 w-6 text-white" />
               </button>
@@ -146,7 +146,7 @@ export default function PerfilAlunoLogado() {
             <div className="flex flex-col">
               <button
                 className="bg-azulCjr text-white rounded-[60px] px-4 py-2 hover:bg-blue-600 transition duration-300 ease-in-out shadow-md hover:shadow-lg"
-                onClick={() => router.push(`/perfil/Aluno/${userInfo.id}/Editar`)}
+                onClick={() => router.push(`/user/aluno/${userInfo.id}/editar`)}
               >
                 Editar Perfil
               </button>

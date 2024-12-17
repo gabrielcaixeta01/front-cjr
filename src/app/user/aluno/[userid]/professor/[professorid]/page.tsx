@@ -4,37 +4,43 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import axios from "axios";
-import { Professor } from "@/types";
+import { User, Professor } from "@/types";
+import { fetchUserInfo } from "@/utils/api";
 import { ArrowRightOnRectangleIcon } from "@heroicons/react/24/solid";
+import { BellIcon } from "@heroicons/react/20/solid";
+import { toast } from "react-toastify";
 
 export default function ProfessorLogado() {
-  const { userId, professorId } = useParams(); // Pega os IDs da URL
+  const { userid, professorid } = useParams(); 
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [professorInfo, setProfessorInfo] = useState<Professor | null>(null);
+  const [userInfo, setUserInfo] = useState<User | null>(null);
   const [openComments, setOpenComments] = useState<number | null>(null);
 
-  // Busca ID do usuário logado (simulação)
-  
-
-  // Busca informações do professor
   useEffect(() => {
-    const loadProfessor = async () => {
+    const loadData = async () => {
       try {
-        const response = await axios.get(`http://localhost:4000/professors/${professorId}`);
-        setProfessorInfo(response.data as Professor);
+        if (userid) {
+          const userData = await fetchUserInfo(Number(userid));
+          setUserInfo(userData);
+        }
+        if (professorid) {
+          const response = await axios.get(`http://localhost:4000/professors/${professorid}`);
+          setProfessorInfo(response.data as Professor);
+        }
       } catch (error) {
-        console.error("Erro ao carregar informações do professor:", error);
+        console.error("Erro ao carregar informações:", error);
       } finally {
         setLoading(false);
       }
     };
 
-    if (professorId) loadProfessor();
-  }, [professorId]);
+    loadData();
+  }, [userid, professorid]);
 
   if (loading) return <div>Carregando...</div>;
-  if (!professorInfo) return <div>Professor não encontrado.</div>;
+  if (!professorInfo || !userInfo) return <div>Informações não encontradas.</div>;
 
   return (
     <div className="flex flex-col h-screen min-h-fit bg-gray-100">
@@ -48,12 +54,26 @@ export default function ProfessorLogado() {
               width={80}
               height={80}
               className="w-20 h-10 cursor-pointer ml-5 shadow-md"
-              onClick={() => router.push(`/feed/${userId}`)} // Redireciona para o feed
+              onClick={() => router.push("/feed/Logado")}
             />
             <div className="flex items-center space-x-5 mr-10">
               <button
+                className="bg-azulCjr hover:bg-blue-600 p-2 rounded-[60px] transition duration-300 shadow-md hover:shadow-lg"
+                onClick={() => toast.info("Sem notificações novas.")}
+              >
+                <BellIcon className="h-6 w-6 text-white" />
+              </button>
+              <Image
+                src={userInfo?.profilepic || "/default-profile.png"}
+                alt="Foto de perfil"
+                width={48}
+                height={48}
+                className="w-10 h-10 rounded-full shadow-md bg-white object-cover cursor-pointer"
+                onClick={() => userInfo && router.push(`/user/aluno/${userInfo.id}`)}
+              />
+              <button
                 className="flex items-center bg-azulCjr text-white rounded-[60px] px-4 py-2 hover:bg-blue-600 transition duration-300 ease-in-out shadow-md hover:shadow-lg"
-                onClick={() => router.push("/login")}
+                onClick={() => router.push("/feed/deslogado")}
               >
                 <ArrowRightOnRectangleIcon className="h-6 w-6 text-white" />
               </button>
@@ -75,20 +95,37 @@ export default function ProfessorLogado() {
           />
         </section>
 
-        <section className="p-4 bg-white">
+        <section className="p-4 bg-white ml-5">
           <div className="flex flex-col">
             <h1 className="text-xl font-bold text-black mb-2">
               {professorInfo.name}
             </h1>
-            <p className="text-sm text-gray-700">
-              Departamento: {professorInfo.department?.name || "Não informado"}
-            </p>
-            <p className="text-sm text-gray-700">
-              Cursos:{" "}
-              {professorInfo.courses
-                ? professorInfo.courses.map((c) => c.name).join(", ")
-                : "Nenhum curso associado"}
-            </p>
+            <div className="flex items-center gap-2 mb-2">
+              <Image
+                src="/building.png"
+                alt="Ícone de prédio"
+                width={24}
+                height={24}
+                className="w-6 h-6 object-cover"
+              />
+              <p className="text-sm text-gray-700">
+              {professorInfo.department?.name || "Não informado"}
+              </p>
+            </div>
+            <div className="flex items-center gap-2 mb-2">
+              <Image
+                src="/livro.png"
+                alt="Ícone de prédio"
+                width={24}
+                height={24}
+                className="w-6 h-6 object-cover"
+              />
+              <p className="text-sm text-gray-700">
+                {professorInfo.courses
+                  ? professorInfo.courses.map((c) => c.name).join(", ")
+                  : "Nenhum curso associado"}
+              </p>
+            </div>
           </div>
         </section>
 
@@ -109,14 +146,15 @@ export default function ProfessorLogado() {
                            alt="Foto do autor"
                            width={64}
                            height={64}
-                           className="w-12 h-12 object-cover rounded-full bg-white"
+                           className="w-12 h-12 object-cover cursor-pointer rounded-full bg-white"
+                           onClick={() => router.push(`/user/aluno/${avaliacao.user?.id}`)}
                          />
                        </div>
        
                        {/* Detalhes da Avaliação */}
                        <div className="max-w-[550px]">
                          {/* Nome do Autor */}
-                         <p className="font-bold text-gray-800">
+                         <p className="font-bold cursor-pointer text-gray-800" onClick={() => router.push(`/user/aluno/${avaliacao.user?.id}`)}>
                            {avaliacao.user?.name || "Usuário desconhecido"}
                          </p>
        
@@ -160,7 +198,8 @@ export default function ProfessorLogado() {
                                        alt="Foto do autor do comentário"
                                        width={24}
                                        height={24}
-                                       className="w-6 h-6 object-cover rounded-full bg-white mr-2"
+                                       className="w-6 h-6 object-cover cursor-pointer rounded-full bg-white mr-2"
+                                       onClick={() => router.push(`/user/aluno/${comment.user?.id}`)}
                                      />
                                      {comment.user?.name || "Usuário desconhecido"}
                                    </p>

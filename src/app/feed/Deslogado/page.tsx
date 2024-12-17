@@ -82,7 +82,7 @@ export default function FeedDeslogado() {
               width={80}
               height={80}
               className="w-20 h-10 cursor-pointer ml-5 shadow-md"
-              onClick={() => router.push("/feed/Deslogado")}
+              onClick={() => router.push("/feed/deslogado")}
             />
             <div className="flex items-center space-x-5 mr-10">
               <button
