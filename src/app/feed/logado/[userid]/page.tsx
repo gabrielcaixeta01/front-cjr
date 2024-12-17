@@ -104,6 +104,11 @@ export default function FeedLogado() {
     }
   };
 
+  //altera o estado do modal
+  const toggleModal= () => {
+    setIsModalOpen(!isModalOpen);
+  };
+
   //reseta campos do modal de avaliação quando é fechado
   const resetModalFields = () => {
     setTexto("");
@@ -111,10 +116,6 @@ export default function FeedLogado() {
     setCourseSelected("-1");
     setIdProfAvaliacao("-1");
     setIdCourseAvaliacao("-1");
-  };
-
-  const toggleModal= () => {
-    setIsModalOpen(!isModalOpen);
   };
 
   //modal de avaliação usado na página

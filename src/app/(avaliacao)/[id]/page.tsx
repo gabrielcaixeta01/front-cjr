@@ -31,36 +31,70 @@ export default function TelaAvaliacao() {
   const [idCommentDeleted, setIdCommentDeleted] = useState(0);
   const [idCommentEdited, setIdCommentEdited] = useState(0);
   const [lengthComment, setLengthComment] = useState(textoComment.length)
+  const {avalId} = useParams();
 
   const [localAval, setLocalAval] = useState<Avaliacao | null>(null);
-  /*const [userAvalInfo, setUserAvalInfo] = useState<User >({
-      id: 0,
-      name: "",
-      email: "",
-      password: "",
-      program: { id: 0, name: "Carregando..." },
-      profilepic: "/default-profile.png",
-      avaliacoes: [],
-    });*/
+  const [userAvalInfo, setUserAvalInfo] = useState<User | null>(null);
+  const [userInfo, setUserInfo] = useState<User | null> (null);
 
-    const [userAvalInfo, setUserAvalInfo] = useState<User | null>(null);
-
-    const [userInfo, setUserInfo] = useState<User | null> (null);
-
-  const {id} = useParams();
-
-  //funções para achar objetos de acordo com os ids
-  const findingAval = async () =>{
-    try {
-      const avalFound: Avaliacao = await findAval(10);
-      setLocalAval(avalFound as Avaliacao);
+  //useEffects + funções para inicializar a tela
+  useEffect(()=>{
+    if (!avalId) {
+      toast.error("Não foi possível achar a avaliação");
+      return;
     }
-    catch (error){
-      toast.error("Erro ao procurar avaliação", {autoClose:2200})
+    const findingAval = async () =>{
+      try {
+        const avalFound: Avaliacao = await findAval(Number(avalId));
+        setLocalAval(avalFound as Avaliacao);
+      }
+      catch (error){
+        toast.error("Erro ao procurar avaliação", {autoClose:2200})
+      }
     }
-    
-  }
+    findingAval();
+  }, [avalId])
 
+    //useEffects para inicializar a tela
+    useEffect(()=> {
+      if (localAval?.professorId!=null)
+      findingProf(localAval.professorId)
+    }, [localAval])
+  
+    useEffect(()=>{
+      if (localAval?.courseId!=null)
+      findingCourse(localAval.courseId)
+    },[localAval])
+  
+    useEffect(() => {
+      const loadUserAvalInfo = async () => {
+        try {
+          if (localAval?.userId!=null){
+          const userData = (await fetchUserInfo(localAval.userId)) as User;
+          setUserAvalInfo(userData as User)
+        };
+        } catch (error) {
+          toast.error("Erro ao carregar as informações do usuário:", {autoClose:2200});
+        } 
+      };
+      loadUserAvalInfo();
+    }, [localAval]);
+  
+    useEffect(() => {
+      const loadUserInfo = async () => {
+        try {
+          const userData = (await fetchUserInfo(10)) as User;
+          setUserInfo(userData as User);
+        } catch (error) {
+          toast.error("Erro ao carregar as informações do usuário:", {autoClose:2200});
+        } 
+        finally{
+          setLoading(false);
+        }
+      };
+      loadUserInfo();
+    }, []); 
+     
   const findingProf = async (id:number) => {
     try{
       if (id>0){
@@ -352,54 +386,8 @@ export default function TelaAvaliacao() {
     return modal
   }
 
-
-  //useEffects para inicializar a tela
-  useEffect (()=>{
-    findingAval();
-  },[])
-
-  useEffect(()=> {
-    if (localAval?.professorId!=null)
-    findingProf(localAval.professorId)
-  }, [localAval])
-
-  useEffect(()=>{
-    if (localAval?.courseId!=null)
-    findingCourse(localAval.courseId)
-  },[localAval])
-
-  useEffect(() => {
-    const loadUserAvalInfo = async () => {
-      try {
-        if (localAval?.userId!=null){
-        const userData = (await fetchUserInfo(localAval.userId)) as User;
-        setUserAvalInfo(userData as User)
-        console.log(userAvalInfo)
-      };
-      } catch (error) {
-        toast.error("Erro ao carregar as informações do usuário:", {autoClose:2200});
-      } 
-    };
-    loadUserAvalInfo();
-  }, [localAval, userAvalInfo]);
-
-  useEffect(() => {
-    const loadUserInfo = async () => {
-      try {
-        const userData = (await fetchUserInfo(8)) as User;
-        setUserInfo(userData as User);
-      } catch (error) {
-        toast.error("Erro ao carregar as informações do usuário:", {autoClose:2200});
-      } 
-      finally{
-        setLoading(false);
-      }
-    };
-    loadUserInfo();
-  }, [localAval]); 
-   
   //tela de carregamento
-  if (loading || !localAval || !userAvalInfo) {
+  if (loading || !localAval || !userAvalInfo || !userInfo) {
     return telaCarregamento;
   }
 
