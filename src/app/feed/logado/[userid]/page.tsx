@@ -125,67 +125,84 @@ export default function FeedLogado() {
       </header>
 
       {/* Buscar Professores */}
-      <div className="flex justify-center my-5">
-        <input
-          type="text"
-          placeholder="Buscar professor"
-          onChange={handleSearch}
-          className="p-3 rounded-lg shadow w-1/2"
-        />
-        <button
-          className="ml-3 px-4 py-2 bg-azulCjr text-white rounded hover:bg-blue-600"
-          onClick={togglePopup}
-        >
-          Ordenar
-        </button>
-      </div>
-
-      {/* Pop-up de Ordenação */}
-      {isPopupOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded shadow-lg">
-            <h3 className="font-semibold mb-4">Ordenar por:</h3>
-            <button onClick={() => handleSort("name")} className="block mb-2">
-              Nome
-            </button>
-            <button onClick={() => handleSort("department")} className="block mb-2">
-              Departamento
-            </button>
-            <button onClick={() => handleSort("recent")} className="block mb-2">
-              Mais Recentes
-            </button>
-            <button onClick={() => handleSort("oldest")} className="block mb-2">
-              Mais Antigos
-            </button>
-            <button onClick={togglePopup} className="mt-4 bg-red-500 text-white px-4 py-2 rounded">
-              Fechar
-            </button>
+            <div className="flex justify-center my-5 text-black">
+            <input
+                type="text"
+                placeholder="Buscar professor"
+                onChange={handleSearch}
+                className="
+                  p-3 
+                  rounded-lg 
+                  shadow 
+                  w-1/2 
+                  border-0 
+                  border-b-2 
+                  border-customGreen 
+                  focus:outline-none 
+                  focus:border-blue-500 
+                  transition 
+                  duration-300
+                "
+              />
+              <button
+                className="ml-3 px-4 py-2 shadow-md bg-azulCjr text-white rounded hover:bg-blue-600 transition duration-300"
+                onClick={togglePopup}
+              >
+                Ordenar
+              </button>
+            </div>
+      
+            {/* Pop-up de Ordenação */}
+            {isPopupOpen && (
+              <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
+                <div className="bg-white p-6 rounded-lg shadow-lg w-[20%] flex flex-col text-azulCjr justify-center items-center">
+                  <h3 className="font-semibold mb-4">Ordenar por:</h3>
+                  <button onClick={() => handleSort("name")} className="block mb-2">
+                    Nome
+                  </button>
+                  <button onClick={() => handleSort("department")} className="block mb-2">
+                    Departamento
+                  </button>
+                  <button onClick={() => handleSort("recent")} className="block mb-2">
+                    Mais Recentes
+                  </button>
+                  <button onClick={() => handleSort("oldest")} className="block mb-2">
+                    Mais Antigos
+                  </button>
+                  <button onClick={togglePopup} className="mt-4 bg-red-500 text-white px-4 py-2 rounded">
+                    Fechar
+                  </button>
+                </div>
+              </div>
+            )}
+      
+            {/* Grid de Professores */}
+            <section className="p-4 grid w-[70%] min-h-fit mx-auto grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+              {filteredProfessores.map((professor) => (
+                <div
+                  key={professor.id}
+                  className="p-4 bg-white rounded-lg shadow cursor-pointer hover:shadow-md"
+                  onClick={() => router.push(`/user/professor/${professor.id}`)}
+                >
+                  <Image
+                    src={professor.profilepic || "/default-profile.png"}
+                    alt={professor.name}
+                    width={80}
+                    height={80}
+                    className="rounded-full mx-auto"
+                  />
+                  <h3 className="text-center text-black font-semibold mt-2">{professor.name}</h3>
+                  <p className="text-center text-gray-400 text-sm mb-3 w-full truncate overflow-hidden">
+                    {professor.department?.name || "Departamento não informado"}
+                  </p>
+                  <p className=" text-center text-azulCjr text-xs w-full truncate overflow-hidden">
+                    {professor.courses?.length
+                      ? professor.courses.map((course) => course.name).join(", ")
+                      : "Sem matérias informadas"}
+                  </p>
+                </div>
+              ))}
+            </section>
           </div>
-        </div>
-      )}
-
-      {/* Grid de Professores */}
-      <section className="p-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {filteredProfessores.map((professor) => (
-          <div
-            key={professor.id}
-            className="p-4 bg-white rounded-lg shadow cursor-pointer hover:shadow-md"
-            onClick={() => router.push(`/user/professor/${professor.id}`)}
-          >
-            <Image
-              src={professor.profilepic || "/default-profile.png"}
-              alt={professor.name}
-              width={80}
-              height={80}
-              className="rounded-full mx-auto"
-            />
-            <h3 className="text-center font-semibold mt-2">{professor.name}</h3>
-            <p className="text-center text-gray-500 text-sm">
-              {professor.department?.name || "Departamento não informado"}
-            </p>
-          </div>
-        ))}
-      </section>
-    </div>
-  );
-}
+        );
+      }
