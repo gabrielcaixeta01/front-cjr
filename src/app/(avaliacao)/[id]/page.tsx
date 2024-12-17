@@ -9,7 +9,7 @@ import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import { Avaliacao, Comment, User } from "@/types";
-import { findAval, fetchUserInfo, getOneProf, deleteAval, getOneCourse, createComment, updateAval, deleteComment, updateComment } from "@/utils/api";
+import { findAval, fetchUserInfo, deleteAval, getOneCourse, createComment, updateAval, deleteComment, updateComment, fetchProfessorInfo } from "@/utils/api";
 import { Avaliacao } from "@prisma/client";
 import telaCarregamento from "@/components/tela_carregamento_aval"
 
@@ -32,18 +32,8 @@ export default function TelaAvaliacao() {
   const [idCommentEdited, setIdCommentEdited] = useState(0);
   const [lengthComment, setLengthComment] = useState(textoComment.length)
 
-  const [localAval, setLocalAval] = useState<Avaliacao>({
-      id: 0,
-      userId: 1,
-      professorId: 0,
-      text: "",
-      courseId:0,
-      comments:[],
-      createdAt: undefined,
-      updatedAt: undefined
-    });
-
-    const [userAvalInfo, setUserAvalInfo] = useState<User>({
+  const [localAval, setLocalAval] = useState<Avaliacao | null>(null);
+  /*const [userAvalInfo, setUserAvalInfo] = useState<User >({
       id: 0,
       name: "",
       email: "",
@@ -51,36 +41,19 @@ export default function TelaAvaliacao() {
       program: { id: 0, name: "Carregando..." },
       profilepic: "/default-profile.png",
       avaliacoes: [],
-    });
+    });*/
 
-    const [userInfo, setUserInfo] = useState<User> (
-      {
-        id:0,
-        name: "",
-        email:"",
-        password:"",
-        program: { id: 0, name: "Carregando..." },
-        profilepic: "/default-profile.png",
-        avaliacoes: [],
-      }
-    );
+    const [userAvalInfo, setUserAvalInfo] = useState<User | null>(null);
+
+    const [userInfo, setUserInfo] = useState<User | null> (null);
 
   const {id} = useParams();
 
   //funções para achar objetos de acordo com os ids
   const findingAval = async () =>{
     try {
-      const avalFound = (await findAval(8)) as Avaliacao;
-      setLocalAval({
-        id: avalFound.id || 2,
-        text: avalFound.text || "",
-        userId: avalFound.userId ||1,
-        professorId: avalFound.professorId || 1,
-        courseId: avalFound.courseId || 2,
-        comments: avalFound.comments || [],
-        createdAt: avalFound.createdAt,
-        updatedAt: avalFound.updatedAt
-      })
+      const avalFound: Avaliacao = await findAval(10);
+      setLocalAval(avalFound as Avaliacao);
     }
     catch (error){
       toast.error("Erro ao procurar avaliação", {autoClose:2200})
@@ -91,7 +64,7 @@ export default function TelaAvaliacao() {
   const findingProf = async (id:number) => {
     try{
       if (id>0){
-      const prof =await getOneProf(id);
+      const prof =await fetchProfessorInfo(id);
       setLocalProf(prof);
       }
     }
@@ -168,7 +141,7 @@ export default function TelaAvaliacao() {
               else {
                 const newComment: Partial<Comment> ={
                 text:textoComment,
-                userId:userAvalInfo.id,
+                userId:userInfo.id,
                 avaliacaoId: localAval.id
                 }
                 try {
@@ -382,50 +355,39 @@ export default function TelaAvaliacao() {
 
   //useEffects para inicializar a tela
   useEffect (()=>{
-    findingAval()
+    findingAval();
   },[])
 
   useEffect(()=> {
+    if (localAval?.professorId!=null)
     findingProf(localAval.professorId)
-  }, [localAval.professorId])
+  }, [localAval])
 
   useEffect(()=>{
+    if (localAval?.courseId!=null)
     findingCourse(localAval.courseId)
-  },[localAval.courseId])
+  },[localAval])
 
   useEffect(() => {
     const loadUserAvalInfo = async () => {
       try {
+        if (localAval?.userId!=null){
         const userData = (await fetchUserInfo(localAval.userId)) as User;
-        setUserAvalInfo({
-          id: userData.id || 0,
-          name: userData.name || "",
-          email: userData.email || "",
-          password: userData.password || "",
-          program: userData.program || { id: 0, name: "Carregando..." },
-          profilepic: userData.profilepic || "/default-profile.png",
-          avaliacoes: userData.avaliacoes || [],
-        });
+        setUserAvalInfo(userData as User)
+        console.log(userAvalInfo)
+      };
       } catch (error) {
         toast.error("Erro ao carregar as informações do usuário:", {autoClose:2200});
       } 
     };
     loadUserAvalInfo();
-  }, [localAval.userId]);
+  }, [localAval, userAvalInfo]);
 
   useEffect(() => {
     const loadUserInfo = async () => {
       try {
         const userData = (await fetchUserInfo(8)) as User;
-        setUserInfo({
-          id: userData.id || 0,
-          name: userData.name || "",
-          email: userData.email || "",
-          password: userData.password || "",
-          program: userData.program || { id: 0, name: "Carregando..." },
-          profilepic: userData.profilepic || "/default-profile.png",
-          avaliacoes: userData.avaliacoes || [],
-        });
+        setUserInfo(userData as User);
       } catch (error) {
         toast.error("Erro ao carregar as informações do usuário:", {autoClose:2200});
       } 
@@ -434,11 +396,10 @@ export default function TelaAvaliacao() {
       }
     };
     loadUserInfo();
-  }, []);
-
-
+  }, [localAval]); 
+   
   //tela de carregamento
-  if (loading) {
+  if (loading || !localAval || !userAvalInfo) {
     return telaCarregamento;
   }
 
@@ -465,7 +426,7 @@ export default function TelaAvaliacao() {
                          <BellIcon className="h-6 w-6 text-white" />
                        </button>
                        <Image
-                         src={profilePic}
+                         src={userInfo?.profilepic || profilePic}
                          alt="Foto de perfil"
                          width={48}
                          height={48}
@@ -489,7 +450,7 @@ export default function TelaAvaliacao() {
                 <div className="flex mx-auto items-center p-3 pb-1 ">
                   <div className="pl-1 items-center">
                     <Image
-                      src={userAvalInfo.profilepic}
+                      src={userAvalInfo.profilepic || profilePic} //caso a foto de perfil do usuário seja null, é colocada uma foto de perfil padrão
                       alt="Foto de perfil"
                       width={48}
                       height={48}
@@ -554,7 +515,7 @@ export default function TelaAvaliacao() {
                   <div  className="flex mx-left mb-[0.2rem] items-center"> 
                     <div className="items-center">
                       <Image
-                        src="/gabigol.jpg"
+                        src={comentario.user?.profilepic || profilePic}
                         alt="Foto de perfil"
                         width={48}
                         height={48}
@@ -564,7 +525,7 @@ export default function TelaAvaliacao() {
                     </div>
                     <span onClick= {()=> router.push("/perfil/aluno/Logado")} className="font-sans text-black ml-2 text-[13px] font-[500] leading-[15.73px] text-center items-center hover:bg-blue-200 transition duration-300 ease-in-out cursor-pointer"> {comentario.user?.name} </span> 
                     <span className="font-sans text-[#71767B] pl-2 text-[13px] font-[350] leading-[15.73px] text-center items-center"> · {formatData(comentario.updatedAt).data}, ás {formatData(comentario.updatedAt).hora}  </span>  
-                    {comentario.userId===localAval.userId && (
+                    {comentario.userId===userInfo.id && (
                       <div className="ml-auto flex flex-row">
                         <Image
                           src="/editar.png"
