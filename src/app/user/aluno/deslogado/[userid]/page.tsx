@@ -191,10 +191,11 @@ export default function PerfilAlunoLogado() {
                                   alt="Foto do autor do comentário"
                                   width={64}
                                   height={64}
-                                  className="w-8 h-8 object-cover rounded-full bg-white"
+                                  className="w-8 h-8 object-cover cursor-pointer rounded-full bg-white"
+                                  onClick={() => router.push(`/user/aluno/deslogado/${comment.user?.id}`)}
                                 />
                               </div>
-                              <p className="font-semibold text-gray-700">
+                              <p className="font-semibold cursor-pointer text-gray-700" onClick={() => router.push(`/user/aluno/deslogado/${comment.user?.id}`)}>
                                 {comment.user?.name || "Usuário desconhecido"}
                               </p>
                             </div>

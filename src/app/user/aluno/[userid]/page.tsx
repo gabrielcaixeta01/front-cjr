@@ -206,12 +206,24 @@ export default function PerfilAlunoLogado() {
                         avaliacao.comments.map((comment) => (
                           <div
                             key={comment.id}
-                            className="bg-gray-100 rounded-[50px] text-sm p-4 mt-1"
+                            className="bg-gray-100 rounded-[50px] text-sm p-3 mt-1"
                           >
-                            <p className="font-semibold text-gray-700">
-                              {comment.user?.name || "Usuário desconhecido"}:
-                            </p>
-                            <p className="text-gray-600 text-sm">{comment.text}</p>
+                            <div className="flex items-center">
+                              <div className="flex  mr-2 mb-1">
+                                <Image
+                                  src={comment.user?.profilepic || "/default-profile.png"}
+                                  alt="Foto do autor do comentário"
+                                  width={64}
+                                  height={64}
+                                  className="w-8 h-8 object-cover cursor-pointer rounded-full bg-white"
+                                  onClick={() => router.push(`/user/aluno/${comment.user?.id}`)}
+                                />
+                              </div>
+                              <p className="font-semibold cursor-pointer text-gray-700" onClick={() => router.push(`/user/aluno/${comment.user?.id}`)}>
+                                {comment.user?.name || "Usuário desconhecido"}
+                              </p>
+                            </div>
+                            <p className="text-gray-600 text-sm ml-2">{comment.text}</p>
                           </div>
                         ))}
                     </div>
