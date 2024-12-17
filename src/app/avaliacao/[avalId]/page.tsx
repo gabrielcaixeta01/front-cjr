@@ -83,7 +83,7 @@ export default function TelaAvaliacao() {
     useEffect(() => {
       const loadUserInfo = async () => {
         try {
-          const userData = (await fetchUserInfo(10)) as User;
+          const userData = (await fetchUserInfo(1)) as User;
           setUserInfo(userData as User);
         } catch (error) {
           toast.error("Erro ao carregar as informações do usuário:", {autoClose:2200});
@@ -395,171 +395,187 @@ export default function TelaAvaliacao() {
   return (
     <>
       <div className="flex flex-col h-screen min-h-fit overflow-y-scroll bg-gray-100">
-               <header className="flex justify-between bg-customGreen pb-1 items-center mb-2">
-                 <div className="flex bg-azulUnb pb-1">
-                   <div className="flex justify-between w-screen bg-white py-3 items-center">
-                     <Image
-                       src="/logounb.png"
-                       alt="Logo da UnB"
-                       width={80}
-                       height={80}
-                       className="w-20 h-10 cursor-pointer ml-5 shadow-md"
-                     />
-                     <div className="flex items-center space-x-5 mr-10">
-                       <button
-                         className="bg-azulCjr hover:bg-blue-600 p-2 rounded-[60px] transition duration-300 shadow-md hover:shadow-lg"
-                         onClick={() => toast.info("Sem notificações novas.")}
-                       >
-                         <BellIcon className="h-6 w-6 text-white" />
-                       </button>
-                       <Image
-                         src={userInfo?.profilepic || profilePic}
-                         alt="Foto de perfil"
-                         width={48}
-                         height={48}
-                         className="w-10 h-10 rounded-full shadow-md bg-white object-cover cursor-pointer"
-                         onClick={() => router.push(`user/aluno/${userInfo.id}`)}
-                       />
-                       <button
-                         className="flex items-center bg-azulCjr text-white rounded-[60px] px-4 py-2 hover:bg-blue-600 transition duration-300 ease-in-out shadow-md hover:shadow-lg"
-                         onClick={() => router.push("/feed/Deslogado")}
-                       >
-                         <ArrowRightOnRectangleIcon className="h-6 w-6 text-white" />
-                       </button>
-                     </div>
-                   </div>
-                 </div>
-            </header>
 
-        <div className="w-full max-w-[40%] mx-auto min-h-fit bg-white h-screen rounded shadow-md ">
-          <div className=" w-full max-w-[95%] bg-[#3EEE9A] rounded-md mt-8 flex flex-col mx-auto mb-4" >
-              <div className=" w-full max-w-[100%] flex flex-col mx-auto border-b-[1.5px] border-b-black pb-[0.7rem]">
-                <div className="flex mx-auto items-center p-3 pb-1 ">
-                  <div className="pl-1 items-center">
+        <header className="flex justify-between bg-customGreen pb-1 items-center mb-2 min-h-fit ">
+            <div className="flex bg-azulUnb pb-1">
+                <div className="flex justify-between w-screen bg-white py-3 items-center">
+                <Image
+                    src="/logounb.png"
+                    alt="Logo da UnB"
+                    width={80}
+                    height={80}
+                    className="w-20 h-10 cursor-pointer ml-5 shadow-md"
+                />
+                <div className="flex items-center space-x-5 mr-10">
+                    <button
+                    className="bg-azulCjr hover:bg-blue-600 p-2 rounded-[60px] transition duration-300 shadow-md hover:shadow-lg"
+                    onClick={() => toast.info("Sem notificações novas.")}
+                    >
+                    <BellIcon className="h-6 w-6 text-white" />
+                    </button>
                     <Image
-                      src={userAvalInfo.profilepic || profilePic} //caso a foto de perfil do usuário seja null, é colocada uma foto de perfil padrão
-                      alt="Foto de perfil"
-                      width={48}
-                      height={48}
-                      className="w-9 h-9 rounded-full shadow-md bg-white object-cover cursor-pointer"
-                      onClick={() => router.push(`/user/aluno/${userAvalInfo.id}`)}
+                    src={userInfo?.profilepic || profilePic}
+                    alt="Foto de perfil"
+                    width={48}
+                    height={48}
+                    className="w-10 h-10 rounded-full shadow-md bg-white object-cover cursor-pointer"
+                    onClick={() => router.push(`user/aluno/${userInfo.id}`)}
                     />
-                  </div>
-                  <span className="font-sans text-black ml-2 text-[15px] font-[500] leading-[16.94px] items-center hover:bg-blue-200 transition duration-300 ease-in-out cursor-pointer" onClick={()=> router.push(`/user/aluno/${userAvalInfo.id}`)}> {userAvalInfo.name} </span>
-                  <span className="font-sans text-[#71767B] text-[12px] font-[350] leading-[16.94px] flex pl-1.5 items-center"> · {formatData(localAval.updatedAt).data}, às {formatData(localAval.updatedAt).hora} </span>
-                  <span className="font-sans text-[#71767B] text-[12px] font-[350] leading-[16.94px] flex pl-1 items-center"> · {localProf.name} </span>
-                  <span className="font-sans text-[#71767B] text-[12px] font-[350] leading-[16.94px] flex pl-1 items-center"> · {localCourse.name} </span>
+                    <button
+                    className="flex items-center bg-azulCjr text-white rounded-[60px] px-4 py-2 hover:bg-blue-600 transition duration-300 ease-in-out shadow-md hover:shadow-lg"
+                    onClick={() => router.push("/feed/Deslogado")}
+                    >
+                    <ArrowRightOnRectangleIcon className="h-6 w-6 text-white" />
+                    </button>
                 </div>
-                <div className="pl-[6.8rem] max-w-[100%] break-words"> 
-                  <p className="text-[#222E50] text-[15px] font-[500] leading-[18.15px] pb-2 pr-4 overflow-wrap: break-word white-space: normal max-width: 100%"> {localAval.text} </p>
                 </div>
-                <div className="flex items-center justify-between pl-[6.5rem]">
-                <div className="flex"> 
-                  <Image
-                      src="/comente.png"
-                      alt="Comentários"
-                      width={48}
-                      height={48}
-                      className="w-6 h-6 rounded-full shadow-md hover:bg-blue-200 transition duration-300 hover:scale-110  ease-in-out cursor-pointer"
-                      onClick= {()=>toggleModalComment()}
-                    />
-                    <span className="font-sans text-[#222E50] text-[12px] font-[600] leading-[14.52px] flex pl-1 items-center"> {localAval.comments?.length} comentários</span>
-                  </div>
-                  {localAval.userId===userInfo.id && (
-                    <div className="flex pr-2">             
-                      <Image
-                        src="/editar.png"
-                        alt="Editar avaliação"
-                        width={64} 
-                        height={64}
-                        onClick = {()=> {toggleModalEdit(); setTextoEdit(localAval.text)}}
-                        className="w-4 h-4 object-cover mx-2 shadow-md hover:bg-blue-200 transition duration-300 hover:scale-110 ease-in-out cursor-pointer"   
-                      />  
-                      <Image
-                        src="/lixeira.png"
-                        alt="Excluir avaliação"
-                        width={64} 
-                        height={64}
-                        onClick = {()=> toggleDeleteAval()}
-                        className="w-4 h-4 object-cover mx-2 shadow-md hover:bg-blue-200 transition duration-300 hover:scale-110  ease-in-out cursor-pointer"
-                      />   
-                    </div>
-                  )}
-                  {isModalCommentOpen && (
-                    modalCreateComment()                           
-                    )}
-                  {isModalDeleteAvalOpen && (
-                    modalDeleteAval()
-                  )}
-                  {isModalEditOpen && (
-                    modalEditAval()
-                  )}                             
-                  </div>                         
-                </div>             
-              <div className="mt-3 w-full max-w-[70%] flex flex-col mx-auto  mb-4 justify-center">
-                {localAval.comments?.map((comentario, index)=> (                       
-                  <div key={comentario.id} className='mt-1'>
-                  <div  className="flex mx-left mb-[0.2rem] items-center"> 
-                    <div className="items-center">
-                      <Image
-                        src={comentario.user?.profilepic || profilePic}
-                        alt="Foto de perfil"
-                        width={48}
-                        height={48}
-                        className="w-7 h-7 rounded-full shadow-md bg-white object-cover cursor-pointer"
-                        onClick={() => router.push(`/user/aluno/${comentario.userId}`)}
-                      />
-                    </div>
-                    <span onClick= {()=> router.push(`/user/aluno/${comentario.userId}`)} className="font-sans text-black ml-2 text-[13px] font-[500] leading-[15.73px] text-center items-center hover:bg-blue-200 transition duration-300 ease-in-out cursor-pointer"> {comentario.user?.name} </span> 
-                    <span className="font-sans text-[#71767B] pl-2 text-[13px] font-[350] leading-[15.73px] text-center items-center"> · {formatData(comentario.updatedAt).data}, ás {formatData(comentario.updatedAt).hora}  </span>  
-                    {comentario.userId===userInfo.id && (
-                      <div className="ml-auto flex flex-row">
-                        <Image
-                          src="/editar.png"
-                          alt="Editar comentário"
-                          width={64} 
-                          height={64}
-                          onClick={()=> {
-                            setIdCommentEdited(comentario.id);
-                            setTextoEditComment(comentario.text);
-                            toggleEditComment();
-                          }}
-                          className="w-4 h-4 object-cover mx-2 shadow-md hover:bg-blue-200 transition duration-300 hover:scale-110 ease-in-out cursor-pointer"   
-                        />
-                        <Image
-                          src="/lixeira.png"
-                          alt="Excluir comentário"
-                          width={64} 
-                          height={64}
-                          onClick = {()=> {
-                            setIdCommentDeleted(comentario.id); 
-                            toggleDeleteComment();
-                          }}
-                          className="w-4 h-4 object-cover shadow-md hover:bg-blue-200 transition duration-300 hover:scale-110  ease-in-out cursor-pointer">
-                        </Image>
+            </div>
+        </header>   
 
-                        {isModalDeleteCommentOpen && (
-                          modalDeleteComment(idCommentDeleted)
-                        )}
-                        {isModalEditCommentOpen && (
-                          modalEditComment(idCommentEdited)
-                        )}       
-                      </div>    
-                    )}               
-                  </div>
-                  <div className="pl-[2.3rem] break-words"> 
-                    <p className="text-[#222E50] text-[14px] text-[500] leading-[16.94px] pb-2"> {comentario.text} </p>
-                  </div>
-                  {index !== localAval.comments.length - 1 && (
-                    <div className="border-b border-[#71767B] w-full mb-[0.5rem]" >
+        <div className="w-full max-w-[40%]  mx-auto min-h-fit bg-white h-screen rounded shadow-md ">
+            <div className=" w-full max-w-[95%] bg-[#3EEE9A] rounded-md mt-8 flex flex-col mx-auto mb-4 min-h-fit" >
+                <div className=" w-full max-w-[100%] flex flex-col mx-auto border-b-[1.5px] border-b-black pb-[0.7rem] mt-2">
+                    <div className="flex items-center pl-3 pb-[0.7rem] mt-2">
+                        <div className="pl-1">
+                            <Image
+                            src={userAvalInfo.profilepic || profilePic} //caso a foto de perfil do usuário seja null, é colocada uma foto de perfil padrão
+                            alt="Foto de perfil"
+                            width={48}
+                            height={48}
+                            className="w-9 h-9 rounded-full shadow-md bg-white object-cover cursor-pointer"
+                            onClick={() => router.push(`/user/aluno/${userAvalInfo.id}`)}
+                            />         
+                        </div>
+                        <div className='flex ml-3 items-center'>
+                            <span className="font-sans text-black text-[15px] font-[500] leading-[16.94px]  hover:bg-blue-200 transition duration-300 ease-in-out cursor-pointer" onClick={()=> router.push(`/user/aluno/${userAvalInfo.id}`)}>{userAvalInfo.name}</span>
+                            <span className="font-sans text-[#71767B] text-[12px] leading-[16.94px] flex ml-[6px] mr-[3px] font-bold"> · </span>
+                            <span className="font-sans text-[#71767B] text-[12px] font-[350] leading-[16.94px] flex">{formatData(localAval.updatedAt).data}, às {formatData(localAval.updatedAt).hora}</span>
+                            <span className="font-sans text-[#71767B] text-[12px] font-bold leading-[16.94px] flex ml-[3px] mr-[3px]"> · </span>
+                            <span className="font-sans text-[#71767B] text-[12px] font-[350] leading-[16.94px] flex">{localProf.name} </span>
+                            <span className="font-sans text-[#71767B] text-[12px] font-bold leading-[16.94px] flex ml-[3px] mr-[3px]"> · </span>
+                            <span className="font-sans text-[#71767B] text-[12px] font-[350] leading-[16.94px] flex">{localCourse.name}</span>
+                        </div>
                     </div>
-                  )}
+                    <div className='flex flex-col ml-[4.25rem]'>
+                        <div>
+                            <div>
+                                <p className="text-[#222E50] text-[15px] font-[500] leading-[18.15px] pb-2 pr-4 whitespace-pre-wrap overflow-wrap: break-words break-word white-space: normal max-width: 100%"> 
+                                    {localAval.text} </p>
+                            </div>
+                        </div>
+                        <div className="flex items-center justify-between">
+                            <div className="flex"> 
+                                <Image
+                                    src="/comente.png"
+                                    alt="Comentários"
+                                    width={48}
+                                    height={48}
+                                    className="w-6 h-6 rounded-full shadow-md hover:bg-blue-200 transition duration-300 hover:scale-110  ease-in-out cursor-pointer"
+                                    onClick= {()=>toggleModalComment()}
+                                />
+                                <span className="font-sans text-[#222E50] text-[12px] font-[600] leading-[14.52px] flex pl-1 items-center"> 
+                                    {localAval.comments?.length} comentários
+                                </span>
+                            </div>
+                            {localAval.userId===userInfo.id && (
+                                <div className="flex pr-2">             
+                                    <Image
+                                    src="/editar.png"
+                                    alt="Editar avaliação"
+                                    width={64} 
+                                    height={64}
+                                    onClick = {()=> {toggleModalEdit(); setTextoEdit(localAval.text)}}
+                                    className="w-4 h-4 object-cover mx-2 shadow-md hover:bg-blue-200 transition duration-300 hover:scale-110 ease-in-out cursor-pointer"   
+                                    />  
+                                    <Image
+                                    src="/lixeira.png"
+                                    alt="Excluir avaliação"
+                                    width={64} 
+                                    height={64}
+                                    onClick = {()=> toggleDeleteAval()}
+                                    className="w-4 h-4 object-cover mx-2 shadow-md hover:bg-blue-200 transition duration-300 hover:scale-110  ease-in-out cursor-pointer"
+                                    />   
+                                </div>
+                                )}
+                                {isModalCommentOpen && (
+                                modalCreateComment()                           
+                                )}
+                                {isModalDeleteAvalOpen && (
+                                modalDeleteAval()
+                                )}
+                                {isModalEditOpen && (
+                                modalEditAval()
+                                )}                             
+                        </div>  
+                    </div>
                 </div>
-                )  
-                )}
-              </div>
-          </div>
-        </div>
+                    <div className="mt-3 w-full max-w-[70%] flex flex-col mx-auto  mb-4 justify-center">
+                        {localAval.comments?.map((comentario, index)=> (                       
+                            <div key={comentario.id} className='mt-1'>
+                            <div  className="flex mx-left mb-[0.2rem] items-center"> 
+                            <div className="items-center">
+                                <Image
+                                src={comentario.user?.profilepic || profilePic}
+                                alt="Foto de perfil"
+                                width={48}
+                                height={48}
+                                className="w-7 h-7 rounded-full shadow-md bg-white object-cover cursor-pointer"
+                                onClick={() => router.push(`/user/aluno/${comentario.userId}`)}
+                                />
+                            </div>
+                            <span onClick= {()=> router.push(`/user/aluno/${comentario.userId}`)} className="font-sans text-black ml-2 text-[13px] font-[500] leading-[15.73px] text-center items-center hover:bg-blue-200 transition duration-300 ease-in-out cursor-pointer"> 
+                                {comentario.user?.name} 
+                            </span> 
+                            <span className="font-sans text-[#71767B] pl-2 text-[13px] font-[350] leading-[15.73px] text-center items-center"> 
+                                · {formatData(comentario.updatedAt).data}, ás {formatData(comentario.updatedAt).hora}  
+                            </span>  
+                            {comentario.userId===userInfo.id && (
+                                <div className="ml-auto flex flex-row">
+                                <Image
+                                    src="/editar.png"
+                                    alt="Editar comentário"
+                                    width={64} 
+                                    height={64}
+                                    onClick={()=> {
+                                    setIdCommentEdited(comentario.id);
+                                    setTextoEditComment(comentario.text);
+                                    toggleEditComment();
+                                    }}
+                                    className="w-4 h-4 object-cover mx-2 shadow-md hover:bg-blue-200 transition duration-300 hover:scale-110 ease-in-out cursor-pointer"   
+                                />
+                                <Image
+                                    src="/lixeira.png"
+                                    alt="Excluir comentário"
+                                    width={64} 
+                                    height={64}
+                                    onClick = {()=> {
+                                    setIdCommentDeleted(comentario.id); 
+                                    toggleDeleteComment();
+                                    }}
+                                    className="w-4 h-4 object-cover shadow-md hover:bg-blue-200 transition duration-300 hover:scale-110  ease-in-out cursor-pointer">
+                                </Image>
+        
+                                {isModalDeleteCommentOpen && (
+                                    modalDeleteComment(idCommentDeleted)
+                                )}
+                                {isModalEditCommentOpen && (
+                                    modalEditComment(idCommentEdited)
+                                )}       
+                                </div>    
+                            )}               
+                            </div>
+                            <div className="pl-[2.3rem] break-words"> 
+                                <p className="text-[#222E50] text-[14px] text-[500] leading-[16.94px] pb-2"> {comentario.text} </p>
+                            </div>
+                            {index !== localAval.comments.length - 1 && (
+                            <div className="border-b border-[#71767B] w-full mb-[0.75rem]"></div>
+                            )}
+                        </div>
+                            ))
+                        }
+                </div>
+            </div>
+        </div>     
       </div>
     </>
   )
