@@ -1,18 +1,18 @@
 "use client";
 
 import Image from "next/image";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import React, { useState, useEffect } from "react";
 import axios from "axios"; // Importação corrigida
 import { toast } from "react-toastify";
 import { fetchUserInfo } from "@/utils/api";
 import { User, Professor } from "@/types";
+import { BellIcon, ArrowRightOnRectangleIcon } from "@heroicons/react/24/solid";
 
-export default function FeedDeslogado() {
+
+export default function FeedLogado() {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const userid = searchParams.get("userid");
-
+  const { userid } = useParams();
   const [filteredProfessores, setFilteredProfessores] = useState<Professor[]>([]);
   const [userInfo, setUserInfo] = useState<User | null>(null);
   const [professores, setProfessores] = useState<Professor[]>([]);
@@ -88,34 +88,38 @@ export default function FeedDeslogado() {
     <div className="bg-gray-100 min-h-screen">
       {/* Header */}
       <header className="flex justify-between bg-customGreen pb-1 items-center mb-5">
-        <div className="flex justify-between w-screen bg-white py-3 items-center">
-          <Image
-            src="/logounb.png"
-            alt="Logo da UnB"
-            width={80}
-            height={80}
-            className="w-20 h-10 cursor-pointer ml-5 shadow-md"
-            onClick={() => router.push("/feed/deslogado")}
-          />
-          <div className="flex items-center space-x-4 mr-10">
-            {userInfo && (
-              <div className="flex items-center">
-                <Image
-                  src={userInfo.profilepic || "/default-profile.png"}
-                  alt="Foto do Usuário"
-                  width={40}
-                  height={40}
-                  className="rounded-full"
-                />
-                <span className="text-gray-800 ml-2">{userInfo.name}</span>
-              </div>
-            )}
-            <button
-              className="bg-azulCjr text-white px-5 py-2 rounded hover:bg-blue-600 transition"
-              onClick={() => router.push("/login")}
-            >
-              Login
-            </button>
+        <div className="flex bg-azulUnb pb-1">
+          <div className="flex justify-between w-screen bg-white py-3 items-center">
+            <Image
+              src="/logounb.png"
+              alt="Logo da UnB"
+              width={80}
+              height={80}
+              className="w-20 h-10 cursor-pointer ml-5 shadow-md"
+              onClick={() => router.push(`/feed/logado/${userid}`)}
+            />
+            <div className="flex items-center space-x-5 mr-10">
+              <button
+                className="bg-azulCjr hover:bg-blue-600 p-2 rounded-[60px] transition duration-300 shadow-md hover:shadow-lg"
+                onClick={() => toast.info("Sem notificações novas.")}
+              >
+                <BellIcon className="h-6 w-6 text-white" />
+              </button>
+              <Image
+                src={userInfo?.profilepic || "/default-profile.png"}
+                alt="Foto de perfil"
+                width={48}
+                height={48}
+                className="w-10 h-10 rounded-full shadow-md bg-white object-cover cursor-pointer"
+                onClick={() => router.push(`/user/aluno/${userid}`)}
+              />
+              <button
+                className="flex items-center bg-azulCjr text-white rounded-[60px] px-4 py-2 hover:bg-blue-600 transition duration-300 ease-in-out shadow-md hover:shadow-lg"
+                onClick={() => router.push("/feed/deslogado")}
+              >
+                <ArrowRightOnRectangleIcon className="h-6 w-6 text-white" />
+              </button>
+            </div>
           </div>
         </div>
       </header>
