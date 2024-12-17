@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
 import Image from "next/image";
@@ -5,8 +6,8 @@ import { useParams, useRouter } from "next/navigation";
 import React, { useState, useEffect } from "react";
 import axios from "axios"; // Importação corrigida
 import { toast } from "react-toastify";
-import { fetchUserInfo, createAval } from "@/utils/api";
-import { User, Professor, Avaliacao } from "@/types";
+import { fetchUserInfo, createAval, getAllCourses } from "@/utils/api";
+import { User, Professor, Avaliacao, Course } from "@/types";
 import { BellIcon, ArrowRightOnRectangleIcon } from "@heroicons/react/24/solid";
 
 
@@ -16,10 +17,9 @@ export default function FeedLogado() {
   const [filteredProfessores, setFilteredProfessores] = useState<Professor[]>([]);
   const [userInfo, setUserInfo] = useState<User | null>(null);
   const [professores, setProfessores] = useState<Professor[]>([]);
+  const [courses, setCourses] = useState<Course[]>([]);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [texto, setTexto] = useState("");
-  const [listaProfs, setListaProfs] = useState<Professor[]>([]);
-  const [listaCourses, setListaCourses] = useState<Course[]>([]);
   const [profSelected, setProfSelected] = useState("-1");
   const [courseSelected, setCourseSelected] = useState("-1");
   const [idProfAvaliacao, setIdProfAvaliacao] = useState("-1");
@@ -52,6 +52,7 @@ export default function FeedLogado() {
         const response = await axios.get("http://localhost:4000/professors"); // URL corrigida
         setProfessores(response.data as Professor[]);
         setFilteredProfessores(response.data as Professor[]);
+        
       } catch (error) {
         toast.error("Erro ao buscar professores.");
         console.error("Erro ao buscar professores:", error);
@@ -59,6 +60,19 @@ export default function FeedLogado() {
     };
     fetchProfessores();
   }, []);
+
+  useEffect(()=> {
+    const fetchCourses = async ()=> {
+      try{
+        const response_course = await axios.get("http://localhost:4000/courses"); 
+        setCourses(response_course.data as Course[]);
+      }
+      catch (error){
+        toast.error("Erro ao buscar disciplinas");
+      }
+    };
+    fetchCourses();
+  },[])
 
   // Função de busca
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>): void => {
@@ -123,21 +137,21 @@ export default function FeedLogado() {
     const modal = 
     <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50 ">
       <div className="h-screen  w-[60%] max-h-[62%]  flex flex-col mx-auto bg-[#3EEE9A] rounded-md items-center">
-        <select value= {profSelected} className="flex flex-col bg-white h-[2rem] w-[90%] justify-between items-left hover:cursor-pointer rounded-md text-[#999797] font-[300] text-[18px] mt-6 leading-[3rem] pt-1" onChange={(event)=> {setIdProfAvaliacao(event.target.value); setProfSelected(event.target.value)}}>
-          <option value="-1"  disabled className="text-[#999797] font-[300] text-[18px] leading-[29.05px] pl-2">
+        <select value= {profSelected} className="flex flex-col bg-white h-[2rem] w-[90%] pl-[0.325rem] justify-between items-left hover:cursor-pointer rounded-md text-[#999797] font-[300] text-[18px]  mt-5 leading-[3rem] pt-[0.325rem]" onChange={(event)=> {setIdProfAvaliacao(event.target.value); setProfSelected(event.target.value)}}>
+          <option value="-1"  disabled className="text-[#999797] font-[300] text-[18px] leading-[29.05px]">
             Nome do professor
           </option>
-          {listaProfs.map((prof) => (
+          {professores.map((prof) => (
             <option key={prof.id} value={prof.id} className="text-black text-[18px] leading-[29.05px] font-[200] ">
               {prof.name}
             </option>))}
         </select>
     
-        <select value={courseSelected} className="flex flex-col bg-white h-[2rem] w-[90%] justify-between items-left hover:cursor-pointer rounded-md text-[#999797] font-[300] text-[18px]  mt-6 leading-[3rem] pt-1" onChange={(event)=> {setIdCourseAvaliacao(event.target.value); setCourseSelected(event.target.value)}}>
-          <option value="-1"  disabled  className="text-[#999797] font-[300] text-[18px] leading-[29.05px] pl-2">
+        <select value={courseSelected} className="flex flex-col bg-white h-[2rem] w-[90%] pl-[0.325rem] justify-between items-left hover:cursor-pointer rounded-md text-[#999797] font-[300] text-[18px]  mt-5 leading-[3rem] pt-[0.325rem]" onChange={(event)=> {setIdCourseAvaliacao(event.target.value); setCourseSelected(event.target.value)}}>
+          <option value="-1"  disabled  className="text-[#999797] font-[300] text-[18px] leading-[29.05px]">
             Disciplina
           </option>
-          {listaCourses.map((course) => (
+          {courses.map((course) => (
             <option key={course.id} value={course.id} className="text-black text-[18px] leading-[29.05px] font-[200]">
               {course.name}
             </option>))}           
