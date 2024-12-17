@@ -125,14 +125,16 @@ export default function ProfessorDeslogado() {
                     alt="Foto do autor"
                     width={64}
                     height={64}
-                    className="w-12 h-12 object-cover rounded-full bg-white"
+                    className="w-12 h-12 object-cover rounded-full cursor-pointer bg-white"
+                    onClick={() => router.push(`/user/aluno/deslogado/${avaliacao.user?.id}`)}
+                    
                   />
                 </div>
 
                 {/* Detalhes da Avaliação */}
                 <div className="max-w-[550px]">
                   {/* Nome do Autor */}
-                  <p className="font-bold text-gray-800">
+                  <p className="font-bold text-gray-800 cursor-pointer" onClick={() => router.push(`/user/aluno/deslogado/${avaliacao.user?.id}`)}>
                     {avaliacao.user?.name || "Usuário desconhecido"}
                   </p>
 

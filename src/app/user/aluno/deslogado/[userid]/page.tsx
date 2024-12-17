@@ -9,7 +9,7 @@ import axios from "axios";
 
 export default function PerfilAlunoLogado() {
   const router = useRouter();
-  const { id } = useParams(); // Captura o ID da URL
+  const { userid } = useParams(); // Captura o ID da URL
   const [loading, setLoading] = useState(true);
   const [openComments, setOpenComments] = useState<number | null>(null);
   const [professores, setProfessores] = useState<{ id: number; name: string }[]>([]);
@@ -20,7 +20,7 @@ export default function PerfilAlunoLogado() {
   useEffect(() => {
     const loadUserInfo = async () => {
       try {
-        const userData = await fetchUserInfo(Number(id)); // Converte o ID para número
+        const userData = await fetchUserInfo(Number(userid)); // Converte o ID para número
         setUserInfo(userData);
       } catch (error) {
         console.error("Erro ao carregar as informações do usuário:", error);
@@ -29,8 +29,8 @@ export default function PerfilAlunoLogado() {
       }
     };
 
-    if (id) loadUserInfo();
-  }, [id]);
+    if (userid) loadUserInfo();
+  }, [userid]);
 
   // Busca professores e cursos
   useEffect(() => {
@@ -66,7 +66,7 @@ export default function PerfilAlunoLogado() {
               width={80}
               height={80}
               className="w-20 h-10 cursor-pointer ml-5 shadow-md"
-              onClick={() => router.push("/feed/Deslogado")}
+              onClick={() => router.push("/feed/deslogado")}
             />
             <div className="flex items-center space-x-5 mr-10">
               <button
