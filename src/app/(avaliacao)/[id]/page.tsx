@@ -37,7 +37,7 @@ export default function TelaAvaliacao() {
   const [userAvalInfo, setUserAvalInfo] = useState<User | null>(null);
   const [userInfo, setUserInfo] = useState<User | null> (null);
 
-  //useEffects + funções para inicializar a tela
+  //useEffects pra inicializar a avaliação da tela
   useEffect(()=>{
     if (!avalId) {
       toast.error("Não foi possível achar a avaliação");
