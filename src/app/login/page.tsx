@@ -6,24 +6,9 @@ import * as Yup from "yup";
 import { getUserByEmail, loginUser } from "@/utils/api";
 
 const validationSchema = Yup.object({
-  name: Yup.string().required("Insira o seu nome"),
   email: Yup.string()
     .email("Insira um email válido")
-    .required("O e-mail é obrigatório")
-    .test(
-      "checkEmailExists",
-      "Não existe conta cadastrada com esse email, se cadastre primeiro.",
-      async (email) => {
-        if (!email) return false;
-        try {
-          const existingUser = await getUserByEmail(email);
-          return existingUser;
-        } catch (error) {
-          console.error("Erro ao verificar email:", error);
-          return true;
-        }
-      }
-    ),
+    .required("O e-mail é obrigatório"),
   password: Yup.string().required("A senha é obrigatória"),
 });
 
@@ -36,8 +21,20 @@ export default function Login() {
   const router = useRouter();
 
   const onSubmit = async (values: typeof initialValues) => {
-    const { access_token } = await loginUser(values.email, values.password);
-    router.push("/feed/Logado");
+    console.log(values);
+    try {
+      const { access_token } = await loginUser(values.email, values.password);
+      console.log("Token:", access_token);
+
+      if (access_token) {
+        router.push("/feed/logado/2");
+      } else {
+        alert("Falha no login. Verifique suas credenciais.");
+      }
+    } catch (error) {
+      console.error("Erro ao fazer login:", error);
+      alert("Erro ao fazer login. Tente novamente.");
+    }
   };
   return (
     <div className="w-full h-screen flex  relative">
@@ -88,6 +85,7 @@ export default function Login() {
               <button
                 type="submit"
                 className="bg-green-300 border-[0.125rem] border-gray-500 p-2 rounded-lg hover:scale-110 duration-200 w-40 h-12 text-xl text-black"
+          
               >
                 Entrar
               </button>

@@ -92,7 +92,8 @@ export const createComment = async (comment: Partial<Comment>) => {
     text: comment.text,
     userId: comment.userId,
     avaliacaoId: comment.avaliacaoId,
-  });
+    
+  }, {headers: {Authorization: "Bearer "}});
   return response.data;
 };
 
@@ -149,7 +150,12 @@ export const getUserByEmail = async (email: string) => {
   return response.data;
 };
 
-export const loginUser = async (email: string, password: string): Promise<{ access_token: string }> => {
+export const loginUser = async (email: string, password: string) => {
+  try {
     const response = await api.post("/login", { email, password });
-    return response.data;
+    return response.data; 
+  } catch (error) {
+    console.error("Erro ao fazer login:", error);
+    throw new Error("Credenciais inválidas ou erro no servidor.");
+  }
 };
