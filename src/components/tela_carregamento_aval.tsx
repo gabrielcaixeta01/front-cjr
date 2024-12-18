@@ -1,6 +1,4 @@
 import Image from "next/image";
-import { ArrowRightOnRectangleIcon } from "@heroicons/react/20/solid";
-import { BellIcon } from "@heroicons/react/24/solid";
 
 const telaCarregamento = <div className="flex flex-col h-screen min-h-screen overflow-y-scroll bg-gray-100">
 <header className="flex justify-between bg-customGreen pb-1 items-center mb-2">

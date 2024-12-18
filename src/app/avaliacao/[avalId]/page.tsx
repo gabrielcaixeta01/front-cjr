@@ -12,6 +12,8 @@ import { Avaliacao, Comment, User } from "@/types";
 import { findAval, fetchUserInfo, deleteAval, getOneCourse, createComment, updateAval, deleteComment, updateComment, fetchProfessorInfo } from "@/utils/api";
 import { Avaliacao } from "@prisma/client";
 import telaCarregamento from "@/components/tela_carregamento_aval"
+import HeaderLogado from "@/components/headers/logado/page"
+import HeaderDeslogado from '@/components/headers/deslogado/page';
 
 export default function TelaAvaliacao() {
   
@@ -35,7 +37,16 @@ export default function TelaAvaliacao() {
   const [localAval, setLocalAval] = useState<Avaliacao | null>(null);
   const [userAvalInfo, setUserAvalInfo] = useState<User | null>(null);
   const [userInfo, setUserInfo] = useState<User | null> (null);
+  const [isAuth, setIsAuth] = useState(false); //verifica se o usuario está logado
 
+  const verify_acess = ()=> {  const accessToken = localStorage.getItem("access_token");
+    if (accessToken){
+      console.log("tem");
+      setIsAuth(true);
+    }
+  }
+
+  useEffect(()=> verify_acess()) //chama a função para verificar se o usuário está logado
   //useEffects pra inicializar a avaliação da tela
   useEffect(()=>{
     console.log(avalId)
@@ -391,47 +402,17 @@ export default function TelaAvaliacao() {
     return telaCarregamento;
   }
 
+
   //tela ao terminar de carregar
   return (
     <>
       <div className="flex flex-col h-screen min-h-fit overflow-y-scroll bg-gray-100">
-
-        <header className="flex justify-between bg-customGreen pb-1 items-center mb-2 min-h-fit ">
-            <div className="flex bg-azulUnb pb-1">
-                <div className="flex justify-between w-screen bg-white py-3 items-center">
-                <Image
-                    src="/logounb.png"
-                    alt="Logo da UnB"
-                    width={80}
-                    height={80}
-                    className="w-20 h-10 cursor-pointer ml-5 shadow-md"
-                />
-                <div className="flex items-center space-x-5 mr-10">
-                    <button
-                    className="bg-azulCjr hover:bg-blue-600 p-2 rounded-[60px] transition duration-300 shadow-md hover:shadow-lg"
-                    onClick={() => toast.info("Sem notificações novas.")}
-                    >
-                    <BellIcon className="h-6 w-6 text-white" />
-                    </button>
-                    <Image
-                    src={userInfo?.profilepic || profilePic}
-                    alt="Foto de perfil"
-                    width={48}
-                    height={48}
-                    className="w-10 h-10 rounded-full shadow-md bg-white object-cover cursor-pointer"
-                    onClick={() => router.push(`user/aluno/${userInfo.id}`)}
-                    />
-                    <button
-                    className="flex items-center bg-azulCjr text-white rounded-[60px] px-4 py-2 hover:bg-blue-600 transition duration-300 ease-in-out shadow-md hover:shadow-lg"
-                    onClick={() => router.push("/feed/Deslogado")}
-                    >
-                    <ArrowRightOnRectangleIcon className="h-6 w-6 text-white" />
-                    </button>
-                </div>
-                </div>
-            </div>
-        </header>   
-
+        {isAuth && (
+          HeaderLogado(userInfo)
+        )}
+        {!isAuth && (
+          HeaderDeslogado()
+        )}
         <div className="w-full max-w-[40%]  mx-auto min-h-fit bg-white h-screen rounded shadow-md ">
             <div className=" w-full max-w-[95%] bg-[#3EEE9A] rounded-md mt-8 flex flex-col mx-auto mb-4 min-h-fit" >
                 <div className=" w-full max-w-[100%] flex flex-col mx-auto border-b-[1.5px] border-b-black pb-[0.7rem] mt-2">
