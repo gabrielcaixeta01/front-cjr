@@ -27,7 +27,11 @@ export default function Login() {
       console.log("Token:", access_token);
 
       if (access_token) {
-        router.push("/feed/logado/2");
+        const user = await getUserByEmail(values.email);
+        if (user) {
+          console.log(localStorage.getItem("authToken"));
+          router.push(`/user/aluno/${user.id}`);
+        }
       } else {
         alert("Falha no login. Verifique suas credenciais.");
       }
@@ -85,7 +89,6 @@ export default function Login() {
               <button
                 type="submit"
                 className="bg-green-300 border-[0.125rem] border-gray-500 p-2 rounded-lg hover:scale-110 duration-200 w-40 h-12 text-xl text-black"
-          
               >
                 Entrar
               </button>
