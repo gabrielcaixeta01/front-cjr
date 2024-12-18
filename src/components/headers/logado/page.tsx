@@ -4,10 +4,9 @@ import { BellIcon } from "@heroicons/react/24/solid";
 import {User} from "@/types"
 import {useRouter } from "next/navigation";
 import { toast } from "react-toastify";
-import { useState } from "react";
 
 export default function HeaderLogado(userInfo:User) {  
-    const [profilePic, setProfilePic] = useState("/default-profile.png");
+    console.log("cheguei aqui")
     const router = useRouter();
     return(  
     <header className="flex justify-between bg-customGreen pb-1 items-center mb-2 min-h-fit ">
@@ -28,7 +27,7 @@ export default function HeaderLogado(userInfo:User) {
                     <BellIcon className="h-6 w-6 text-white" />
                     </button>
                     <Image
-                    src={userInfo?.profilepic || profilePic}
+                    src={userInfo?.profilepic || "/default-profile.png"}
                     alt="Foto de perfil"
                     width={48}
                     height={48}

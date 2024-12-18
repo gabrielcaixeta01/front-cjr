@@ -14,6 +14,7 @@ import { Avaliacao } from "@prisma/client";
 import telaCarregamento from "@/components/tela_carregamento_aval"
 import HeaderLogado from "@/components/headers/logado/page"
 import HeaderDeslogado from '@/components/headers/deslogado/page';
+import { jwtDecode } from 'jwt-decode'
 
 export default function TelaAvaliacao() {
   
@@ -39,15 +40,23 @@ export default function TelaAvaliacao() {
   const [userInfo, setUserInfo] = useState<User | null> (null);
   const [isAuth, setIsAuth] = useState(false); //verifica se o usuario está logado
 
-  const verify_acess = ()=> {  const accessToken = localStorage.getItem("access_token");
-    if (accessToken){
-      console.log("tem");
+  useEffect(()=> {
+    const verify_acess = async () =>{ 
+      const accessToken = localStorage.getItem("authToken");
+    if (accessToken) {
+      const decodedToken = jwtDecode(accessToken)
+      console.log("Decoded Payload:",decodedToken)
+      console.log("o id do usuario é " + decodedToken.sub)
       setIsAuth(true);
+      const usuarioLogado : User = await fetchUserInfo(Number(decodedToken.sub));
+      setUserInfo(usuarioLogado);
+    }
+    else{
+      setUserInfo(null);
     }
   }
+    verify_acess()}) 
 
-  useEffect(()=> verify_acess()) //chama a função para verificar se o usuário está logado
-  //useEffects pra inicializar a avaliação da tela
   useEffect(()=>{
     console.log(avalId)
     if (!avalId) {
@@ -61,6 +70,7 @@ export default function TelaAvaliacao() {
       }
       catch (error){
         toast.error("Erro ao procurar avaliação", {autoClose:2200})
+        console.log(error)
       }
     }
     findingAval();
@@ -68,7 +78,7 @@ export default function TelaAvaliacao() {
 
     //useEffects para inicializar a tela
     useEffect(()=> {
-      if (localAval?.professorId!=null)
+    if (localAval?.professorId!=null)
       findingProf(localAval.professorId)
     }, [localAval])
   
@@ -90,22 +100,7 @@ export default function TelaAvaliacao() {
       };
       loadUserAvalInfo();
     }, [localAval]);
-  
-    useEffect(() => {
-      const loadUserInfo = async () => {
-        try {
-          const userData = (await fetchUserInfo(1)) as User;
-          setUserInfo(userData as User);
-        } catch (error) {
-          toast.error("Erro ao carregar as informações do usuário:", {autoClose:2200});
-        } 
-        finally{
-          setLoading(false);
-        }
-      };
-      loadUserInfo();
-    }, []); 
-     
+       
   const findingProf = async (id:number) => {
     try{
       if (id>0){
@@ -398,16 +393,16 @@ export default function TelaAvaliacao() {
   }
 
   //tela de carregamento
-  if (loading || !localAval || !userAvalInfo || !userInfo) {
+  if (!localAval || !userAvalInfo) {
+    console.log("travei")
     return telaCarregamento;
   }
-
 
   //tela ao terminar de carregar
   return (
     <>
       <div className="flex flex-col h-screen min-h-fit overflow-y-scroll bg-gray-100">
-        {isAuth && (
+        {isAuth && userInfo && (
           HeaderLogado(userInfo)
         )}
         {!isAuth && (
@@ -445,20 +440,31 @@ export default function TelaAvaliacao() {
                             </div>
                         </div>
                         <div className="flex items-center justify-between">
-                            <div className="flex"> 
+                            <div className="flex">
+                              {isAuth && (
                                 <Image
+                                src="/comente.png"
+                                alt="Comentários"
+                                width={48}
+                                height={48}
+                                className="w-6 h-6 rounded-full shadow-md hover:bg-blue-200 transition duration-300 hover:scale-110  ease-in-out cursor-pointer"
+                                onClick= {()=>toggleModalComment()}
+                                />
+                              )} 
+                              {!isAuth && (<Image
                                     src="/comente.png"
                                     alt="Comentários"
                                     width={48}
                                     height={48}
                                     className="w-6 h-6 rounded-full shadow-md hover:bg-blue-200 transition duration-300 hover:scale-110  ease-in-out cursor-pointer"
-                                    onClick= {()=>toggleModalComment()}
-                                />
+                                    onClick= {()=>router.push("/login")}
+                                    />
+                                )}
                                 <span className="font-sans text-[#222E50] text-[12px] font-[600] leading-[14.52px] flex pl-1 items-center"> 
                                     {localAval.comments?.length} comentários
                                 </span>
                             </div>
-                            {localAval.userId===userInfo.id && (
+                            {userInfo && localAval.userId===userInfo.id && (
                                 <div className="flex pr-2">             
                                     <Image
                                     src="/editar.png"
@@ -510,7 +516,7 @@ export default function TelaAvaliacao() {
                             <span className="font-sans text-[#71767B] pl-2 text-[13px] font-[350] leading-[15.73px] text-center items-center"> 
                                 · {formatData(comentario.updatedAt).data}, ás {formatData(comentario.updatedAt).hora}  
                             </span>  
-                            {comentario.userId===userInfo.id && (
+                            {userInfo && comentario.userId===userInfo.id && (
                                 <div className="ml-auto flex flex-row">
                                 <Image
                                     src="/editar.png"
