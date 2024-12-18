@@ -19,21 +19,7 @@ const validationSchema = Yup.object({
   name: Yup.string().required("Insira o seu nome"),
   email: Yup.string()
     .email("Insira um email válido")
-    .required("O e-mail é obrigatório")
-    .test(
-      "checkEmailExists",
-      "Este e-mail já está cadastrado",
-      async (email) => {
-        if (!email) return false;
-        try {
-          const existingUser = await getUserByEmail(email);
-          return !existingUser;
-        } catch (error) {
-          console.error("Erro ao verificar email:", error);
-          return true;
-        }
-      }
-    ),
+    .required("O e-mail é obrigatório"),
   password: Yup.string()
     .min(6, "A senha deve ter pelo menos 6 caracteres")
     .matches(/[A-Z]/, "A senha deve conter pelo menos uma letra maiúscula")
@@ -100,6 +86,11 @@ export default function Cadastro() {
   }, []);
 
   const onSubmit = async (values: User) => {
+    const existingUser: User | null = await getUserByEmail(values.email);
+    if (existingUser) {
+      toast.error("Este e-mail já está cadastrado.", { autoClose: 3000 });
+      return; 
+    }
     const newUser = {
       name: values.name,
       email: values.email,

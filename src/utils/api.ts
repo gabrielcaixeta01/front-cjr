@@ -145,9 +145,14 @@ export const getAllPrograms = async () => {
   return response.data;
 };
 
-export const getUserByEmail = async (email: string) => {
-  const response = await api.get(`/user/email/${email}`);
-  return response.data;
+export const getUserByEmail = async (email: string): Promise<User | null> => {
+   try {
+    const response = await api.get(`/user/email/${email}`);
+    return response.data || null; 
+  } catch (error) {
+    console.error("Erro ao buscar usuário ", error);
+    return null;
+  }
 };
 
 export const loginUser = async (email: string, password: string) => {
