@@ -6,24 +6,9 @@ import * as Yup from "yup";
 import { getUserByEmail, loginUser } from "@/utils/api";
 
 const validationSchema = Yup.object({
-  name: Yup.string().required("Insira o seu nome"),
   email: Yup.string()
     .email("Insira um email válido")
-    .required("O e-mail é obrigatório")
-    .test(
-      "checkEmailExists",
-      "Não existe conta cadastrada com esse email, se cadastre primeiro.",
-      async (email) => {
-        if (!email) return false;
-        try {
-          const existingUser = await getUserByEmail(email);
-          return existingUser;
-        } catch (error) {
-          console.error("Erro ao verificar email:", error);
-          return true;
-        }
-      }
-    ),
+    .required("O e-mail é obrigatório"),
   password: Yup.string().required("A senha é obrigatória"),
 });
 
@@ -36,8 +21,24 @@ export default function Login() {
   const router = useRouter();
 
   const onSubmit = async (values: typeof initialValues) => {
-    const { access_token } = await loginUser(values.email, values.password);
-    router.push("/feed/Logado");
+    console.log(values);
+    try {
+      const { access_token } = await loginUser(values.email, values.password);
+      console.log("Token:", access_token);
+
+      if (access_token) {
+        const user = await getUserByEmail(values.email);
+        if (user) {
+          console.log(localStorage.getItem("authToken"));
+          router.push(`/user/aluno/${user.id}`);
+        }
+      } else {
+        alert("Falha no login. Verifique suas credenciais.");
+      }
+    } catch (error) {
+      console.error("Erro ao fazer login:", error);
+      alert("Erro ao fazer login. Tente novamente.");
+    }
   };
   return (
     <div className="w-full h-screen flex  relative">

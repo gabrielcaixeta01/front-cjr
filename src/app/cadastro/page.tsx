@@ -10,29 +10,16 @@ import {
   createUser,
   getUserByEmail,
 } from "@/utils/api";
-import { User } from "@/types";
+import { Department, Program, User } from "@/types";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import axios from "axios";
 
 const validationSchema = Yup.object({
   name: Yup.string().required("Insira o seu nome"),
   email: Yup.string()
     .email("Insira um email válido")
-    .required("O e-mail é obrigatório")
-    .test(
-      "checkEmailExists",
-      "Este e-mail já está cadastrado",
-      async (email) => {
-        if (!email) return false;
-        try {
-          const existingUser = await getUserByEmail(email);
-          return !existingUser;
-        } catch (error) {
-          console.error("Erro ao verificar email:", error);
-          return true;
-        }
-      }
-    ),
+    .required("O e-mail é obrigatório"),
   password: Yup.string()
     .min(6, "A senha deve ter pelo menos 6 caracteres")
     .matches(/[A-Z]/, "A senha deve conter pelo menos uma letra maiúscula")
@@ -69,36 +56,41 @@ const initialValues = {
 export default function Cadastro() {
   const referencia_imagem = useRef<HTMLInputElement>(null);
   const router = useRouter();
-  const [departments, setDepartments] = useState<any[]>([]);
-  const [programs, setPrograms] = useState<any[]>([]);
-
-  const getDepartments = async () => {
-    try {
-      const departamentos = await getAllDepartments();
-      setDepartments(departamentos);
-    } catch (error) {
-      console.error("Erro ao carregar departamentos", error);
-    }
-  };
+  const [departments, setDepartments] = useState<Department[]>([]);
+  const [programs, setPrograms] = useState<Program[]>([]);
 
   useEffect(() => {
-    getDepartments();
+    const fetchDepartments = async () => {
+      try {
+        const response = await axios.get("http://localhost:4000/departments"); // URL corrigida
+        setDepartments(response.data as Department[]);
+      } catch (error) {
+        toast.error("Erro ao buscar professores.");
+        console.error("Erro ao buscar professores:", error);
+      }
+    };
+    fetchDepartments();
   }, []);
 
-  const getPrograms = async () => {
-    try {
-      const cursos = await getAllPrograms();
-      setPrograms(cursos);
-    } catch (error) {
-      console.error("Erro ao carregar cursos", error);
-    }
-  };
-
   useEffect(() => {
-    getPrograms();
+    const fetchPrograms = async () => {
+      try {
+        const response = await axios.get("http://localhost:4000/programs"); // URL corrigida
+        setPrograms(response.data as Program[]);
+      } catch (error) {
+        toast.error("Erro ao buscar professores.");
+        console.error("Erro ao buscar professores:", error);
+      }
+    };
+    fetchPrograms();
   }, []);
 
   const onSubmit = async (values: User) => {
+    const existingUser: User | null = await getUserByEmail(values.email);
+    if (existingUser) {
+      toast.error("Este e-mail já está cadastrado.", { autoClose: 3000 });
+      return; 
+    }
     const newUser = {
       name: values.name,
       email: values.email,

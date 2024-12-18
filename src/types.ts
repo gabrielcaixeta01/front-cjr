@@ -71,3 +71,13 @@ export interface Course {
   avaliacoes?: Avaliacao[]; // Avaliações associadas ao curso
   createdAt?: Date;
 }
+
+export interface Department {
+  id: number;
+  name: string;
+}
+
+export interface Program {
+  id: number;
+  name: string;
+}

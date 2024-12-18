@@ -92,6 +92,7 @@ export const createComment = async (comment: Partial<Comment>) => {
     text: comment.text,
     userId: comment.userId,
     avaliacaoId: comment.avaliacaoId,
+    
   });
   return response.data;
 };
@@ -144,12 +145,46 @@ export const getAllPrograms = async () => {
   return response.data;
 };
 
-export const getUserByEmail = async (email: string) => {
-  const response = await api.get(`/user/email/${email}`);
-  return response.data;
+export const getUserByEmail = async (email: string): Promise<User | null> => {
+   try {
+    const response = await api.get(`/user/email/${email}`);
+    return response.data || null; 
+  } catch (error) {
+    console.error("Erro ao buscar usuário ", error);
+    return null;
+  }
 };
 
-export const loginUser = async (email: string, password: string): Promise<{ access_token: string }> => {
+export const loginUser = async (email: string, password: string) => {
+  try {
     const response = await api.post("/login", { email, password });
-    return response.data;
+    console.log("Resposta:", response.data);
+    
+    const {access_token}  = response.data;
+    console.log("Token obtidoooo:", access_token);
+    if(access_token){
+
+    
+      localStorage.setItem("authToken", access_token);
+      console.log("Token armazenado no localStorage:", localStorage.getItem("authToken"));
+    
+    }
+    return response.data; 
+  } catch (error) {
+    console.error("Erro ao fazer login:", error);
+    throw new Error("Credenciais inválidas ou erro no servidor.");
+  }
 };
+
+export const logoutUser = () => {
+  localStorage.removeItem("authToken");
+};
+
+api.interceptors.request.use((request) => {
+    const token = localStorage.getItem("authToken");
+    
+    if(token) {
+        request.headers.Authorization = `Bearer ${token}`;
+    }
+    return request; 
+});
