@@ -167,10 +167,10 @@ export default function TelaAvaliacao() {
       <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
         <div className="h-screen  w-1/2 max-h-[45%]  flex flex-col mx-auto bg-[#3EEE9A] rounded-md items-center">
           <div className="flex flex-col h-[12rem] w-[90%] bg-[#A4FED3] mt-[2rem] rounded-md">
-            <textarea value={textoComment} maxLength={800} onChange={(event)=> {setTextoComment(event.target.value); setLengthComment(event.target.value.length)}} className="text-black h-full  shadow-sm placeholder-black placeholder-opacity-50 mt-2 pt-[2px] border-none pl-[1rem] bg-[#A4FED3] leading-tight focus:outline-none w-full p-2 resize-none overflow-y-auto  border rounded-md" placeholder="Digite seu comentário aqui"> </textarea>
+            <textarea value={textoComment} maxLength={500} onChange={(event)=> {setTextoComment(event.target.value); setLengthComment(event.target.value.length)}} className="text-black h-full  shadow-sm placeholder-black placeholder-opacity-50 mt-2 pt-[2px] border-none pl-[1rem] bg-[#A4FED3] leading-tight focus:outline-none w-full p-2 resize-none overflow-y-auto  border rounded-md" placeholder="Digite seu comentário aqui"> </textarea>
         </div>
         <div className="flex justify-between items-center w-[90%] mt-6">
-          <span className="text-white text-base pl-1">{textoComment.length}/800</span>
+          <span className="text-white text-base pl-1">{textoComment.length}/500</span>
         <div className="flex mr-6 items-center justify-center">
             <button
               onClick={() => {
@@ -184,7 +184,7 @@ export default function TelaAvaliacao() {
             </button>
             <button
               onClick={() => {
-                if (textoComment === "") {
+                if (!textoComment.trim()) {
                   toast.error("O comentário não pode ser vazio", { autoClose: 2200 });
                 } else {
                   const newComment: Partial<Comment> = {
@@ -235,11 +235,9 @@ export default function TelaAvaliacao() {
                               deleteAval(localAval.id);
                               toast.success("Avaliação excluída com sucesso!",{autoClose:800})
                               setTimeout(() => {
-                                router.push(`/feed/logado/${userInfo?.id}`);
-                                }, 1200);
-                
+                                router.push(`/feed`);
+                                }, 1200);              
                             }
-                              
                             catch(error){
                               toast.error("Erro ao excluir avaliação")
                             }
@@ -265,11 +263,11 @@ export default function TelaAvaliacao() {
     const modal = <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
     <div className="h-screen  w-1/2 max-h-[45%]  flex flex-col mx-auto bg-[#3EEE9A] rounded-md items-center">
       <div className="flex flex-col h-[12rem] w-[90%] bg-[#A4FED3] mt-[2rem] rounded-md">
-        <textarea value={textoEdit} maxLength={800} onChange={(event)=> setTextoEdit(event.target.value)} className="text-black h-full placeholder-black placeholder-opacity-50 mt-2 pt-[2px] border-none pl-[1rem] bg-[#A4FED3] leading-tight focus:outline-none w-full p-2 resize-none overflow-y-auto  border rounded-md"> </textarea>
+        <textarea value={textoEdit} maxLength={500} onChange={(event)=> setTextoEdit(event.target.value)} className="text-black h-full placeholder-black placeholder-opacity-50 mt-2 pt-[2px] border-none pl-[1rem] bg-[#A4FED3] leading-tight focus:outline-none w-full p-2 resize-none overflow-y-auto  border rounded-md"> </textarea>
       </div>
       <div className="flex justify-between items-center w-[90%] mt-6">
           <span className="text-white text-base pl-1">
-            {textoEdit.length}/800
+            {textoEdit.length}/500
           </span>
           <div className="flex mr-6 items-center justify-center">
             <button onClick={()=> 
@@ -281,7 +279,7 @@ export default function TelaAvaliacao() {
               Cancelar
             </button>
             <button onClick={() => {
-                if (textoEdit===""){
+                if (!textoEdit.trim()){
                   toast.error("O comentário não pode ser vazio");
                 }
                 else {
@@ -319,11 +317,11 @@ export default function TelaAvaliacao() {
     <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
       <div className="h-screen  w-1/2 max-h-[45%]  flex flex-col mx-auto bg-[#3EEE9A] rounded-md items-center">
         <div className="flex flex-col h-[12rem] w-[90%] bg-[#A4FED3] mt-[2rem] rounded-md">
-          <textarea value= {textoEditComment} maxLength={800} onChange={(event)=> setTextoEditComment(event.target.value)} className="text-black h-full placeholder-black mt-2 pt-[2px] border-none pl-[1rem] bg-[#A4FED3] leading-tight focus:outline-none w-full p-2 resize-none overflow-y-auto  border rounded-md"> </textarea>
+          <textarea value= {textoEditComment} maxLength={500} onChange={(event)=> setTextoEditComment(event.target.value)} className="text-black h-full placeholder-black mt-2 pt-[2px] border-none pl-[1rem] bg-[#A4FED3] leading-tight focus:outline-none w-full p-2 resize-none overflow-y-auto  border rounded-md"> </textarea>
         </div>
         <div className="flex justify-between items-center w-[90%] mt-6">
           <span className="text-white text-base pl-1">
-            {textoEditComment.length}/800
+            {textoEditComment.length}/500
           </span>
           <div className="flex mr-6 items-center justify-center">
             <button onClick={()=> 
@@ -335,7 +333,7 @@ export default function TelaAvaliacao() {
               Cancelar
             </button>
             <button onClick={() => {
-                if (textoEditComment===""){
+                if (!textoEditComment.trim()){
                   toast.error("O comentário não pode ser vazio");
                 }
                 else {
@@ -357,7 +355,7 @@ export default function TelaAvaliacao() {
                   }                                  
                 }
               }}
-              className="bg-[#A4FED3] text-[#2B895C] font-400 text-[20px] rounded-lg hover:scale-110 duration-200 w-32 h-10 text-xl leading-[42.36px]  mr-10 ml-2"
+              className="bg-[#A4FED3] text-[#2B895C] font-400 text-[20px] rounded-lg hover:scale-110 duration-200 w-32 h-10 text-xl leading-[42.36px] ml-2"
               >
                 Editar
             </button>
@@ -456,8 +454,7 @@ export default function TelaAvaliacao() {
                     <div className='flex flex-col ml-[4.25rem]'>
                         <div>
                             <div>
-                                <p className="text-[#222E50] text-[15px] font-[500] leading-[18.15px] pb-2 pr-4 whitespace-pre-wrap overflow-wrap: break-words break-word white-space: normal max-width: 100%"> 
-                                    {localAval.text} </p>
+                                <p className="text-[#222E50] text-[15px] font-[500] leading-[18.15px] pb-2 pr-4 whitespace-pre-wrap overflow-wrap: break-words break-word white-space: normal max-width: 100%">{localAval.text}</p>
                             </div>
                         </div>
                         <div className="flex items-center justify-between">
@@ -481,9 +478,22 @@ export default function TelaAvaliacao() {
                                     onClick= {()=>router.push("/login")}
                                     />
                                 )}
+
+                              {localAval.comments?.length===0 && (
                                 <span className="font-sans text-[#222E50] text-[12px] font-[600] leading-[14.52px] flex pl-1 items-center"> 
-                                    {localAval.comments?.length} comentários
-                                </span>
+                                  Nenhum comentário
+                                </span>                                     
+                              )}
+                              {localAval.comments?.length===1 && (
+                                <span className="font-sans text-[#222E50] text-[12px] font-[600] leading-[14.52px] flex pl-1 items-center"> 
+                                  1 comentário
+                                </span>                                     
+                              )}
+                              {localAval.comments && localAval.comments?.length>1 && (
+                                <span className="font-sans text-[#222E50] text-[12px] font-[600] leading-[14.52px] flex pl-1 items-center"> 
+                                  {localAval.comments?.length} comentários
+                                </span>                                     
+                              )}
                             </div>
                             {userInfo && localAval.userId===userInfo.id && (
                                 <div className="flex pr-2">             
@@ -573,7 +583,7 @@ export default function TelaAvaliacao() {
                             )}               
                             </div>
                             <div className="pl-[2.3rem] break-words"> 
-                                <p className="text-[#222E50] text-[14px] text-[500] leading-[16.94px] pb-2"> {comentario.text} </p>
+                                <p className="text-[#222E50] text-[14px] text-[500] leading-[16.94px] pb-2 whitespace-pre-wrap overflow-wrap: break-words break-word white-space: normal">{comentario.text}</p>
                             </div>
                             {index !== localAval.comments.length - 1 && (
                             <div className="border-b border-[#71767B] w-full mb-[0.75rem]"></div>
