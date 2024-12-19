@@ -175,6 +175,15 @@ export default function FeedDeslogado() {
         </div>
       )}
 
+      <div className="flex  mx-auto w-[20%] max-w-[30%] max-h-[2%]">
+        <button
+            className="bg-azulCjr text-white px-6 py-4 ml-2 rounded-lg shadow-md hover:shadow-lg hover:bg-blue-600 transition duration-500"
+            onClick={()=>router.push("/login")}>
+            Criar nova avaliação
+        </button>
+      </div>
+
+
       {/* Grid de Professores */}
       <section className="p-4 grid w-[70%] min-h-fit mx-auto grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {filteredProfessores.map((professor) => (
