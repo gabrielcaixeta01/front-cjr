@@ -116,7 +116,7 @@ export default function PerfilAluno() {
                   height={24}
                   className="w-6 h-6 object-cover"
                 />
-                <p className="text-sm text-gray-700">
+                <p className="text-sm text-gray-500">
                   {userInfo.program?.name || "Carregando..."}
                   {userInfo.department?.name && (
                     <>

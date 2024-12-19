@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { api } from "@/utils/api";
@@ -38,11 +38,34 @@ const initialValues = {
 
 const EditarPerfil = () => {
   const router = useRouter();
-  const { userid } = useParams(); // Captura o ID dinâmico do caminho
   const [showPassword, setShowPassword] = useState(false);
   const [selectedFile, setSelectedFile] = useState<string | null>(null);
   const [departments, setDepartments] = useState<{ id: number; name: string }[]>([]);
   const [programs, setPrograms] = useState<{ id: number; name: string }[]>([]);
+  const [loggedInUserId, setLoggedInUserId] = useState<number | null>(null);
+
+  // Verifica autenticação, token e obtém o ID do usuário
+  useEffect(() => {
+    const verifyAccess = async () => {
+      const token = localStorage.getItem("authToken");
+      if (!token) {
+        toast.error("Você precisa estar logado para acessar esta página.");
+        router.push("/login");
+        return;
+      }
+      try {
+        const decoded: { sub: number } = jwtDecode(token);
+        if (!decoded?.sub) throw new Error("Token inválido");
+        setLoggedInUserId(decoded.sub); // Salva o ID do usuário logado
+      } catch (error) {
+        console.error("Erro ao verificar o token:", error);
+        toast.error("Sessão expirada. Faça login novamente.");
+        router.push("/login");
+      }
+    };
+
+    verifyAccess();
+  }, [router]);
 
   // Busca departamentos
   const fetchDepartments = async () => {
@@ -79,82 +102,57 @@ const EditarPerfil = () => {
     fetchPrograms();
   }, []);
 
-  // Verifica autenticação e token
-useEffect(() => {
-  const verifyAccess = async () => {
-    const token = localStorage.getItem("authToken"); // Pega o token do armazenamento local
-    if (!token) {
-      toast.error("Você precisa estar logado para acessar esta página.");
-      router.push("/auth/login"); // Redireciona para login se não houver token
-      return;
-    }
+  const onSubmit = async (values: typeof initialValues, { setSubmitting, resetForm }: { setSubmitting: (isSubmitting: boolean) => void; resetForm: () => void }) => {
+    const payload: {
+      name?: string;
+      password?: string;
+      departmentId?: number;
+      programId?: number;
+      profilepic?: File | null;
+    } = {};
+
+    if (values.name) payload.name = values.name;
+    if (values.password) payload.password = values.password;
+    if (values.department) payload.departmentId = parseInt(values.department, 10);
+    if (values.program) payload.programId = parseInt(values.program, 10);
+    if (values.profilePicture) payload.profilepic = values.profilePicture;
+
     try {
-      const decoded: { sub: number } = jwtDecode(token); // Decodifica o token para verificar
-      if (!decoded?.sub) {
-        throw new Error("Token inválido");
-      }
+      const token = localStorage.getItem("authToken");
+      console.log("Payload enviado:", payload);
+      const response = await api.patch(`/user/${loggedInUserId}`, payload, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      console.log("Dados recebidos com sucesso:", response.data);
+      toast.success("Perfil atualizado com sucesso!");
+      resetForm();
     } catch (error) {
-      console.error("Erro ao verificar o token:", error);
-      toast.error("Sessão expirada. Faça login novamente.");
-      router.push("/auth/login"); // Redireciona se o token for inválido
+      console.error("Erro ao atualizar o perfil:", error);
+      toast.error("Erro ao atualizar o perfil.");
+    } finally {
+      setSubmitting(false);
     }
   };
 
-  verifyAccess();
-}, [router]);
-
-const onSubmit = async (values: typeof initialValues, { setSubmitting, resetForm }: { setSubmitting: (isSubmitting: boolean) => void; resetForm: () => void }) => {
-  const payload: {
-    name?: string;
-    password?: string;
-    departmentId?: number;
-    programId?: number;
-    profilepic?: File | null;
-  } = {};
-
-  if (values.name) payload.name = values.name;
-  if (values.password) payload.password = values.password;
-  if (values.department) payload.departmentId = parseInt(values.department, 10);
-  if (values.program) payload.programId = parseInt(values.program, 10);
-  if (values.profilePicture) payload.profilepic = values.profilePicture;
-
-  try {
-    const token = localStorage.getItem("authToken");
-    console.log("Payload enviado:", payload);
-    const response = await api.patch(`/user/${userid}`, payload, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    console.log("Dados recebidos com sucesso:", response.data);
-    toast.success("Perfil atualizado com sucesso!");
-    resetForm();
-    router.push(`/user/aluno/${userid}`);
-  } catch (error) {
-    console.error("Erro ao atualizar o perfil:", error);
-    toast.error("Erro ao atualizar o perfil.");
-  } finally {
-    setSubmitting(false);
-  }
-};
-
-const handleDeleteProfile = async () => {
-  try {
-    const token = localStorage.getItem("authToken");
-    await api.delete(`/user/${userid}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    toast.success("Perfil excluído com sucesso.");
-    setTimeout(() => {
-      router.push("/");
-    }, 2000);
-  } catch (error) {
-    console.error("Erro ao excluir o perfil:", error);
-    toast.error("Erro ao excluir o perfil. Tente novamente.");
-  }
-};
+  const handleDeleteProfile = async () => {
+    try {
+      const token = localStorage.getItem("authToken");
+      await api.delete(`/user/${loggedInUserId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      toast.success("Perfil excluído com sucesso.");
+      setTimeout(() => {
+        router.push("/feed");
+      }, 2000);
+    } catch (error) {
+      console.error("Erro ao excluir o perfil:", error);
+      toast.error("Erro ao excluir o perfil. Tente novamente.");
+    }
+  };
 
   return (
     <div className="flex flex-row h-screen w-full bg-gray-100 pt-32 justify-center p-6">
@@ -217,14 +215,14 @@ const handleDeleteProfile = async () => {
               {/* Campo Programa */}
               <div className="bg-white p-4 rounded-[30px] shadow-md">
                 <label htmlFor="program" className="block text-sm font-medium text-gray-700">
-                  Programa
+                  Curso
                 </label>
                 <Field
                   as="select"
                   name="program"
                   className="mt-1 text-xs block w-full border-0 border-b-2 border-gray-50 focus:outline-none focus:border-blue-400 focus:ring-0 transition duration-300"
                 >
-                  <option value="" disabled>Selecione o Programa</option>
+                  <option value="" disabled>Selecione o Curso</option>
                   {programs.map((program) => (
                     <option key={program.id} value={program.id}>
                       {program.name}
