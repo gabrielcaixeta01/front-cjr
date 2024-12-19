@@ -14,7 +14,6 @@ import { Avaliacao } from "@prisma/client";
 import telaCarregamento from "@/components/telas_carregamento/avaliacao/tela_carregamento_aval"
 import HeaderLogado from "@/components/headers/logado/page"
 import HeaderDeslogado from '@/components/headers/deslogado/page';
-import { comment } from 'postcss';
 import { jwtDecode } from 'jwt-decode'
 
 export default function TelaAvaliacao() {
@@ -44,8 +43,6 @@ export default function TelaAvaliacao() {
       const accessToken = localStorage.getItem("authToken");
     if (accessToken) {
       const decodedToken = jwtDecode(accessToken)
-      console.log("Decoded Payload:",decodedToken)
-      console.log("o id do usuario é " + decodedToken.sub)
       setIsAuth(true);
       const usuarioLogado : User = await fetchUserInfo(Number(decodedToken.sub));
       setUserInfo(usuarioLogado);
@@ -57,7 +54,6 @@ export default function TelaAvaliacao() {
     verify_acess()}) 
 
   useEffect(()=>{
-    console.log(avalId)
     if (!avalId) {
       toast.error("Não foi possível achar a avaliação");
       return;
@@ -68,12 +64,12 @@ export default function TelaAvaliacao() {
         setLocalAval(avalFound as Avaliacao);
       }
       catch (error){
-        toast.error("Erro ao procurar avaliação", {autoClose:2200})
-        console.log(error)
+        toast.error("Erro ao procurar avaliação", {autoClose:2200});
+        router.push("/feed");
       }
     }
     findingAval();
-  }, [avalId])
+  }, [avalId,router])
 
     //useEffects para inicializar a tela
     useEffect(()=> {
@@ -165,7 +161,7 @@ export default function TelaAvaliacao() {
       <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
         <div className="h-screen  w-1/2 max-h-[45%]  flex flex-col mx-auto bg-[#3EEE9A] rounded-md items-center">
           <div className="flex flex-col h-[12rem] w-[90%] bg-[#A4FED3] mt-[2rem] rounded-md">
-            <textarea value={textoComment} maxLength={500} onChange={(event)=> {setTextoComment(event.target.value); setLengthComment(event.target.value.length)}} className="text-black h-full  shadow-sm placeholder-black placeholder-opacity-50 mt-2 pt-[2px] border-none pl-[1rem] bg-[#A4FED3] leading-tight focus:outline-none w-full p-2 resize-none overflow-y-auto  border rounded-md" placeholder="Digite seu comentário aqui"> </textarea>
+            <textarea value={textoComment} maxLength={500} onChange={(event)=> setTextoComment(event.target.value)} className="text-black h-full  shadow-sm placeholder-black placeholder-opacity-50 mt-2 pt-[2px] border-none pl-[1rem] bg-[#A4FED3] leading-tight focus:outline-none w-full p-2 resize-none overflow-y-auto  border rounded-md" placeholder="Digite seu comentário aqui"> </textarea>
         </div>
         <div className="flex justify-between items-center w-[90%] mt-6">
           <span className="text-white text-base pl-1">{textoComment.length}/500</span>
@@ -174,7 +170,6 @@ export default function TelaAvaliacao() {
               onClick={() => {
                 setTextoComment("");
                 toggleModalComment();
-                setLengthComment(textoComment.length);
               }}
               className="bg-transparent rounded-lg hover:scale-110 duration-200 w-20 h-10 text-xl text-[23px] font-400 leading-[54.46px] mr-9 flex items-center justify-center"
               >
@@ -193,7 +188,6 @@ export default function TelaAvaliacao() {
                   try {
                     createComment(newComment);
                     setTextoComment("");
-                    setLengthComment(textoComment.length);
                     toggleModalComment();
                     toast.success("O comentário foi criado com sucesso", { autoClose: 1200 });
                     setTimeout(() => {
@@ -234,7 +228,7 @@ export default function TelaAvaliacao() {
                               toast.success("Avaliação excluída com sucesso!",{autoClose:800})
                               setTimeout(() => {
                                 router.push(`/feed`);
-                                }, 1200);              
+                                }, 1100);              
                             }
                             catch(error){
                               toast.error("Erro ao excluir avaliação")
@@ -288,8 +282,8 @@ export default function TelaAvaliacao() {
                   }
                   try{
                     updateAval(avalEdited,localAval.id);
-                    toast.success("A avaliação foi editada com sucesso", {autoClose:1100});
                     toggleModalEdit(); 
+                    toast.success("A avaliação foi editada com sucesso", {autoClose:1100});
                     setTimeout(() => {
                     window.location.reload();
                     }, 1600);
@@ -411,7 +405,6 @@ export default function TelaAvaliacao() {
 
   //tela de carregamento
   if (!localAval || !userAvalInfo) {
-    console.log("travei")
     return telaCarregamento;
   }
 

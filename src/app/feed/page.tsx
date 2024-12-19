@@ -131,7 +131,7 @@ export default function FeedLogado() {
         return;
       }
       await createAval(aval); 
-      toast.success("Avaliação criada com sucesso!"); 
+      toast.success("Avaliação criada com sucesso!",{autoClose:2200}); 
       resetModalFields(); 
       setTimeout(() => {
         toggleModal();

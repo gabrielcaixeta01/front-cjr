@@ -179,7 +179,9 @@ export default function PerfilAluno() {
                     {cursos.find((curso) => curso.id === avaliacao.courseId)?.name ||
                       "Curso não encontrado"}
                   </p>
-                  <p className="text-gray-700 mt-2 whitespace-pre-wrap overflow-wrap: break-words break-word white-space: normal">{avaliacao.text}</p>
+                  <p className="text-gray-700 mt-2 whitespace-pre-wrap overflow-wrap: break-words break-word white-space: normal hover:bg-blue-200 transition duration-300 ease-in-out cursor-pointer"
+                  onClick={()=> router.push(`/avaliacao/${avaliacao.id}`)}
+                  >{avaliacao.text}</p>
 
                   {/* Botão para abrir/fechar comentários */}
                   {avaliacao.comments && avaliacao.comments.length > 0 && (
