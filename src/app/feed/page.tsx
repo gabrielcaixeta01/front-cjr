@@ -128,7 +128,6 @@ export default function FeedLogado() {
         toast.error("Preencha todos os campos!");
         return;
       }
-  
       const result = await createAval(aval);
       toast.success("Avaliação criada com sucesso!");
       // Atualiza estado ou executa outra lógica
@@ -180,39 +179,46 @@ export default function FeedLogado() {
           ))}
         </select>
 
+        <div className="flex flex-col h-[12rem] w-[90%] bg-[#A4FED3] mt-[2rem] rounded-md">
         <textarea
           value={texto}
+          maxLength={500}
           placeholder="Digite sua avaliação"
           onChange={(event) => setTexto(event.target.value)}
-          className="bg-[#A4FED3] w-[90%] h-[12rem] mt-5 rounded-md p-2 resize-none"
+          className="text-black h-full  shadow-sm placeholder-black placeholder-opacity-50 mt-2 pt-[2px] border-none pl-[1rem] bg-[#A4FED3] leading-tight focus:outline-none w-full p-2 resize-none overflow-y-auto  border rounded-md"
         />
-
-        <div className="mt-6 flex justify-end w-[90%]">
-          <button
-            onClick={() => { resetModalFields(); toggleModal(); }}
-            className="bg-transparent text-xl mr-4"
-          >
-            Cancelar
-          </button>
-          <button
-            onClick={() => {
-              if (texto === "" || profSelected === "-1" || courseSelected === "-1") {
-                toast.error("Preencha todos os campos!");
-              } else {
-                creatingAval({
-                  text: texto,
-                  professorId: parseInt(profSelected, 10),
-                  courseId: parseInt(courseSelected, 10),
-                  userId: Number(userid),
-                });
-                resetModalFields();
-                toggleModal();
-              }
-            }}
-            className="bg-[#A4FED3] text-[#2B895C] px-4 py-2 rounded-lg"
-          >
-            Avaliar
-          </button>
+        </div>
+        
+        <div className="flex justify-between items-center w-[90%] mt-6">
+          <span className="text-white text-base pl-1">
+            {texto.length}/500
+            </span>
+          <div className="flex mr-6 items-center justify-center">
+            <button
+              onClick={() => { resetModalFields(); toggleModal(); }}
+              className="bg-transparent text-white rounded-lg hover:scale-110 duration-200 w-20 h-10 text-xl text-[23px] font-400 leading-[54.46px] mr-9 flex items-center justify-center"
+            >
+              Cancelar
+            </button>
+            <button className="bg-[#A4FED3] text-[#2B895C] ml-1 font-400 text-[20px] rounded-lg hover:scale-110 duration-200 w-32 h-10 text-xl leading-[42.36px] flex items-center justify-center"
+              onClick={() => {
+                if (!texto.trim() || profSelected === "-1" || courseSelected === "-1") {
+                  toast.error("Preencha todos os campos!");
+                } else {
+                  creatingAval({
+                    text: texto,
+                    professorId: parseInt(profSelected, 10),
+                    courseId: parseInt(courseSelected, 10),
+                    userId: Number(userid),
+                  });
+                  resetModalFields();
+                  toggleModal();
+                }
+              }}
+            >
+              Avaliar
+            </button>
+          </div>
         </div>
       </div>
     </div>
