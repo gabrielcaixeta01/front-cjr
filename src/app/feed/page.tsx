@@ -153,7 +153,7 @@ export default function FeedLogado() {
   // Modal de avaliação
   const modalAvaliacao = () => (
     <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
-      <div className="h-screen text-black w-[60%] max-h-[62%] flex flex-col mx-auto bg-[#3EEE9A] rounded-md items-center">
+      <div className="h-screen text-black w-[60%] max-h-[60%] flex flex-col mx-auto bg-[#3EEE9A] rounded-md items-center">
         <select
           value={profSelected}
           className="bg-white h-[2rem] w-[90%] pl-[0.325rem] mt-5 rounded-md"

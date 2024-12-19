@@ -9,6 +9,9 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { jwtDecode } from "jwt-decode";
 
+
+
+
 const validationSchema = Yup.object({
   name: Yup.string(),
   password: Yup.string().min(6, "A senha deve ter pelo menos 6 caracteres"),
@@ -145,6 +148,7 @@ const EditarPerfil = () => {
         },
       });
       toast.success("Perfil excluído com sucesso.");
+      localStorage.removeItem("authToken");
       setTimeout(() => {
         router.push("/feed");
       }, 2000);
@@ -154,10 +158,52 @@ const EditarPerfil = () => {
     }
   };
 
+  const [isModalDeleteOpen, setIsModalDeleteOpen] = useState(false);
+  const toggleDelete = () => {
+    setIsModalDeleteOpen(!isModalDeleteOpen);
+  }
+  
+    const modalDelete = () => {
+      const modal = 
+        <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
+          <div className="bg-black pt-3 pl-6 pr-6 pb-6 max-h-fit flex flex-col items-center rounded-lg w-full max-w-md shadow-lg">
+            <div className="text-center mb-5 p-2">
+              <p className="text-lg text-ellipsis text-white">
+              Tem certeza de que deseja excluir o perfil?
+              </p>
+              <p className="text-xs italic text-white"> Essa ação não poderá ser desfeita</p>
+          </div>
+          <div className="flex space-x-6">
+            <button
+              onClick={()=> {
+                              toggleDelete();
+                              try{    
+                                handleDeleteProfile();                                          
+                              }
+                              catch(error){
+                                toast.error("Erro ao excluir perfil")
+                              }
+                            }
+                          }
+              className="bg-red-600 text-white font-semibold px-7 py-2 rounded-lg hover:bg-red-900 hover:text-white transition duration-300 ease-in-out"
+            >
+              Sim 
+            </button>
+            <button
+              onClick={()=> toggleDelete()}
+              className=" text-white font-semibold px-7 py-2 rounded-lg hover:bg-white border-[0.5px] border-gray-300 hover:text-black transition duration-300 ease-in-out"
+            >
+              Cancelar 
+            </button>
+          </div>
+        </div>
+      </div>
+      return modal;
+    }
   return (
-    <div className="flex flex-row h-screen w-full bg-gray-100 pt-32 justify-center p-6">
+    <div className="flex flex-row w-full bg-gray-100 pt-32 justify-center p-6 h-screen min-h-fit overflow-y-scroll">
       <ToastContainer />
-      <div className="bg-customGreen p-6 rounded-lg w-[28%] max-h-fit shadow-lg">
+      <div className="bg-customGreen p-6 rounded-lg w-[29%] max-h-fit shadow-lg">
         <div className="text-center mb-6">
           <h1 className="text-3xl font-bold text-azulCjr">Atualize seu Perfil</h1>
           <p className="text-sm italic text-gray-600">Mantenha suas informações sempre atualizadas</p>
@@ -289,11 +335,14 @@ const EditarPerfil = () => {
           </p>
         </div>
         <button
-          onClick={handleDeleteProfile}
+          onClick={()=> toggleDelete()}
           className="bg-white text-black font-semibold px-7 py-2 rounded-lg hover:bg-red-600 hover:text-white transition duration-300 ease-in-out"
         >
           Excluir
         </button>
+        {isModalDeleteOpen && (
+          modalDelete()
+        )}
       </div>
     </div>
   );

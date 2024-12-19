@@ -299,7 +299,7 @@ export default function PerfilAluno() {
                           setTextoEdit(avaliacao.text);
                           setIdAvalEdited(avaliacao.id);
                         }}
-                        className="w-4 h-4 object-cover mx-2 shadow-md hover:bg-blue-200 transition duration-300 hover:scale-110 ease-in-out cursor-pointer"   
+                        className="w-4 h-4 object-cover mx-2 shadow-md hover:bg-[#adeccc] transition duration-300 hover:scale-110 ease-in-out cursor-pointer"   
                         />  
                         <Image
                         src="/lixeira.png"
@@ -310,7 +310,7 @@ export default function PerfilAluno() {
                           toggleDeleteAval();
                           setIdAvalDeleted(avaliacao.id);
                         }}
-                        className="w-4 h-4 object-cover mx-2 shadow-md hover:bg-blue-200 transition duration-300 hover:scale-110  ease-in-out cursor-pointer"
+                        className="w-4 h-4 object-cover mx-2 shadow-md hover:bg-[#adeccc] transition duration-300 hover:scale-110  ease-in-out cursor-pointer"
                         />   
                       </div>
                     )}
@@ -330,8 +330,9 @@ export default function PerfilAluno() {
                     {cursos.find((curso) => curso.id === avaliacao.courseId)?.name ||
                       "Curso não encontrado"}
                   </p>
-                  <p className="text-gray-700 mt-2 whitespace-pre-wrap overflow-wrap: break-words break-word white-space: normal hover:bg-blue-200 transition duration-300 ease-in-out cursor-pointer"
-                  onClick={()=> router.push(`/avaliacao/${avaliacao.id}`)}
+                  <p
+                  onClick={()=> router.push(`/avaliacao/${avaliacao.id}`)} 
+                  className="text-gray-700 mt-2 whitespace-pre-wrap overflow-wrap: break-words break-word white-space: normal hover:bg-[#adeccc] transition duration-300 ease-in-out cursor-pointer"
                   >{avaliacao.text}</p>
 
                   {/* Botão para abrir/fechar comentários */}

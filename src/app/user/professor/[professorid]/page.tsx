@@ -271,7 +271,7 @@ export default function ProfessorPerfil() {
                           setTextoEdit(avaliacao.text);
                           setIdAvalEdited(avaliacao.id);
                         }}
-                        className="w-4 h-4 object-cover mx-2 shadow-md hover:bg-blue-200 transition duration-300 hover:scale-110 ease-in-out cursor-pointer"   
+                        className="w-4 h-4 object-cover mx-2 shadow-md hover:bg-[#adeccc] transition duration-300 hover:scale-110 ease-in-out cursor-pointer"   
                         />  
                         <Image
                         src="/lixeira.png"
@@ -282,7 +282,7 @@ export default function ProfessorPerfil() {
                           toggleDeleteAval();
                           setIdAvalDeleted(avaliacao.id);
                         }}
-                        className="w-4 h-4 object-cover mx-2 shadow-md hover:bg-blue-200 transition duration-300 hover:scale-110  ease-in-out cursor-pointer"
+                        className="w-4 h-4 object-cover mx-2 shadow-md hover:bg-[#adeccc] transition duration-300 hover:scale-110  ease-in-out cursor-pointer"
                         />   
                       </div>
                     )}
@@ -298,12 +298,13 @@ export default function ProfessorPerfil() {
                     {new Date(avaliacao.createdAt || "").toLocaleDateString()} -{" "}
                     {avaliacao.course?.name || "Curso desconhecido"}
                   </p>
-                  <p onClick={()=>router.push(`/avaliacao/${avaliacao.id}`)}
-                  className="text-gray-700 mt-2 whitespace-pre-wrap overflow-wrap: break-words break-word white-space: normal hover:bg-blue-200 transition duration-300 ease-in-out cursor-pointer">
+                  <p 
+                  onClick={()=>router.push(`/avaliacao/${avaliacao.id}`)}
+                  className="text-gray-700 mt-2 whitespace-pre-wrap overflow-wrap: break-words break-word white-space: normal hover:bg-[#adeccc] transition duration-300 ease-in-out cursor-pointer">
                     {avaliacao.text}
                   </p>
                   {avaliacao.comments && avaliacao.comments.length > 0 && (
-                    <div className="mt-2">
+                    <div className="mt-2 ">
                       <button
                         className="text-gray-500 text-sm font-medium cursor-pointer mb-2"
                         onClick={() =>
