@@ -11,7 +11,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { Avaliacao, Comment, User } from "@/types";
 import { findAval, fetchUserInfo, deleteAval, getOneCourse, createComment, updateAval, deleteComment, updateComment, fetchProfessorInfo } from "@/utils/api";
 import { Avaliacao } from "@prisma/client";
-import telaCarregamento from "@/components/tela_carregamento_aval"
+import telaCarregamento from "@/components/telas_carregamento/avaliacao/tela_carregamento_aval"
 import HeaderLogado from "@/components/headers/logado/page"
 import HeaderDeslogado from '@/components/headers/deslogado/page';
 import { comment } from 'postcss';
