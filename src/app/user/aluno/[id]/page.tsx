@@ -3,13 +3,15 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { useRouter, useParams } from "next/navigation";
-import { User } from "@/types";
+import { Avaliacao, User } from "@/types";
 import { fetchUserInfo } from "@/utils/api";
 import { jwtDecode } from "jwt-decode";
 import axios from "axios";
 import HeaderLogado from "@/components/headers/logado/page";
 import HeaderDeslogado from "@/components/headers/deslogado/page";
 import telaCarregamento from "@/components/telas_carregamento/aluno/tela_carregamento_aluno"
+import { toast } from "react-toastify";
+import {updateAval, deleteAval} from "@/utils/api";
 
 export default function PerfilAluno() {
   const router = useRouter();
@@ -21,6 +23,12 @@ export default function PerfilAluno() {
   const [professores, setProfessores] = useState<{ id: number; name: string }[]>([]);
   const [cursos, setCursos] = useState<{ id: number; name: string }[]>([]);
   const [openComments, setOpenComments] = useState<number | null>(null);
+  const [textoEdit, setTextoEdit] = useState("");
+  const [isModalEditOpen, setIsModalEditOpen] = useState(false);
+  const [isModalDeleteAvalOpen, setIsToggleDeleteAvalOpen] = useState(false);
+  const [idAvalEdited, setIdAvalEdited] = useState(0);
+  const [idAvalDeleted, setIdAvalDeleted] = useState(0);
+
 
   // Verifica autenticação e salva o ID do usuário logado
   useEffect(() => {
@@ -78,6 +86,113 @@ export default function PerfilAluno() {
 
     fetchProfessoresECursos();
   }, []);
+
+  //toggle dos modais
+  const toggleModalEdit = () => {
+    setIsModalEditOpen(!isModalEditOpen);
+  }
+
+  const toggleDeleteAval = () => {
+    setIsToggleDeleteAvalOpen(!isModalDeleteAvalOpen);
+  }
+
+  //modais para editar/excluir
+  const modalEditAval = () => {
+    const modal = <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
+    <div className="h-screen  w-1/2 max-h-[45%]  flex flex-col mx-auto bg-[#3EEE9A] rounded-md items-center">
+      <div className="flex flex-col h-[12rem] w-[90%] bg-[#A4FED3] mt-[2rem] rounded-md">
+        <textarea value={textoEdit} maxLength={500} onChange={(event)=> setTextoEdit(event.target.value)} className="text-black h-full placeholder-black placeholder-opacity-50 mt-2 pt-[2px] border-none pl-[1rem] bg-[#A4FED3] leading-tight focus:outline-none w-full p-2 resize-none overflow-y-auto  border rounded-md"> </textarea>
+      </div>
+      <div className="flex justify-between items-center w-[90%] mt-6">
+          <span className="text-white text-base pl-1">
+            {textoEdit.length}/500
+          </span>
+          <div className="flex mr-6 items-center justify-center">
+            <button onClick={()=> 
+              {setTextoEdit("");
+                toggleModalEdit();
+              }}
+              className="bg-transparent rounded-lg hover:scale-110 duration-200 w-20 h-10 text-xl text-[23px] font-400 leading-[54.46px] mr-9 flex items-center justify-center"
+              >
+              Cancelar
+            </button>
+            <button onClick={() => {
+                if (!textoEdit.trim()){
+                  toast.error("O comentário não pode ser vazio");
+                }
+                else {
+                  setTextoEdit(textoEdit);          
+                  const avalEdited: Partial <Avaliacao> = {
+                    text: textoEdit,
+                    isEdited:true,
+                  }
+                  try{
+                    updateAval(avalEdited,idAvalEdited);
+                    toggleModalEdit(); 
+                    toast.success("A avaliação foi editada com sucesso", {autoClose:1100});
+                    setTimeout(() => {
+                    window.location.reload();
+                    }, 1600);
+                  }
+                  catch(error){
+                    toast.error("Erro ao editar avaliação", {autoClose:2200})
+                  }                                  
+                }
+              }}
+              className="bg-[#A4FED3] text-[#2B895C] ml-1 font-400 text-[20px] rounded-lg hover:scale-110 duration-200 w-32 h-10 text-xl leading-[42.36px] flex items-center justify-center"
+              >
+                Editar
+              </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    return modal;                          
+  }
+
+  const modalDeleteAval = () => {
+    const modal = 
+      <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
+        <div className="bg-black pt-3 pl-6 pr-6 pb-6 max-h-fit flex flex-col items-center rounded-lg w-full max-w-md shadow-lg">
+          <div className="text-center mb-5 p-2">
+            <p className="text-lg text-ellipsis text-white">
+            Tem certeza de que deseja excluir a avaliação?
+            </p>
+            <p className="text-xs italic text-white"> Essa ação não poderá ser desfeita</p>
+        </div>
+        <div className="flex space-x-6">
+          <button
+            onClick={()=> {
+                            toggleDeleteAval();
+                            try{                                              
+                              deleteAval(idAvalDeleted);
+                              toast.success("Avaliação excluída com sucesso!",{autoClose:800})
+                              setTimeout(() => {
+                                window.location.reload();
+                              }, 1100);              
+                            }
+                            catch(error){
+                              toast.error("Erro ao excluir avaliação")
+                            }
+                          }
+                        }
+            className="bg-red-600 text-white font-semibold px-7 py-2 rounded-lg hover:bg-red-900 hover:text-white transition duration-300 ease-in-out"
+          >
+            Sim 
+          </button>
+          <button
+            onClick={()=> toggleDeleteAval()}
+            className=" text-white font-semibold px-7 py-2 rounded-lg hover:bg-white border-[0.5px] border-gray-300 hover:text-black transition duration-300 ease-in-out"
+          >
+            Cancelar 
+          </button>
+        </div>
+      </div>
+    </div>
+    return modal;
+  }
+    
+
 
   if (loading) return telaCarregamento;
   if (!userInfo) return <div>Perfil não encontrado.</div>;
@@ -170,7 +285,43 @@ export default function PerfilAluno() {
                   />
                 </div>
                 <div className="max-w-[550px]">
-                  <p className="font-bold text-gray-800">{userInfo.name}</p>
+                  <div className="flex space-x-12">
+                    <p className="font-bold text-gray-800">{userInfo.name}</p>
+                    {loggedInUserId===avaliacao.userId && (
+                      <div className="flex flex-row">
+                        <Image
+                        src="/editar.png"
+                        alt="Editar avaliação"
+                        width={64} 
+                        height={64}
+                        onClick = {()=> {
+                          toggleModalEdit(); 
+                          setTextoEdit(avaliacao.text);
+                          setIdAvalEdited(avaliacao.id);
+                        }}
+                        className="w-4 h-4 object-cover mx-2 shadow-md hover:bg-blue-200 transition duration-300 hover:scale-110 ease-in-out cursor-pointer"   
+                        />  
+                        <Image
+                        src="/lixeira.png"
+                        alt="Excluir avaliação"
+                        width={64} 
+                        height={64}
+                        onClick = {()=> {
+                          toggleDeleteAval();
+                          setIdAvalDeleted(avaliacao.id);
+                        }}
+                        className="w-4 h-4 object-cover mx-2 shadow-md hover:bg-blue-200 transition duration-300 hover:scale-110  ease-in-out cursor-pointer"
+                        />   
+                      </div>
+                    )}
+                    {isModalEditOpen && (
+                      modalEditAval()
+                    )}
+                    {isModalDeleteAvalOpen && (                      
+                      modalDeleteAval())
+                    }
+                  </div>
+                                             
                   <p className="text-sm text-gray-500">
                     {new Date(avaliacao.createdAt || "").toLocaleDateString()} -{" "}
                     {professores.find((prof) => prof.id === avaliacao.professorId)?.name ||
