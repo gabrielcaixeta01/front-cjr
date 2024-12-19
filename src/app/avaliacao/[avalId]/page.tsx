@@ -425,7 +425,7 @@ export default function TelaAvaliacao() {
                         <div className="pl-1">
                             <Image
                             src={userAvalInfo.profilepic || profilePic} //caso a foto de perfil do usuário seja null, é colocada uma foto de perfil padrão
-                            alt="Foto de perfil"
+                            alt="Foto de perfil do usuário que fez a avaliação"
                             width={48}
                             height={48}
                             className="w-9 h-9 rounded-full shadow-md bg-white object-cover cursor-pointer"
@@ -453,7 +453,7 @@ export default function TelaAvaliacao() {
                               {isAuth && (
                                 <Image
                                 src="/comente.png"
-                                alt="Comentários"
+                                alt="Fazer comentário"
                                 width={48}
                                 height={48}
                                 className="w-6 h-6 rounded-full shadow-md hover:bg-blue-200 transition duration-300 hover:scale-110  ease-in-out cursor-pointer"
@@ -462,7 +462,7 @@ export default function TelaAvaliacao() {
                               )} 
                               {!isAuth && (<Image
                                     src="/comente.png"
-                                    alt="Comentários"
+                                    alt="Fazer comentário"
                                     width={48}
                                     height={48}
                                     className="w-6 h-6 rounded-full shadow-md hover:bg-blue-200 transition duration-300 hover:scale-110  ease-in-out cursor-pointer"
@@ -525,7 +525,7 @@ export default function TelaAvaliacao() {
                             <div className="items-center">
                                 <Image
                                 src={comentario.user?.profilepic || profilePic}
-                                alt="Foto de perfil"
+                                alt="Foto de perfil do autor do comentário"
                                 width={48}
                                 height={48}
                                 className="w-7 h-7 rounded-full shadow-md bg-white object-cover cursor-pointer"

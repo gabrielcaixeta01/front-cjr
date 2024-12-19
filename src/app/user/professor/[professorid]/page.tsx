@@ -129,7 +129,7 @@ export default function ProfessorPerfil() {
   
     const modalDeleteAval = () => {
       const modal = 
-        <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
+        <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center outline ml-0 z-50 w-screen h-screen overflow-hidden">
           <div className="bg-black pt-3 pl-6 pr-6 pb-6 max-h-fit flex flex-col items-center rounded-lg w-full max-w-md shadow-lg">
             <div className="text-center mb-5 p-2">
               <p className="text-lg text-ellipsis text-white">
@@ -252,8 +252,6 @@ export default function ProfessorPerfil() {
                 </div>
 
                 <div className="max-w-[550px]">
-                  
-
                   <div className="flex space-x-12">
                     <p
                     className="font-bold text-gray-800 cursor-pointer"
@@ -295,14 +293,15 @@ export default function ProfessorPerfil() {
                       modalDeleteAval())
                     }
                   </div>
+
                   <p className="text-sm text-gray-500">
                     {new Date(avaliacao.createdAt || "").toLocaleDateString()} -{" "}
                     {avaliacao.course?.name || "Curso desconhecido"}
                   </p>
                   <p onClick={()=>router.push(`/avaliacao/${avaliacao.id}`)}
                   className="text-gray-700 mt-2 whitespace-pre-wrap overflow-wrap: break-words break-word white-space: normal hover:bg-blue-200 transition duration-300 ease-in-out cursor-pointer">
-                    {avaliacao.text}</p>
-
+                    {avaliacao.text}
+                  </p>
                   {avaliacao.comments && avaliacao.comments.length > 0 && (
                     <div className="mt-2">
                       <button

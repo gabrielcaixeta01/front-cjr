@@ -43,7 +43,6 @@ const EditarPerfil = () => {
   const [departments, setDepartments] = useState<{ id: number; name: string }[]>([]);
   const [programs, setPrograms] = useState<{ id: number; name: string }[]>([]);
   const [loggedInUserId, setLoggedInUserId] = useState<number | null>(null);
-  const [isModalEditOpen, setIsModalEditOpen] = useState(false);
 
   // Verifica autenticação, token e obtém o ID do usuário
   useEffect(() => {
@@ -57,7 +56,7 @@ const EditarPerfil = () => {
       try {
         const decoded: { sub: number } = jwtDecode(token);
         if (!decoded?.sub) throw new Error("Token inválido");
-        setLoggedInUserId(Number(decoded.sub)); // Salva o ID do usuário logado
+        setLoggedInUserId(decoded.sub); // Salva o ID do usuário logado
       } catch (error) {
         console.error("Erro ao verificar o token:", error);
         toast.error("Sessão expirada. Faça login novamente.");
@@ -120,11 +119,13 @@ const EditarPerfil = () => {
 
     try {
       const token = localStorage.getItem("authToken");
+      console.log("Payload enviado:", payload);
       const response = await api.patch(`/user/${loggedInUserId}`, payload, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
+      console.log("Dados recebidos com sucesso:", response.data);
       toast.success("Perfil atualizado com sucesso!");
       resetForm();
     } catch (error) {
