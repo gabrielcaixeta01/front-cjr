@@ -178,7 +178,7 @@ export default function PerfilAluno() {
                     {cursos.find((curso) => curso.id === avaliacao.courseId)?.name ||
                       "Curso não encontrado"}
                   </p>
-                  <p className="text-gray-700 mt-2">{avaliacao.text}</p>
+                  <p className="text-gray-700 mt-2 whitespace-pre-wrap overflow-wrap: break-words break-word white-space: normal">{avaliacao.text}</p>
 
                   {/* Botão para abrir/fechar comentários */}
                   {avaliacao.comments && avaliacao.comments.length > 0 && (
@@ -225,7 +225,7 @@ export default function PerfilAluno() {
                                 {comment.user?.name || "Usuário desconhecido"}
                               </p>
                             </div>
-                            <p className="text-gray-600 text-sm ml-2">{comment.text}</p>
+                            <p className="text-gray-600 text-sm ml-2 whitespace-pre-wrap overflow-wrap: break-words break-word white-space: normal">{comment.text}</p>
                           </div>
                         ))}
                     </div>

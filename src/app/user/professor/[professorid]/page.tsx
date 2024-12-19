@@ -149,7 +149,7 @@ export default function ProfessorPerfil() {
                     {new Date(avaliacao.createdAt || "").toLocaleDateString()} -{" "}
                     {avaliacao.course?.name || "Curso desconhecido"}
                   </p>
-                  <p className="text-gray-700 mt-2">{avaliacao.text}</p>
+                  <p className="text-gray-700 mt-2 whitespace-pre-wrap overflow-wrap: break-words break-word white-space: normal">{avaliacao.text}</p>
 
                   {avaliacao.comments && avaliacao.comments.length > 0 && (
                     <div className="mt-2">
@@ -181,7 +181,7 @@ export default function ProfessorPerfil() {
                               />
                               {comment.user?.name || "Usuário desconhecido"}
                             </p>
-                            <p className="text-gray-600 text-sm mt-1">{comment.text}</p>
+                            <p className="text-gray-600 text-sm mt-1 whitespace-pre-wrap overflow-wrap: break-words break-word white-space: normal">{comment.text}</p>
                           </div>
                         ))}
                     </div>
