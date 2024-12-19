@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useParams, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
@@ -13,7 +13,6 @@ import HeaderLogado from "@/components/headers/logado/page";
 
 export default function FeedLogado() {
   const router = useRouter();
-  const { userid } = useParams();
   const [filteredProfessores, setFilteredProfessores] = useState<Professor[]>([]);
   const [userInfo, setUserInfo] = useState<User | null>(null);
   const [professores, setProfessores] = useState<Professor[]>([]);
@@ -130,12 +129,15 @@ export default function FeedLogado() {
         toast.error("Preencha todos os campos!");
         return;
       }
-      await createAval(aval);
-      toast.success("Avaliação criada com sucesso!");
-      // Atualiza estado ou executa outra lógica
+      await createAval(aval); 
+      toast.success("Avaliação criada com sucesso!"); 
+      resetModalFields(); 
+      setTimeout(() => {
+        toggleModal();
+      }, 500); 
     } catch (error) {
       console.error("Erro ao criar avaliação:", error);
-      toast.error("Erro ao criar avaliação.");
+      toast.error("Erro ao criar avaliação. Por favor, tente novamente.");
     }
   };
 
@@ -202,7 +204,8 @@ export default function FeedLogado() {
             >
               Cancelar
             </button>
-            <button className="bg-[#A4FED3] text-[#2B895C] ml-1 font-400 text-[20px] rounded-lg hover:scale-110 duration-200 w-32 h-10 text-xl leading-[42.36px] flex items-center justify-center"
+            <button
+              className="bg-[#A4FED3] text-[#2B895C] ml-1 font-400 text-[20px] rounded-lg hover:scale-110 duration-200 w-32 h-10 text-xl leading-[42.36px] flex items-center justify-center"
               onClick={() => {
                 if (!texto.trim() || profSelected === "-1" || courseSelected === "-1") {
                   toast.error("Preencha todos os campos!");
@@ -211,10 +214,8 @@ export default function FeedLogado() {
                     text: texto,
                     professorId: parseInt(profSelected, 10),
                     courseId: parseInt(courseSelected, 10),
-                    userId: Number(userid),
+                    userId: Number(userInfo?.id),
                   });
-                  resetModalFields();
-                  toggleModal();
                 }
               }}
             >
@@ -297,11 +298,7 @@ export default function FeedLogado() {
                   isAuth ? "bg-azulCjr text-white" : "bg-gray-300 text-gray-500 cursor-not-allowed"
                 } w-[11rem] h-[3.5rem] mx-auto rounded-lg shadow-md hover:shadow-lg transition duration-500`}
                 onClick={() => {
-                  if (!isAuth) {
-                    toast.info("Faça login para criar uma avaliação.");
-                  } else {
                     toggleModal();
-                  }
                 }}
                 disabled={!isAuth}
               >

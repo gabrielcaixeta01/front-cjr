@@ -1,6 +1,5 @@
 import axios from "axios";
 import { User, Avaliacao, Comment, Professor } from "@/types";
-import { toast } from "react-toastify";
 
 // Configuração do Axios com a base URL correta
 export const api = axios.create({
@@ -68,8 +67,7 @@ export const createAval = async (aval: Partial<Avaliacao>): Promise<Avaliacao | 
   try {
     const token = localStorage.getItem("authToken");
     if (!token) {
-      toast.error("Você precisa estar logado para criar uma avaliação.");
-      return null;
+      throw new Error("Você precisa estar logado para criar uma avaliação.");
     }
 
     const response = await axios.post(
@@ -87,16 +85,10 @@ export const createAval = async (aval: Partial<Avaliacao>): Promise<Avaliacao | 
       }
     );
 
-    toast.success("Avaliação criada com sucesso!");
-    return response.data as Avaliacao; // Retorna os dados da avaliação criada, caso necessário
+    return response.data as Avaliacao; 
   } catch (error: any) {
     console.error("Erro ao criar avaliação:", error.response?.data || error.message);
-    if (error.response?.status === 401) {
-      toast.error("Sessão expirada. Faça login novamente.");
-    } else {
-      toast.error("Erro ao criar avaliação. Tente novamente.");
-    }
-    return null; // Retorna null em caso de erro
+    throw error; 
   }
 };
 
