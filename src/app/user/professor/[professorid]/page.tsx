@@ -332,7 +332,7 @@ export default function ProfessorPerfil() {
                               />
                               {comment.user?.name || "Usuário desconhecido"}
                             </p>
-                            <p className="text-gray-600 text-sm mt-1 whitespace-pre-wrap overflow-wrap: break-words break-word white-space: normal">{comment.text}</p>
+                            <p className="text-gray-600 text-sm ml-[2rem] mt-1 whitespace-pre-wrap overflow-wrap: break-words break-word white-space: normal">{comment.text}</p>
                           </div>
                         ))}
                     </div>
@@ -341,7 +341,7 @@ export default function ProfessorPerfil() {
               </article>
             ))
           ) : (
-            <p className="text-sm text-gray-500">Nenhuma avaliação publicada.</p>
+            <p className="text-sm text-gray-500  ml-[0.2rem]">Nenhuma avaliação publicada.</p>
           )}
         </section>
       </main>
