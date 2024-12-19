@@ -37,8 +37,8 @@ export default function HeaderLogado(userInfo:User) {
                     <button
                     className="flex items-center bg-azulCjr text-white rounded-[60px] px-4 py-2 hover:bg-blue-600 transition duration-300 ease-in-out shadow-md hover:shadow-lg"
                     onClick={() => {
-                        router.push("/feed");
                         localStorage.removeItem("authToken");
+                        window.location.href = "/feed";
                     }}
                     >
                     <ArrowRightOnRectangleIcon className="h-6 w-6 text-white" />
