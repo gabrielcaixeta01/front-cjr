@@ -134,7 +134,7 @@ export default function PerfilAluno() {
                     window.location.reload();
                     }, 1600);
                   }
-                  catch(error){
+                  catch{
                     toast.error("Erro ao editar avaliação", {autoClose:2200})
                   }                                  
                 }
@@ -171,7 +171,7 @@ export default function PerfilAluno() {
                                 window.location.reload();
                               }, 1100);              
                             }
-                            catch(error){
+                            catch {
                               toast.error("Erro ao excluir avaliação")
                             }
                           }
