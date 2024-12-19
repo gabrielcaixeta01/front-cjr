@@ -23,14 +23,15 @@ export default function Login() {
   const onSubmit = async (values: typeof initialValues) => {
     console.log(values);
     try {
-      const { access_token } = await loginUser(values.email, values.password);
+      const response = await loginUser(values.email, values.password);
+      const { access_token } = response as { access_token: string };
       console.log("Token:", access_token);
 
       if (access_token) {
         const user = await getUserByEmail(values.email);
         if (user) {
           console.log(localStorage.getItem("authToken"));
-          router.push(`/user/aluno/${user.id}`);
+          router.push(`/feed`);
         }
       } else {
         alert("Falha no login. Verifique suas credenciais.");

@@ -1,5 +1,6 @@
 import axios from "axios";
 import { User, Avaliacao, Comment, Professor } from "@/types";
+import { toast } from "react-toastify";
 
 // Configuração do Axios com a base URL correta
 export const api = axios.create({
@@ -63,14 +64,40 @@ export const getAllAval = async () => {
   return response.data;
 };
 
-export const createAval = async (aval: Partial<Avaliacao>) => {
-    const response = await api.post("/avaliacao", {
-      text: aval.text,              // Texto da avaliação
-      userId: aval.userId,          // ID do usuário
-      professorId: aval.professorId,// ID do professor
-      courseId: aval.courseId,      // ID do curso
-    });
-    return response.data;
+export const createAval = async (aval: Partial<Avaliacao>): Promise<Avaliacao | null> => {
+  try {
+    const token = localStorage.getItem("authToken");
+    if (!token) {
+      toast.error("Você precisa estar logado para criar uma avaliação.");
+      return null;
+    }
+
+    const response = await axios.post(
+      "http://localhost:4000/avaliacao",
+      {
+        text: aval.text,
+        professorId: aval.professorId,
+        courseId: aval.courseId,
+        userId: aval.userId,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`, // Envia o token de autenticação
+        },
+      }
+    );
+
+    toast.success("Avaliação criada com sucesso!");
+    return response.data as Avaliacao; // Retorna os dados da avaliação criada, caso necessário
+  } catch (error: any) {
+    console.error("Erro ao criar avaliação:", error.response?.data || error.message);
+    if (error.response?.status === 401) {
+      toast.error("Sessão expirada. Faça login novamente.");
+    } else {
+      toast.error("Erro ao criar avaliação. Tente novamente.");
+    }
+    return null; // Retorna null em caso de erro
+  }
 };
 
 export const updateAval = async (aval: Partial<Avaliacao>, id: number) => {
@@ -148,7 +175,7 @@ export const getAllPrograms = async () => {
 export const getUserByEmail = async (email: string): Promise<User | null> => {
    try {
     const response = await api.get(`/user/email/${email}`);
-    return response.data || null; 
+    return response.data as User || null; 
   } catch (error) {
     console.error("Erro ao buscar usuário ", error);
     return null;
@@ -157,10 +184,10 @@ export const getUserByEmail = async (email: string): Promise<User | null> => {
 
 export const loginUser = async (email: string, password: string) => {
   try {
-    const response = await api.post("/login", { email, password });
+    const response = await api.post<{ access_token: string }>("/login", { email, password });
     console.log("Resposta:", response.data);
     
-    const {access_token}  = response.data;
+    const { access_token } = response.data;
     console.log("Token obtidoooo:", access_token);
     if(access_token){
 
@@ -184,6 +211,9 @@ api.interceptors.request.use((request) => {
     const token = localStorage.getItem("authToken");
     
     if(token) {
+        if (!request.headers) {
+            request.headers = {};
+        }
         request.headers.Authorization = `Bearer ${token}`;
     }
     return request; 

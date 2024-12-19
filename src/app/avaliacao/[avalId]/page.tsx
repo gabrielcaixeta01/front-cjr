@@ -14,7 +14,7 @@ import { Avaliacao } from "@prisma/client";
 import telaCarregamento from "@/components/tela_carregamento_aval"
 import HeaderLogado from "@/components/headers/logado/page"
 import HeaderDeslogado from '@/components/headers/deslogado/page';
-import { jwtDecode } from 'jwt-decode'
+import { jwtDecode } from 'jwt-decode';
 
 export default function TelaAvaliacao() {
   
