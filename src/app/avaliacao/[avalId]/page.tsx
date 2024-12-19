@@ -412,11 +412,11 @@ export default function TelaAvaliacao() {
   return (
     <>
       <div className="flex flex-col h-screen min-h-fit overflow-y-scroll bg-gray-100">
-        {isAuth && userInfo && (
-          HeaderLogado(userInfo)
-        )}
-        {!isAuth && (
-          HeaderDeslogado()
+        {/* Header */}
+        {isAuth && userInfo ? (
+          <HeaderLogado {...(userInfo as User)} />
+        ) : (
+          <HeaderDeslogado />
         )}
         <div className="w-full max-w-[40%]  mx-auto min-h-fit bg-white h-screen rounded shadow-md ">
             <div className=" w-full max-w-[95%] bg-[#3EEE9A] rounded-md mt-8 flex flex-col mx-auto mb-4 min-h-fit" >
