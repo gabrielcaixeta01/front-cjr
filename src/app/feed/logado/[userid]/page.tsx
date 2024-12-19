@@ -112,9 +112,9 @@ export default function FeedLogado() {
   const creatingAval = async (aval: Partial<Avaliacao>) => {
     try {
       await createAval(aval); // Remova a variável 'created' se não for necessária
-      console.log("Avaliação criada com sucesso.");
+      toast.success("Avaliação criada com sucesso!", {autoClose:2200});
     } catch (error) {
-      console.error("Erro ao criar avaliação:", error);
+      toast.error("Erro ao criar avaliação", {autoClose:2200});
     }
   };
 
@@ -156,40 +156,48 @@ export default function FeedLogado() {
               {course.name}
             </option>))}           
         </select>
-
-        <div className="flex flex-col h-[12rem] w-[90%] bg-[#A4FED3] mt-[1.5rem] rounded-md">
-          <textarea value={texto} placeholder= "Digite sua avaliação" onChange={(event)=> setTexto(event.target.value)} className=" text-black placeholder-black placeholder-opacity-50 mt-2 mr-[0.3px]h-full w-full pt-[2px] pl-[1rem] rounded-md bg-[#A4FED3] leading-tight focus:outline-none resize-none overflow-y-auto" > </textarea>
-        </div>
-
-        <div className="ml-auto items-right pr-5 mt-6">
-          <button onClick={() => { resetModalFields(); toggleModal(); }}
-            className="bg-transparent rounded-lg hover:scale-110 duration-200 w-20 h-10 text-xl text-[23px] font-400 leading-[54.46px] mr-9"
-            >
-            Cancelar
-          </button>
-          <button className="bg-[#A4FED3] text-[#2B895C] font-400 text-[20px] rounded-lg hover:scale-110 duration-200 w-32 h-10 text-xl leading-[42.36px]  mr-10 ml-2"
-             onClick={() => {
-            if (texto === "") {
-              toast.error("A avaliação não pode ser vazia", {autoClose:2200});
-            } else if (parseInt(idProfAvaliacao, 10) === -1) {
-              toast.error("Selecione um professor", {autoClose:2200});
-            } else if (parseInt(idCourseAvaliacao, 10) === -1) {
-              toast.error("Selecione uma disciplina", {autoClose:2200});
-            } else {
-              const newAval: Partial<Avaliacao> = {
-                text: texto,
-                professorId: parseInt(idProfAvaliacao, 10),
-                courseId: parseInt(idCourseAvaliacao, 10),
-                userId: Number(userid),
-              };
-              creatingAval(newAval);
-              resetModalFields();
-              toast.success("A avaliação foi criada com sucesso", { autoClose: 2200 });
-              toggleModal();
-            }
-          }}>
-            Avaliar
-          </button>
+          
+        <div className="flex flex-col h-[12rem] w-[90%] bg-[#A4FED3] mt-[2rem] rounded-md">
+            <textarea value={texto} maxLength={500} onChange={(event)=> {setTexto(event.target.value); }} 
+            className="text-black h-full  shadow-sm placeholder-black placeholder-opacity-50 mt-2 pt-[2px] border-none pl-[1rem] bg-[#A4FED3] leading-tight focus:outline-none w-full p-2 resize-none overflow-y-auto  border rounded-md" placeholder="Digite seu comentário aqui"> </textarea>
+          </div>
+        <div className="flex justify-between items-center w-[90%] mt-6">
+          <span className="text-white text-base pl-1">
+            {texto.length}/500
+          </span>
+          <div className="flex mr-6 items-center justify-center">
+            <button onClick={() => { resetModalFields(); toggleModal(); }}
+              className="bg-transparent rounded-lg hover:scale-110 duration-200 w-20 h-10 text-xl text-[23px] font-400 leading-[54.46px] mr-9 flex items-center justify-center"
+            >              
+              Cancelar
+            </button>
+            <button className="bg-[#A4FED3] text-[#2B895C] ml-1 font-400 text-[20px] rounded-lg hover:scale-110 duration-200 w-32 h-10 text-xl leading-[42.36px] flex items-center justify-center"
+              onClick={() => {
+              if (!texto.trim()) {
+                toast.error("A avaliação não pode ser vazia", {autoClose:2200});
+              } else if (parseInt(idProfAvaliacao, 10) === -1) {
+                toast.error("Selecione um professor", {autoClose:2200});
+              } else if (parseInt(idCourseAvaliacao, 10) === -1) {
+                toast.error("Selecione uma disciplina", {autoClose:2200});
+              } else {
+                const newAval: Partial<Avaliacao> = {
+                  text: texto,
+                  professorId: parseInt(idProfAvaliacao, 10),
+                  courseId: parseInt(idCourseAvaliacao, 10),
+                  userId: Number(userid),
+                };
+                try{
+                  creatingAval(newAval);
+                  resetModalFields();
+                  toggleModal();
+                }
+                catch (error){
+                }
+              }
+            }}>
+              Avaliar
+            </button>
+          </div>
         </div>
       </div>
     </div>     

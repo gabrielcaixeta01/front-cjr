@@ -6,7 +6,6 @@ import {useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 
 export default function HeaderLogado(userInfo:User) {  
-    console.log("cheguei aqui")
     const router = useRouter();
     return(  
     <header className="flex justify-between bg-customGreen pb-1 items-center mb-2 min-h-fit ">

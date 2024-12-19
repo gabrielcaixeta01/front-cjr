@@ -167,10 +167,10 @@ export default function TelaAvaliacao() {
       <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
         <div className="h-screen  w-1/2 max-h-[45%]  flex flex-col mx-auto bg-[#3EEE9A] rounded-md items-center">
           <div className="flex flex-col h-[12rem] w-[90%] bg-[#A4FED3] mt-[2rem] rounded-md">
-            <textarea value={textoComment} maxLength={800} onChange={(event)=> {setTextoComment(event.target.value); setLengthComment(event.target.value.length)}} className="text-black h-full  shadow-sm placeholder-black placeholder-opacity-50 mt-2 pt-[2px] border-none pl-[1rem] bg-[#A4FED3] leading-tight focus:outline-none w-full p-2 resize-none overflow-y-auto  border rounded-md" placeholder="Digite seu comentário aqui"> </textarea>
-        </div>
+            <textarea value={textoComment} maxLength={500} onChange={(event)=> {setTextoComment(event.target.value); setLengthComment(event.target.value.length)}} className="text-black h-full  shadow-sm placeholder-black placeholder-opacity-50 mt-2 pt-[2px] border-none pl-[1rem] bg-[#A4FED3] leading-tight focus:outline-none w-full p-2 resize-none overflow-y-auto  border rounded-md" placeholder="Digite seu comentário aqui"> </textarea>
+          </div>
         <div className="flex justify-between items-center w-[90%] mt-6">
-          <span className="text-white text-base pl-1">{textoComment.length}/800</span>
+          <span className="text-white text-base pl-1">{textoComment.length}/500</span>
         <div className="flex mr-6 items-center justify-center">
             <button
               onClick={() => {
@@ -184,7 +184,7 @@ export default function TelaAvaliacao() {
             </button>
             <button
               onClick={() => {
-                if (textoComment === "") {
+                if (!textoComment.trim()) {
                   toast.error("O comentário não pode ser vazio", { autoClose: 2200 });
                 } else {
                   const newComment: Partial<Comment> = {
@@ -265,11 +265,11 @@ export default function TelaAvaliacao() {
     const modal = <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
     <div className="h-screen  w-1/2 max-h-[45%]  flex flex-col mx-auto bg-[#3EEE9A] rounded-md items-center">
       <div className="flex flex-col h-[12rem] w-[90%] bg-[#A4FED3] mt-[2rem] rounded-md">
-        <textarea value={textoEdit} maxLength={800} onChange={(event)=> setTextoEdit(event.target.value)} className="text-black h-full placeholder-black placeholder-opacity-50 mt-2 pt-[2px] border-none pl-[1rem] bg-[#A4FED3] leading-tight focus:outline-none w-full p-2 resize-none overflow-y-auto  border rounded-md"> </textarea>
+        <textarea value={textoEdit} maxLength={500} onChange={(event)=> setTextoEdit(event.target.value)} className="text-black h-full placeholder-black placeholder-opacity-50 mt-2 pt-[2px] border-none pl-[1rem] bg-[#A4FED3] leading-tight focus:outline-none w-full p-2 resize-none overflow-y-auto  border rounded-md"> </textarea>
       </div>
       <div className="flex justify-between items-center w-[90%] mt-6">
           <span className="text-white text-base pl-1">
-            {textoEdit.length}/800
+            {textoEdit.length}/500
           </span>
           <div className="flex mr-6 items-center justify-center">
             <button onClick={()=> 
@@ -281,7 +281,7 @@ export default function TelaAvaliacao() {
               Cancelar
             </button>
             <button onClick={() => {
-                if (textoEdit===""){
+                if (!textoEdit.trim()){
                   toast.error("O comentário não pode ser vazio");
                 }
                 else {
@@ -319,11 +319,11 @@ export default function TelaAvaliacao() {
     <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
       <div className="h-screen  w-1/2 max-h-[45%]  flex flex-col mx-auto bg-[#3EEE9A] rounded-md items-center">
         <div className="flex flex-col h-[12rem] w-[90%] bg-[#A4FED3] mt-[2rem] rounded-md">
-          <textarea value= {textoEditComment} maxLength={800} onChange={(event)=> setTextoEditComment(event.target.value)} className="text-black h-full placeholder-black mt-2 pt-[2px] border-none pl-[1rem] bg-[#A4FED3] leading-tight focus:outline-none w-full p-2 resize-none overflow-y-auto  border rounded-md"> </textarea>
+          <textarea value= {textoEditComment} maxLength={500} onChange={(event)=> setTextoEditComment(event.target.value)} className="text-black h-full placeholder-black mt-2 pt-[2px] border-none pl-[1rem] bg-[#A4FED3] leading-tight focus:outline-none w-full p-2 resize-none overflow-y-auto  border rounded-md"> </textarea>
         </div>
         <div className="flex justify-between items-center w-[90%] mt-6">
           <span className="text-white text-base pl-1">
-            {textoEditComment.length}/800
+            {textoEditComment.length}/500
           </span>
           <div className="flex mr-6 items-center justify-center">
             <button onClick={()=> 
@@ -335,7 +335,7 @@ export default function TelaAvaliacao() {
               Cancelar
             </button>
             <button onClick={() => {
-                if (textoEditComment===""){
+                if (!textoEditComment.trim()){
                   toast.error("O comentário não pode ser vazio");
                 }
                 else {
