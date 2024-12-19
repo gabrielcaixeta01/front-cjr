@@ -8,6 +8,8 @@ import { Professor, User } from "@/types";
 import HeaderLogado from "@/components/headers/logado/page";
 import HeaderDeslogado from "@/components/headers/deslogado/page";
 import { jwtDecode } from "jwt-decode";
+import telaCarregamento from "@/components/telas_carregamento/professor/tela_carregamento_professor"
+
 
 export default function ProfessorPerfil() {
   const { professorid } = useParams();
@@ -55,7 +57,7 @@ export default function ProfessorPerfil() {
     loadProfessor();
   }, [professorid]);
 
-  if (loading) return <div className="flex justify-center items-center h-screen">Carregando...</div>;
+  if (loading) return telaCarregamento;
   if (!professorInfo) return <div className="flex justify-center items-center h-screen">Professor não encontrado.</div>;
 
   return (

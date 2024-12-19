@@ -1,7 +1,8 @@
 import Image from "next/image";
 
-const telaCarregamento = <div className="flex flex-col h-screen min-h-screen overflow-y-scroll bg-gray-100">
-<header className="flex justify-between bg-customGreen pb-1 items-center mb-2">
+const telaCarregamento = 
+    <div className="flex flex-col h-screen min-h-screen bg-gray-100">
+        <header className="flex justify-between bg-customGreen pb-1 items-center mb-2">
            <div className="flex bg-azulUnb pb-1">
              <div className="flex justify-between w-screen bg-white py-3 items-center">
                <Image
@@ -13,7 +14,7 @@ const telaCarregamento = <div className="flex flex-col h-screen min-h-screen ove
                />
              </div>
            </div>
-      </header>
-</div>
+        </header>
+    </div>
 
 export default telaCarregamento;

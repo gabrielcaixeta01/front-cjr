@@ -10,6 +10,7 @@ import { User, Professor, Avaliacao, Course } from "@/types";
 import { jwtDecode } from "jwt-decode";
 import HeaderDeslogado from "@/components/headers/deslogado/page";
 import HeaderLogado from "@/components/headers/logado/page";
+import telaCarregamento from "@/components/telas_carregamento/feed/tela_carregamento_feed"
 
 export default function FeedLogado() {
   const router = useRouter();
@@ -228,7 +229,7 @@ export default function FeedLogado() {
   );
 
   if (isLoading) {
-    return <div className="text-center mt-20">Verificando autenticação...</div>;
+    return telaCarregamento;
   }
 
   return (
@@ -292,7 +293,7 @@ export default function FeedLogado() {
               </div>
             )}
 
-            <div className="flex  mx-auto w-[20%] max-w-[30%] max-h-[2%]">
+            <div className="flex  mx-auto w-[20%] max-w-[30%] max-h-[2%] mt-2 mb-2">
               <button
                 className={`${
                   isAuth ? "bg-azulCjr text-white" : "bg-gray-300 text-gray-500 cursor-not-allowed"

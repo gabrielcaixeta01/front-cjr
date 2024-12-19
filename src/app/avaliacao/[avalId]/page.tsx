@@ -31,10 +31,8 @@ export default function TelaAvaliacao() {
   const [localCourse, setLocalCourse] = useState([])
   const [textoEdit, setTextoEdit] = useState("");
   const [textoEditComment, setTextoEditComment] = useState("");
-  const [loading, setLoading] = useState(true);
   const [idCommentDeleted, setIdCommentDeleted] = useState(0);
   const [idCommentEdited, setIdCommentEdited] = useState(0);
-  const [lengthComment, setLengthComment] = useState(textoComment.length)
   const {avalId} = useParams();
   const [localAval, setLocalAval] = useState<Avaliacao | null>(null);
   const [userAvalInfo, setUserAvalInfo] = useState<User | null>(null);

@@ -9,6 +9,7 @@ import { jwtDecode } from "jwt-decode";
 import axios from "axios";
 import HeaderLogado from "@/components/headers/logado/page";
 import HeaderDeslogado from "@/components/headers/deslogado/page";
+import telaCarregamento from "@/components/telas_carregamento/aluno/tela_carregamento_aluno"
 
 export default function PerfilAluno() {
   const router = useRouter();
@@ -78,7 +79,7 @@ export default function PerfilAluno() {
     fetchProfessoresECursos();
   }, []);
 
-  if (loading) return <div>Carregando...</div>;
+  if (loading) return telaCarregamento;
   if (!userInfo) return <div>Perfil não encontrado.</div>;
 
   return (
