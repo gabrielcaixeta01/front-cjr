@@ -32,7 +32,7 @@ export default function HeaderLogado(userInfo:User) {
                     width={48}
                     height={48}
                     className="w-10 h-10 rounded-full shadow-md bg-white object-cover cursor-pointer"
-                    onClick={() => router.push(`/user/aluno`)}
+                    onClick={() => router.push(`user/aluno`)}
                     />
                     <button
                     className="flex items-center bg-azulCjr text-white rounded-[60px] px-4 py-2 hover:bg-blue-600 transition duration-300 ease-in-out shadow-md hover:shadow-lg"
