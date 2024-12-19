@@ -12,7 +12,7 @@ import HeaderDeslogado from "@/components/headers/deslogado/page";
 
 export default function PerfilAluno() {
   const router = useRouter();
-  const { userid } = useParams(); // ID do perfil na URL
+  const { id } = useParams(); // ID do perfil na URL
   const [loading, setLoading] = useState(true);
   const [userInfo, setUserInfo] = useState<User | null>(null); // Dados do usuário do perfil
   const [loggedInUserId, setLoggedInUserId] = useState<number | null>(null); // ID do usuário autenticado
@@ -33,23 +33,21 @@ export default function PerfilAluno() {
         } catch (error) {
           console.error("Erro ao decodificar o token:", error);
           setIsAuth(false);
-          router.push("/auth/login");
         }
       } else {
         setIsAuth(false);
-        router.push("/auth/login");
       }
     };
 
     verifyAccess();
-  }, [router]);
+  }, []);
 
   // Busca as informações do perfil (do ID da URL ou do usuário logado)
   useEffect(() => {
     const loadUserInfo = async () => {
       try {
-        const userIdToFetch = userid ? Number(userid) : loggedInUserId;
-        if (!userIdToFetch) return; // Se não há ID (usuário não logado ou problema), para aqui
+        const userIdToFetch = id ? Number(id) : loggedInUserId;
+        if (!userIdToFetch) return; // Se não há ID, para aqui
         const userData = await fetchUserInfo(userIdToFetch);
         setUserInfo(userData);
       } catch (error) {
@@ -59,11 +57,8 @@ export default function PerfilAluno() {
       }
     };
 
-    // Só carrega as informações se o usuário está autenticado
-    if (isAuth) {
-      loadUserInfo();
-    }
-  }, [userid, loggedInUserId, isAuth]);
+    loadUserInfo();
+  }, [id, loggedInUserId]);
 
   // Busca os professores e cursos
   useEffect(() => {
@@ -89,10 +84,9 @@ export default function PerfilAluno() {
   return (
     <div className="flex flex-col h-screen min-h-fit bg-gray-100">
       {/* Header */}
-      {isAuth && userInfo && (
+      {isAuth && userInfo ? (
         <HeaderLogado {...(userInfo as User)} />
-      )}
-      {!isAuth && (
+      ) : (
         <HeaderDeslogado />
       )}
 
@@ -143,7 +137,7 @@ export default function PerfilAluno() {
                 <p className="text-sm text-gray-500">{userInfo?.email || "Carregando..."}</p>
               </div>
             </div>
-            {isAuth && loggedInUserId === Number(userid) && (
+            {isAuth && loggedInUserId === Number(id) && (
               <div className="flex flex-col">
                 <button
                   className="bg-azulCjr text-white rounded-[60px] px-4 py-2 hover:bg-blue-600 transition duration-300 ease-in-out shadow-md hover:shadow-lg"
@@ -156,89 +150,94 @@ export default function PerfilAluno() {
           </div>
         </section>
 
+        {/* Avaliações */}
+        <section className="mt-3 p-4">
+          <h2 className="text-l font-semibold mb-3 text-black">Publicações</h2>
+          {userInfo.avaliacoes && userInfo.avaliacoes.length > 0 ? (
+            userInfo.avaliacoes.map((avaliacao) => (
+              <article
+                key={avaliacao.id}
+                className="bg-customGreen rounded-lg shadow mb-4 flex flex-row p-3"
+              >
+                <div className="flex items-start justify-center w-16 h-16 mr-2">
+                  <Image
+                    src={userInfo.profilepic || "/default-profile.png"}
+                    alt="Autor"
+                    width={64}
+                    height={64}
+                    className="w-12 h-12 object-cover rounded-full bg-white"
+                  />
+                </div>
+                <div className="max-w-[550px]">
+                  <p className="font-bold text-gray-800">{userInfo.name}</p>
+                  <p className="text-sm text-gray-500">
+                    {new Date(avaliacao.createdAt || "").toLocaleDateString()} -{" "}
+                    {professores.find((prof) => prof.id === avaliacao.professorId)?.name ||
+                      "Professor não encontrado"}{" "}
+                    -{" "}
+                    {cursos.find((curso) => curso.id === avaliacao.courseId)?.name ||
+                      "Curso não encontrado"}
+                  </p>
+                  <p className="text-gray-700 mt-2">{avaliacao.text}</p>
 
-      {/* Avaliações */}
-              <section className="mt-3 p-4">
-                <h2 className="text-l font-semibold mb-3 text-black">Publicações</h2>
-      
-                {userInfo.avaliacoes && userInfo.avaliacoes.length > 0 ? (
-                  userInfo.avaliacoes.map((avaliacao) => (
-                    <article
-                      key={avaliacao.id}
-                      className="bg-customGreen rounded-lg shadow mb-4 flex flex-row p-3"
-                    >
-                      <div className="flex items-start justify-center w-16 h-16 mr-2">
-                        <Image
-                          src={userInfo.profilepic || "/default-profile.png"}
-                          alt="Autor"
-                          width={64}
-                          height={64}
-                          className="w-12 h-12 object-cover rounded-full bg-white"
-                        />
-                      </div>
-                      <div className="max-w-[550px]">
-                        <p className="font-bold text-gray-800">{userInfo.name}</p>
-                        <p className="text-sm text-gray-500">
-                          {new Date(avaliacao.createdAt || "").toLocaleDateString()} -{" "}
-                          {professores.find((prof) => prof.id === avaliacao.professorId)?.name ||
-                            "Professor não encontrado"}{" "}
-                          -{" "}
-                          {cursos.find((curso) => curso.id === avaliacao.courseId)?.name ||
-                            "Curso não encontrado"}
-                        </p>
-                        <p className="text-gray-700 mt-2">{avaliacao.text}</p>
-      
-                        {/* Botão para abrir/fechar comentários */}
-                        {avaliacao.comments && avaliacao.comments.length > 0 && (
-                          <div className="mt-2">
-                            <button
-                              className="text-gray-500 text-sm font-medium cursor-pointer mb-2"
-                              onClick={() =>
-                                setOpenComments((prev) =>
-                                  prev === avaliacao.id ? null : avaliacao.id
-                                )
-                              }
-                            >
-                              {openComments === avaliacao.id
-                                ? "Ocultar comentários"
-                                : `Ver comentários (${avaliacao.comments.length})`}
-                            </button>
-      
-                            {/* Exibe os comentários caso estejam abertos */}
-                            {openComments === avaliacao.id &&
-                              avaliacao.comments.map((comment) => (
-                                <div
-                                  key={comment.id}
-                                  className="bg-gray-100 rounded-[50px] text-sm p-3 mt-1"
-                                >
-                                  <div className="flex items-center">
-                                    <div className="flex  mr-2 mb-1">
-                                      <Image
-                                        src={comment.user?.profilepic || "/default-profile.png"}
-                                        alt="Foto do autor do comentário"
-                                        width={64}
-                                        height={64}
-                                        className="w-8 h-8 object-cover cursor-pointer rounded-full bg-white"
-                                        onClick={() => router.push(`/user/aluno/${comment.user?.id}`)}
-                                      />
-                                    </div>
-                                    <p className="font-semibold cursor-pointer text-gray-700" onClick={() => router.push(`/user/aluno/deslogado/${comment.user?.id}`)}>
-                                      {comment.user?.name || "Usuário desconhecido"}
-                                    </p>
-                                  </div>
-                                  <p className="text-gray-600 text-sm ml-2">{comment.text}</p>
-                                </div>
-                              ))}
+                  {/* Botão para abrir/fechar comentários */}
+                  {avaliacao.comments && avaliacao.comments.length > 0 && (
+                    <div className="mt-2">
+                      <button
+                        className="text-gray-500 text-sm font-medium cursor-pointer mb-2"
+                        onClick={() =>
+                          setOpenComments((prev) =>
+                            prev === avaliacao.id ? null : avaliacao.id
+                          )
+                        }
+                      >
+                        {openComments === avaliacao.id
+                          ? "Ocultar comentários"
+                          : `Ver comentários (${avaliacao.comments.length})`}
+                      </button>
+
+                      {/* Exibe os comentários caso estejam abertos */}
+                      {openComments === avaliacao.id &&
+                        avaliacao.comments.map((comment) => (
+                          <div
+                            key={comment.id}
+                            className="bg-gray-100 rounded-[50px] text-sm p-3 mt-1"
+                          >
+                            <div className="flex items-center">
+                              <div className="flex mr-2 mb-1">
+                                <Image
+                                  src={comment.user?.profilepic || "/default-profile.png"}
+                                  alt="Foto do autor do comentário"
+                                  width={64}
+                                  height={64}
+                                  className="w-8 h-8 object-cover cursor-pointer rounded-full bg-white"
+                                  onClick={() =>
+                                    router.push(`/user/aluno/${comment.user?.id}`)
+                                  }
+                                />
+                              </div>
+                              <p
+                                className="font-semibold cursor-pointer text-gray-700"
+                                onClick={() =>
+                                  router.push(`/user/aluno/${comment.user?.id}`)
+                                }
+                              >
+                                {comment.user?.name || "Usuário desconhecido"}
+                              </p>
+                            </div>
+                            <p className="text-gray-600 text-sm ml-2">{comment.text}</p>
                           </div>
-                        )}
-                      </div>
-                    </article>
-                  ))
-                ) : (
-                  <p className="text-sm text-gray-500">Nenhuma avaliação publicada.</p>
-                )}
-              </section>
-            </main>
-          </div>
-        );
-      }
+                        ))}
+                    </div>
+                  )}
+                </div>
+              </article>
+            ))
+          ) : (
+            <p className="text-sm text-gray-500">Nenhuma avaliação publicada.</p>
+          )}
+        </section>
+      </main>
+    </div>
+  );
+}

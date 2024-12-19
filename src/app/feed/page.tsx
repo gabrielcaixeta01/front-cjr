@@ -130,7 +130,7 @@ export default function FeedLogado() {
         toast.error("Preencha todos os campos!");
         return;
       }
-      const result = await createAval(aval);
+      await createAval(aval);
       toast.success("Avaliação criada com sucesso!");
       // Atualiza estado ou executa outra lógica
     } catch (error) {

@@ -17,7 +17,7 @@ export default function HeaderDeslogado() {
                 />
                 <div className="flex items-center space-x-5 mr-10">
                     <button
-                    className="bg-azulCjr hover:bg-blue-600 p-2 rounded-[60px] transition duration-300 shadow-md hover:shadow-lg mr-2"
+                    className="bg-azulCjr hover:bg-blue-600 py-2 px-5 rounded-[60px] transition duration-300 shadow-md hover:shadow-lg mr-2"
                     onClick={() => router.push("/login")}
                     >
                         Login

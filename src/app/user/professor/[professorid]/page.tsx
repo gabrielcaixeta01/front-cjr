@@ -170,13 +170,14 @@ export default function ProfessorPerfil() {
                             key={comment.id}
                             className="bg-gray-100 rounded-[50px] text-sm p-4 mt-1"
                           >
-                            <p className="font-semibold text-gray-700 flex items-center">
+                            <p className="font-semibold text-gray-700 flex items-center cursor-pointer" onClick={() => router.push(`/user/aluno/${comment.user?.id || ""}`)}>
                               <Image
                                 src={comment.user?.profilepic || "/default-profile.png"}
                                 alt="Foto do autor do comentário"
                                 width={24}
                                 height={24}
                                 className="w-6 h-6 object-cover rounded-full bg-white mr-2"
+                                onClick={() => router.push(`/user/aluno/${comment.user?.id || ""}`)}
                               />
                               {comment.user?.name || "Usuário desconhecido"}
                             </p>
