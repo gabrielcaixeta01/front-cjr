@@ -42,11 +42,11 @@ export default function FeedLogado() {
           console.error("Erro ao verificar autenticação:", error);
           setIsAuth(false);
           toast.error("Sessão expirada. Faça login novamente.");
-          router.push("/auth/login");
+          router.push("login");
         }
       } else {
         setIsAuth(false);
-        router.push("/auth/login");
+        router.push("login");
       }
     };
 

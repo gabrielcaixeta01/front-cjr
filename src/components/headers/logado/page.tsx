@@ -6,7 +6,6 @@ import {useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 
 export default function HeaderLogado(userInfo:User) {  
-    console.log("cheguei aqui")
     const router = useRouter();
     return(  
     <header className="flex justify-between bg-customGreen pb-1 items-center mb-2 min-h-fit ">
@@ -18,6 +17,7 @@ export default function HeaderLogado(userInfo:User) {
                     width={80}
                     height={80}
                     className="w-20 h-10 cursor-pointer ml-5 shadow-md"
+                    onClick={()=>router.push("/feed")}
                 />
                 <div className="flex items-center space-x-5 mr-10">
                     <button
@@ -32,12 +32,12 @@ export default function HeaderLogado(userInfo:User) {
                     width={48}
                     height={48}
                     className="w-10 h-10 rounded-full shadow-md bg-white object-cover cursor-pointer"
-                    onClick={() => router.push(`user/aluno`)}
+                    onClick={() => router.push(`/user/aluno/${userInfo.id}`)}
                     />
                     <button
                     className="flex items-center bg-azulCjr text-white rounded-[60px] px-4 py-2 hover:bg-blue-600 transition duration-300 ease-in-out shadow-md hover:shadow-lg"
                     onClick={() => {
-                        router.push("/feed/Deslogado");
+                        router.push("/feed");
                         localStorage.removeItem("authToken");
                     }}
                     >

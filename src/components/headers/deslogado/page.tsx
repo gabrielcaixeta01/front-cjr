@@ -13,6 +13,7 @@ export default function HeaderDeslogado() {
                     width={80}
                     height={80}
                     className="w-20 h-10 cursor-pointer ml-5 shadow-md"
+                    onClick={()=> router.push("/feed")}
                 />
                 <div className="flex items-center space-x-5 mr-10">
                     <button
