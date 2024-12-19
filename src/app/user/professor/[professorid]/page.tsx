@@ -32,8 +32,6 @@ export default function ProfessorPerfil() {
           console.error("Erro ao decodificar token ou buscar informações do usuário:", error);
           setIsAuth(false);
         }
-      } else {
-        setIsAuth(false);
       }
     };
 
@@ -135,14 +133,14 @@ export default function ProfessorPerfil() {
                     width={64}
                     height={64}
                     className="w-12 h-12 object-cover rounded-full cursor-pointer bg-white"
-                    onClick={() => router.push(`/user/aluno/${avaliacao.user?.id}`)}
+                    onClick={() => router.push(`/user/aluno/${avaliacao.user?.id || ""}`)}
                   />
                 </div>
 
                 <div className="max-w-[550px]">
                   <p
                     className="font-bold text-gray-800 cursor-pointer"
-                    onClick={() => router.push(`/user/aluno/${avaliacao.user?.id}`)}
+                    onClick={() => router.push(`/user/aluno/${avaliacao.user?.id || ""}`)}
                   >
                     {avaliacao.user?.name || "Usuário desconhecido"}
                   </p>

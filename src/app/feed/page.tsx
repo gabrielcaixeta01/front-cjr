@@ -19,6 +19,7 @@ export default function FeedLogado() {
   const [professores, setProfessores] = useState<Professor[]>([]);
   const [courses, setCourses] = useState<Course[]>([]);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [texto, setTexto] = useState("");
   const [profSelected, setProfSelected] = useState("-1");
   const [courseSelected, setCourseSelected] = useState("-1");
@@ -31,27 +32,28 @@ export default function FeedLogado() {
   // Verifica autenticação e carrega informações do usuário
   useEffect(() => {
     const verifyAccess = async () => {
+      setIsLoading(true); // Define como carregando
       const token = localStorage.getItem("authToken");
+  
       if (token) {
         try {
           const decoded: { sub: number } = jwtDecode(token);
-          setIsAuth(true);
           const userData = await fetchUserInfo(decoded.sub);
           setUserInfo(userData);
+          setIsAuth(true);
         } catch (error) {
           console.error("Erro ao verificar autenticação:", error);
           setIsAuth(false);
           toast.error("Sessão expirada. Faça login novamente.");
-          router.push("login");
         }
       } else {
-        setIsAuth(false);
-        router.push("login");
+        setIsAuth(false); // Usuário deslogado
       }
+      setIsLoading(false); // Carregamento concluído
     };
-
+  
     verifyAccess();
-  }, [router]);
+  }, []);
 
   // Busca professores
   useEffect(() => {
@@ -224,17 +226,16 @@ export default function FeedLogado() {
     </div>
   );
 
-  if (!isAuth) {
+  if (isLoading) {
     return <div className="text-center mt-20">Verificando autenticação...</div>;
   }
 
   return (
     <div className="bg-gray-100 min-h-screen">
       {/* Header */}
-      {isAuth && userInfo && (
+      {isAuth && userInfo ? (
         <HeaderLogado {...(userInfo as User)} />
-      )}
-      {!isAuth && (
+      ) : (
         <HeaderDeslogado />
       )}
 
@@ -290,16 +291,24 @@ export default function FeedLogado() {
               </div>
             )}
 
-          <div className="flex  mx-auto w-[20%] max-w-[30%] max-h-[2%]">
-            <button
-              className="bg-azulCjr text-white w-[11rem] h-[3.5rem] mx-auto rounded-lg shadow-md hover:shadow-lg hover:bg-blue-600 transition duration-500"
-              onClick={toggleModal}>
-              Criar nova avaliação
-            </button>
-            {isModalOpen && isAuth && 
-              modalAvaliacao()
-            }                              
-          </div>
+            <div className="flex  mx-auto w-[20%] max-w-[30%] max-h-[2%]">
+              <button
+                className={`${
+                  isAuth ? "bg-azulCjr text-white" : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                } w-[11rem] h-[3.5rem] mx-auto rounded-lg shadow-md hover:shadow-lg transition duration-500`}
+                onClick={() => {
+                  if (!isAuth) {
+                    toast.info("Faça login para criar uma avaliação.");
+                  } else {
+                    toggleModal();
+                  }
+                }}
+                disabled={!isAuth}
+              >
+                Criar nova avaliação
+              </button>
+              {isModalOpen && isAuth && modalAvaliacao()}
+            </div>
       
             {/* Grid de Professores */}
             <section className="p-4 grid w-[70%] min-h-fit mx-auto grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
