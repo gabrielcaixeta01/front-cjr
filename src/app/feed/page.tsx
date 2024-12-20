@@ -42,7 +42,7 @@ export default function FeedLogado() {
           const userData = await fetchUserInfo(decoded.sub);
           setUserInfo(userData);
           setIsAuth(true);
-        } catch (error) {
+        } catch {
           setIsAuth(false);
           toast.error("Sessão expirada. Faça login novamente.");
         }
@@ -62,7 +62,7 @@ export default function FeedLogado() {
         const response = await axios.get("http://localhost:4000/professors");
         setProfessores(response.data as Professor[]);
         setFilteredProfessores(response.data as Professor[]);
-      } catch (error) {
+      } catch {
         toast.error("Erro ao buscar professores.");
       }
     };
@@ -76,7 +76,7 @@ export default function FeedLogado() {
       try {
         const response = await axios.get("http://localhost:4000/courses");
         setCourses(response.data as Course[]);
-      } catch (error) {
+      } catch {
         toast.error("Erro ao buscar disciplinas.");
       }
     };
@@ -128,7 +128,7 @@ export default function FeedLogado() {
       setProfSelected(profFound);
       }
     }
-    catch (error){
+    catch {
       toast.error ("Erro ao procurar professor");
     }
   }
@@ -146,7 +146,7 @@ export default function FeedLogado() {
       setTimeout(() => {
         toggleModal();
       }, 500); 
-    } catch (error) {
+    } catch {
       toast.error("Erro ao criar avaliação. Por favor, tente novamente.");
     }
   };
@@ -159,9 +159,6 @@ export default function FeedLogado() {
     setCourseSelected("-1");
   };
 
-  const warningMessageProf = () =>{
-    return toast.warning("O professor não ministra nenhuma disciplina", {autoClose:2200})
-  }
 
   // Modal de avaliação
   const modalAvaliacao = () => (
@@ -284,7 +281,7 @@ export default function FeedLogado() {
     <div className="bg-gray-100 min-h-screen">
       {/* Header */}
       {isAuth && userInfo ? (
-        <HeaderLogado {...(userInfo as User)} />
+        <HeaderLogado/>
       ) : (
         <HeaderDeslogado />
       )}

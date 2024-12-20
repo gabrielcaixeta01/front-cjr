@@ -324,7 +324,7 @@ export default function ProfessorPerfil() {
       {isModalDeleteAvalOpen && modalDeleteAval()}
       {isModalOpen && isAuth && modalAvaliacao()}
       {/* Header */}
-      {isAuth && userInfo && <HeaderLogado {...(userInfo as User)} />}
+      {isAuth && userInfo && <HeaderLogado/>}
       {!isAuth && <HeaderDeslogado />}
 
       {/* Conteúdo Principal */}

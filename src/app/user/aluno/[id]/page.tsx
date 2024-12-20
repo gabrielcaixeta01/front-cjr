@@ -198,16 +198,16 @@ export default function PerfilAluno() {
     <div className="flex flex-col h-screen min-h-fit bg-gray-100">
       {/* Header */}
       {isAuth && userInfo ? (
-        <HeaderLogado {...(userInfo as User)} />
+        <HeaderLogado />
       ) : (
         <HeaderDeslogado />
       )}
-                    {isModalEditOpen && (
-                      modalEditAval()
-                    )}
-                    {isModalDeleteAvalOpen && (                      
-                      modalDeleteAval())
-                    }
+      {isModalEditOpen && (
+        modalEditAval()
+      )}
+      {isModalDeleteAvalOpen && (                      
+        modalDeleteAval())
+      }
 
       {/* Conteúdo Principal */}
       <main className="w-full max-w-[40%] min-h-fit mx-auto bg-white rounded shadow-md my-5">

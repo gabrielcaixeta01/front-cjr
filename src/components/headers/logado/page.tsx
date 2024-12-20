@@ -1,11 +1,34 @@
 import Image from "next/image";
 import { ArrowRightOnRectangleIcon } from "@heroicons/react/20/solid";
 import { BellIcon } from "@heroicons/react/24/solid";
-import {User} from "@/types"
 import { toast } from "react-toastify";
 import Link from "next/link";
+import { useEffect, useState } from "react";
+import { jwtDecode } from "jwt-decode";
 
-export default function HeaderLogado(userInfo:User) {  
+export default function HeaderLogado() {  
+    const [loggedInUser, setLoggedInUser] = useState<{
+        id: number;
+        name: string;
+        profilepic?: string;
+    } | null>(null);
+    
+    useEffect(() => {
+        const token = localStorage.getItem("authToken");
+        if (token) {
+        try {
+            const decoded: { sub: number; name?: string; profilepic?: string } = jwtDecode(token);
+            setLoggedInUser({
+            id: decoded.sub,
+            name: decoded.name || "Usuário",
+            profilepic: decoded.profilepic || "/default-profile.png",
+            });
+        } catch (error) {
+            console.error("Erro ao decodificar o token:", error);
+        }
+        }
+    }, []);
+      
     return(  
     <header className="flex justify-between bg-customGreen pb-1 items-center mb-2 min-h-fit ">
         <div className="flex bg-azulUnb pb-1">
@@ -28,16 +51,18 @@ export default function HeaderLogado(userInfo:User) {
                     >
                     <BellIcon className="h-6 w-6 text-white" />
                     </button>
+                    {loggedInUser && (
                     <Link
-                    href={`/user/aluno/${userInfo.id}`}>
+                    href={`/user/aluno/${loggedInUser.id}`}>
                     <Image
-                    src={userInfo?.profilepic || "/default-profile.png"}
+                    src={loggedInUser.profilepic || "/default-profile.png"}
                     alt="Foto de perfil"
                     width={48}
                     height={48}
                     className="w-10 h-10 rounded-full shadow-md bg-white object-cover cursor-pointer"
                     />
                     </Link>
+                    )}
                     <button
                     className="flex items-center bg-azulCjr text-white rounded-[60px] px-4 py-2 hover:bg-blue-600 transition duration-300 ease-in-out shadow-md hover:shadow-lg"
                     onClick={() => {

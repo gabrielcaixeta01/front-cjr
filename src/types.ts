@@ -14,7 +14,7 @@ export interface User {
     name: string;
   };
   profilepic?: string;
-  avaliacoes?: Avaliacao[]; // Avaliações feitas pelo usuário
+  avaliacoes?: Avaliacao[];
 }
 
 export interface Comment {
