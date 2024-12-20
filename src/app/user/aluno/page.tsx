@@ -90,7 +90,7 @@ export default function PerfilAluno() {
     <div className="flex flex-col h-screen min-h-fit bg-gray-100">
       {/* Header */}
       {isAuth && userInfo && (
-        <HeaderLogado {...(userInfo as User)} />
+        <HeaderLogado />
       )}
       {!isAuth && (
         <HeaderDeslogado />
