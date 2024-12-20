@@ -68,7 +68,6 @@ export default function Cadastro() {
         setDepartments(response.data as Department[]);
       } catch (error) {
         toast.error("Erro ao buscar professores.");
-        console.error("Erro ao buscar professores:", error);
       }
     };
     fetchDepartments();
@@ -81,7 +80,6 @@ export default function Cadastro() {
         setPrograms(response.data as Program[]);
       } catch (error) {
         toast.error("Erro ao buscar professores.");
-        console.error("Erro ao buscar professores:", error);
       }
     };
     fetchPrograms();
@@ -108,22 +106,18 @@ export default function Cadastro() {
       profilepic: values.profilepic || undefined,
     };
 
-    console.log(newUser);
 
     try {
       const response = await createUser(newUser);
-      console.log(response);
-      console.log("Usuário criado:", response);
       toast.success("Usuário criado com sucesso!", { autoClose: 3000 });
       router.push("/login");
     } catch (error) {
-      console.error("Erro ao criar o usuário:", error);
       toast.error("Erro ao criar usuário", { autoClose: 3000 });
     }
   };
 
   return (
-    <div className="w-full h-screen flex relative h-screen min-h-fit overflow-y-scroll">
+    <div className="w-full flex relative h-screen min-h-fit overflow-y-scroll">
       <div className="ImgContainer flex justify-center h-full flex-1 relative">
         <div className="absolute w-full h-screen bg-black/30 z-30"></div>
         <Image

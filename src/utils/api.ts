@@ -38,7 +38,6 @@ export const fetchUserID = async (): Promise<number> => {
     const response = await api.get<{ id: number }>("/user/me");
     return response.data.id;
   } catch (error) {
-    console.error("Erro ao buscar informações do usuário logado:", error);
     throw new Error("Erro ao buscar o ID do usuário.");
   }
 };
@@ -48,7 +47,6 @@ export const fetchUserInfo = async (userId: number): Promise<User> => {
     const response = await api.get<User>(`/user/${userId}`);
     return response.data;
   } catch (error) {
-    console.error("Erro ao buscar informações do usuário:", error);
     throw new Error("Erro ao buscar informações do usuário.");
   }
 };
@@ -88,7 +86,6 @@ export const createAval = async (aval: Partial<Avaliacao>): Promise<Avaliacao | 
 
     return response.data as Avaliacao; 
   } catch (error: any) {
-    console.error("Erro ao criar avaliação:", error.response?.data || error.message);
     throw error; 
   }
 };
@@ -140,7 +137,6 @@ export const fetchProfessorInfo = async (professorId: number): Promise<Professor
     const response = await api.get<Professor>(`/professors/${professorId}`);
     return response.data;
   } catch (error) {
-    console.error("Erro ao buscar informações do professor:", error);
     throw new Error("Erro ao buscar informações do professor.");
   }
 };

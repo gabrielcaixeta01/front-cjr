@@ -67,7 +67,6 @@ export default function ProfessorPerfil() {
         );
         setProfessorInfo(response.data as Professor);
       } catch (error) {
-        console.error("Erro ao carregar informações do professor:", error);
       } finally {
         setLoading(false);
       }
@@ -99,7 +98,6 @@ export default function ProfessorPerfil() {
         window.location.reload();
       }, 1200);
     } catch (error) {
-      console.error("Erro ao criar avaliação:", error);
       toast.error("Erro ao criar avaliação. Por favor, tente novamente.");
     }
   };

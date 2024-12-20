@@ -61,7 +61,6 @@ const EditarPerfil = () => {
         if (!decoded?.sub) throw new Error("Token inválido");
         setLoggedInUserId(decoded.sub); // Salva o ID do usuário logado
       } catch (error) {
-        console.error("Erro ao verificar o token:", error);
         toast.error("Sessão expirada. Faça login novamente.");
         router.push("/login");
       }
@@ -81,7 +80,6 @@ const EditarPerfil = () => {
       });
       setDepartments(response.data as { id: number; name: string }[]);
     } catch (error) {
-      console.error("Erro ao carregar departamentos:", error);
     }
   };
 
@@ -96,7 +94,6 @@ const EditarPerfil = () => {
       });
       setPrograms(response.data as { id: number; name: string }[]);
     } catch (error) {
-      console.error("Erro ao carregar programas:", error);
     }
   };
 
@@ -122,17 +119,14 @@ const EditarPerfil = () => {
 
     try {
       const token = localStorage.getItem("authToken");
-      console.log("Payload enviado:", payload);
       const response = await api.patch(`/user/${loggedInUserId}`, payload, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-      console.log("Dados recebidos com sucesso:", response.data);
       toast.success("Perfil atualizado com sucesso!");
       resetForm();
     } catch (error) {
-      console.error("Erro ao atualizar o perfil:", error);
       toast.error("Erro ao atualizar o perfil.");
     } finally {
       setSubmitting(false);
@@ -153,7 +147,6 @@ const EditarPerfil = () => {
         router.push("/feed");
       }, 2000);
     } catch (error) {
-      console.error("Erro ao excluir o perfil:", error);
       toast.error("Erro ao excluir o perfil. Tente novamente.");
     }
   };

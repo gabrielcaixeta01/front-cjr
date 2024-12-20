@@ -38,13 +38,11 @@ export default function FeedLogado() {
   
       if (token) {
         try {
-          console.log("tem token")
           const decoded: { sub: number } = jwtDecode(token);
           const userData = await fetchUserInfo(decoded.sub);
           setUserInfo(userData);
           setIsAuth(true);
         } catch (error) {
-          console.error("Erro ao verificar autenticação:", error);
           setIsAuth(false);
           toast.error("Sessão expirada. Faça login novamente.");
         }
@@ -65,7 +63,6 @@ export default function FeedLogado() {
         setProfessores(response.data as Professor[]);
         setFilteredProfessores(response.data as Professor[]);
       } catch (error) {
-        console.error("Erro ao buscar professores:", error);
         toast.error("Erro ao buscar professores.");
       }
     };
@@ -80,7 +77,6 @@ export default function FeedLogado() {
         const response = await axios.get("http://localhost:4000/courses");
         setCourses(response.data as Course[]);
       } catch (error) {
-        console.error("Erro ao buscar disciplinas.", error);
         toast.error("Erro ao buscar disciplinas.");
       }
     };
@@ -151,7 +147,6 @@ export default function FeedLogado() {
         toggleModal();
       }, 500); 
     } catch (error) {
-      console.error("Erro ao criar avaliação:", error);
       toast.error("Erro ao criar avaliação. Por favor, tente novamente.");
     }
   };

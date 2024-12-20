@@ -40,7 +40,6 @@ export default function PerfilAluno() {
           setLoggedInUserId(decoded.sub); // Salva o ID do usuário logado
           setIsAuth(true); // Define como autenticado
         } catch (error) {
-          console.error("Erro ao decodificar o token:", error);
           setIsAuth(false);
         }
       } else {
@@ -60,7 +59,6 @@ export default function PerfilAluno() {
         const userData = await fetchUserInfo(userIdToFetch);
         setUserInfo(userData);
       } catch (error) {
-        console.error("Erro ao carregar as informações do usuário:", error);
       } finally {
         setLoading(false);
       }
@@ -80,7 +78,6 @@ export default function PerfilAluno() {
         setProfessores(professoresResponse.data as { id: number; name: string }[]);
         setCursos(cursosResponse.data as { id: number; name: string }[]);
       } catch (error) {
-        console.error("Erro ao buscar professores ou cursos:", error);
       }
     };
 
@@ -334,14 +331,21 @@ export default function PerfilAluno() {
                     )}
                   </div>
                                              
-                  <p className="text-sm text-gray-500">
-                    {new Date(avaliacao.createdAt || "").toLocaleDateString()} -{" "}
-                    {professores.find((prof) => prof.id === avaliacao.professorId)?.name ||
-                      "Professor não encontrado"}{" "}
-                    -{" "}
-                    {cursos.find((curso) => curso.id === avaliacao.courseId)?.name ||
-                      "Curso não encontrado"}
-                  </p>
+                  <div className="flex">                        
+                    <p className="text-sm text-gray-500">
+                      {new Date(avaliacao.createdAt || "").toLocaleDateString()} - {" "}
+                    </p> 
+                    <p className="text-sm text-gray-500 cursor-pointer transition-transform duration-300 hover:scale-105 ease-in-out" 
+                    onClick={(event)=>{ event.stopPropagation(); router.push(`/user/professor/${avaliacao.professorId}`) }} >
+                      { professores.find((prof) => prof.id === avaliacao.professorId)?.name ||
+                        "Professor não encontrado"}{" "}
+                      -{" "}
+                      </p> 
+                      <p className="text-sm text-gray-500">
+                        {cursos.find((curso) => curso.id === avaliacao.courseId)?.name ||
+                        "Curso não encontrado"}
+                      </p>
+                  </div>  
                   <p
                   onClick={(event)=> event.stopPropagation()} 
                   onSelect={(event)=> event.stopPropagation()}

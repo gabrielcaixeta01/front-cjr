@@ -23,7 +23,6 @@ export default function Login() {
   const router = useRouter();
 
   const onSubmit = async (values: typeof initialValues) => {
-    console.log(values);
     try {
       const existingUser: User | null = await getUserByEmail(values.email);
       if(!existingUser){
@@ -34,14 +33,11 @@ export default function Login() {
       }
       const response = await loginUser(values.email, values.password);
       if (response) {
-        const { access_token } = response as { access_token: string };
-        console.log("Token:", access_token);
-      
+        const { access_token } = response as { access_token: string };      
 
         if (access_token) {
           const user = await getUserByEmail(values.email);
           if (user) {
-            console.log(localStorage.getItem("authToken"));
             router.push(`/feed`);
           }
         } else {
@@ -49,7 +45,6 @@ export default function Login() {
         }
       }
     } catch (error) {
-      console.error("Erro ao fazer login:", error);
       alert("Erro ao fazer login. Tente novamente.");
     }
   };
