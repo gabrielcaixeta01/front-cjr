@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
-import { fetchUserInfo, createAval } from "@/utils/api";
+import { fetchUserInfo, createAval, fetchProfessorInfo } from "@/utils/api";
 import { User, Professor, Avaliacao, Course } from "@/types";
 import { jwtDecode } from "jwt-decode";
 import HeaderDeslogado from "@/components/headers/deslogado/page";
@@ -21,10 +21,11 @@ export default function FeedLogado() {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [texto, setTexto] = useState("");
-  const [profSelected, setProfSelected] = useState("-1");
+  const [idProfSelected, setIdProfSelected] = useState("-1");
   const [courseSelected, setCourseSelected] = useState("-1");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isAuth, setIsAuth] = useState(false);
+  const [profSelected, setProfSelected] = useState<Professor|null> (null);
 
   // Função para alternar o pop-up
   const togglePopup = () => setIsPopupOpen(!isPopupOpen);
@@ -123,6 +124,18 @@ export default function FeedLogado() {
     setIsPopupOpen(false);
   };
 
+  const findProfSelected = async (id : number) => {
+    try {
+      if (id>0){
+      const profFound = await fetchProfessorInfo(id);
+      setProfSelected(profFound);
+      }
+    }
+    catch (error){
+      toast.error ("Erro ao procurar professor");
+    }
+  }
+
   // Função para criar avaliação
   const creatingAval = async (aval: Partial<Avaliacao>) => {
     try {
@@ -146,19 +159,24 @@ export default function FeedLogado() {
 
   const resetModalFields = () => {
     setTexto("");
-    setProfSelected("-1");
+    setIdProfSelected("-1");
     setCourseSelected("-1");
   };
+
+  
+
 
   // Modal de avaliação
   const modalAvaliacao = () => (
     <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
       <div className="h-screen text-black w-[60%] max-h-[60%] flex flex-col mx-auto bg-[#3EEE9A] rounded-md items-center">
         <select
-          value={profSelected}
+          value={idProfSelected}
           className="bg-white h-[2rem] w-[90%] pl-[0.325rem] mt-5 rounded-md"
           onChange={(event) => {
-            setProfSelected(event.target.value);
+            setIdProfSelected(event.target.value);
+            findProfSelected(Number(event.target.value));
+            setCourseSelected("-1");
           }}
         >
           <option value="-1" disabled>Nome do professor</option>
@@ -169,7 +187,58 @@ export default function FeedLogado() {
           ))}
         </select>
 
-        <select
+        {Number(idProfSelected)>0 && profSelected && profSelected.courses?.length===0 && (
+          <select> 
+            <select
+              disabled
+              value={courseSelected}
+              className="bg-white h-[2rem] w-[90%] pl-[0.325rem] mt-5 rounded-md"
+              onChange={(event) => {
+                setCourseSelected(event.target.value);
+              }}
+           >
+          <option value="-1" disabled>Disciplina</option>
+        </select>
+          </select>
+        )}
+
+      {Number(idProfSelected)>0 && profSelected && profSelected.courses && profSelected.courses?.length>0 && (
+         <select
+         value={courseSelected}
+         className="bg-white h-[2rem] w-[90%] pl-[0.325rem] mt-5 rounded-md"
+         onChange={(event) => {
+           setCourseSelected(event.target.value);
+         }}
+       >
+         <option value="-1" disabled>Disciplina</option>
+         {profSelected.courses.map((course) => (
+           <option key={course.id} value={course.id}>
+             {course.name}
+           </option>
+         ))}
+       </select>
+        )}
+
+        {Number(idProfSelected)<=0 && (
+            <select
+              disabled
+              value={courseSelected}
+              className="bg-white h-[2rem] w-[90%] pl-[0.325rem] mt-5 rounded-md"
+              onChange={(event) => {
+                setCourseSelected(event.target.value);
+              }}
+           >
+          <option value="-1" disabled>Disciplina</option>
+          {courses.map((course) => (
+            <option key={course.id} value={course.id}>
+              {course.name}
+            </option>
+          ))}
+        </select>
+        )}
+
+          
+        {/*<select
           value={courseSelected}
           className="bg-white h-[2rem] w-[90%] pl-[0.325rem] mt-5 rounded-md"
           onChange={(event) => {
@@ -182,7 +251,7 @@ export default function FeedLogado() {
               {course.name}
             </option>
           ))}
-        </select>
+        </select>*/}
 
         <div className="flex flex-col h-[12rem] w-[90%] bg-[#A4FED3] mt-[2rem] rounded-md">
         <textarea
@@ -208,12 +277,12 @@ export default function FeedLogado() {
             <button
               className="bg-[#A4FED3] text-[#2B895C] ml-1 font-400 text-[20px] rounded-lg hover:scale-110 duration-200 w-32 h-10 text-xl leading-[42.36px] flex items-center justify-center"
               onClick={() => {
-                if (!texto.trim() || profSelected === "-1" || courseSelected === "-1") {
+                if (!texto.trim() || idProfSelected === "-1" || courseSelected === "-1") {
                   toast.error("Preencha todos os campos!");
                 } else {
                   creatingAval({
                     text: texto,
-                    professorId: parseInt(profSelected, 10),
+                    professorId: parseInt(idProfSelected, 10),
                     courseId: parseInt(courseSelected, 10),
                     userId: Number(userInfo?.id),
                   });
