@@ -31,16 +31,18 @@ const validationSchema = Yup.object({
     .required("A senha é obrigatória"),
   department: Yup.object()
     .shape({
-      id: Yup.number().required("O departamento é obrigatório").positive(),
-      name: Yup.string().required("O nome do departamento é obrigatório"),
+      id: Yup.number()
+        .required("Por favor, selecione um departamento")
+        .min(1, "Selecione um departamento válido"),
     })
-    .required("O departamento é obrigatório"),
+    .nullable(),
   program: Yup.object()
     .shape({
-      id: Yup.number().required("O curso é obrigatório").positive(),
-      name: Yup.string().required("O nome do curso é obrigatório"),
+      id: Yup.number()
+        .required("Por favor, selecione um curso")
+        .min(1, "Selecione um curso válido"),
     })
-    .required("O curso é obrigatório"),
+    .nullable(),
   profilepic: Yup.mixed().nullable(),
 });
 
@@ -86,6 +88,12 @@ export default function Cadastro() {
   }, []);
 
   const onSubmit = async (values: User) => {
+    if (!values.department?.id || !values.program?.id) {
+      toast.error("Por favor, selecione o departamento e o curso.", {
+        autoClose: 3000,
+      });
+      return;
+    }
     const existingUser: User | null = await getUserByEmail(values.email);
     if (existingUser) {
       toast.error("Este e-mail já está cadastrado.", { autoClose: 3000 });
@@ -204,7 +212,7 @@ export default function Cadastro() {
                 ))}
               </select>
               <ErrorMessage
-                name="program"
+                name="program.id"
                 component="div"
                 className="text-red-500 text-sm mt-2"
               />
@@ -213,9 +221,8 @@ export default function Cadastro() {
                 value={values.department?.id || ""}
                 className="w-3/4 h-12 p-2 border-[0.125rem] border-gray-300 rounded-lg focus:border-gray-500 mt-8 text-black"
                 onChange={(event: React.ChangeEvent<HTMLSelectElement>) => {
-                  const selectedDepartment = programs.find(
-                    (departament) =>
-                      departament.id === parseInt(event.target.value)
+                  const selectedDepartment = departments.find(
+                    (department) => department.id === parseInt(event.target.value)
                   );
                   setFieldValue(
                     "department",
@@ -226,14 +233,14 @@ export default function Cadastro() {
                 <option value="" disabled>
                   Selecione o departamento
                 </option>
-                {departments.map((departament) => (
-                  <option key={departament.id} value={departament.id}>
-                    {departament.name}
+                {departments.map((department) => (
+                  <option key={department.id} value={department.id}>
+                    {department.name}
                   </option>
                 ))}
               </select>
               <ErrorMessage
-                name="department"
+                name="department.id"
                 component="div"
                 className="text-red-500 text-sm mt-2"
               />
