@@ -98,8 +98,9 @@ export default function PerfilAluno() {
 
   //modais para editar/excluir
   const modalEditAval = () => {
-    const modal = <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
-    <div className="h-screen  w-1/2 max-h-[45%]  flex flex-col mx-auto bg-[#3EEE9A] rounded-md items-center">
+    const modal = 
+    <div className="fixed w-full h-screen bg-black bg-opacity-30 flex items-center justify-center z-50">
+     <div className="h-screen  w-1/2 max-h-[45%]  flex flex-col mx-auto bg-[#3EEE9A] rounded-md items-center">
       <div className="flex flex-col h-[12rem] w-[90%] bg-[#A4FED3] mt-[2rem] rounded-md">
         <textarea value={textoEdit} maxLength={500} onChange={(event)=> setTextoEdit(event.target.value)} className="text-black h-full placeholder-black placeholder-opacity-50 mt-2 pt-[2px] border-none pl-[1rem] bg-[#A4FED3] leading-tight focus:outline-none w-full p-2 resize-none overflow-y-auto  border rounded-md"> </textarea>
       </div>
@@ -152,7 +153,7 @@ export default function PerfilAluno() {
 
   const modalDeleteAval = () => {
     const modal = 
-      <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
+      <div className="fixed w-full h-screen bg-black bg-opacity-30 flex items-center justify-center z-50">
         <div className="bg-black pt-3 pl-6 pr-6 pb-6 max-h-fit flex flex-col items-center rounded-lg w-full max-w-md shadow-lg">
           <div className="text-center mb-5 p-2">
             <p className="text-lg text-ellipsis text-white">
@@ -205,6 +206,12 @@ export default function PerfilAluno() {
       ) : (
         <HeaderDeslogado />
       )}
+                    {isModalEditOpen && (
+                      modalEditAval()
+                    )}
+                    {isModalDeleteAvalOpen && (                      
+                      modalDeleteAval())
+                    }
 
       {/* Conteúdo Principal */}
       <main className="w-full max-w-[40%] min-h-fit mx-auto bg-white rounded shadow-md my-5">
@@ -314,12 +321,6 @@ export default function PerfilAluno() {
                         />   
                       </div>
                     )}
-                    {isModalEditOpen && (
-                      modalEditAval()
-                    )}
-                    {isModalDeleteAvalOpen && (                      
-                      modalDeleteAval())
-                    }
                   </div>
                                              
                   <p className="text-sm text-gray-500">

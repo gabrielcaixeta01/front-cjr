@@ -75,11 +75,12 @@ export default function ProfessorPerfil() {
   
     //modais para editar/excluir
     const modalEditAval = () => {
-      const modal = <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
-      <div className="h-screen  w-1/2 max-h-[45%]  flex flex-col mx-auto bg-[#3EEE9A] rounded-md items-center">
-        <div className="flex flex-col h-[12rem] w-[90%] bg-[#A4FED3] mt-[2rem] rounded-md">
-          <textarea value={textoEdit} maxLength={500} onChange={(event)=> setTextoEdit(event.target.value)} className="text-black h-full placeholder-black placeholder-opacity-50 mt-2 pt-[2px] border-none pl-[1rem] bg-[#A4FED3] leading-tight focus:outline-none w-full p-2 resize-none overflow-y-auto  border rounded-md"> </textarea>
-        </div>
+      const modal = 
+      <div className="fixed w-screen h-screen min-h-fit overflow-y-scroll bg-black bg-opacity-30 flex items-center justify-center z-50">
+        <div className="h-screen  w-1/2 max-h-[45%]  flex flex-col mx-auto bg-[#3EEE9A] rounded-md items-center">
+          <div className="flex flex-col h-[12rem] w-[90%] bg-[#A4FED3] mt-[2rem] rounded-md">
+            <textarea value={textoEdit} maxLength={500} onChange={(event)=> setTextoEdit(event.target.value)} className="text-black h-full placeholder-black placeholder-opacity-50 mt-2 pt-[2px] border-none pl-[1rem] bg-[#A4FED3] leading-tight focus:outline-none w-full p-2 resize-none overflow-y-auto  border rounded-md"> </textarea>
+         </div>
         <div className="flex justify-between items-center w-[90%] mt-6">
             <span className="text-white text-base pl-1">
               {textoEdit.length}/500
@@ -129,7 +130,7 @@ export default function ProfessorPerfil() {
   
     const modalDeleteAval = () => {
       const modal = 
-        <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center outline ml-0 z-50 w-screen h-screen overflow-hidden">
+        <div className="fixed w-full h-screen bg-black bg-opacity-30 flex items-center justify-center outline ml-0 z-50 overflow-hidden">
           <div className="bg-black pt-3 pl-6 pr-6 pb-6 max-h-fit flex flex-col items-center rounded-lg w-full max-w-md shadow-lg">
             <div className="text-center mb-5 p-2">
               <p className="text-lg text-ellipsis text-white">
@@ -174,6 +175,12 @@ export default function ProfessorPerfil() {
 
   return (
     <div className="flex flex-col h-screen min-h-fit bg-gray-100">
+      {isModalEditOpen && (
+        modalEditAval()
+      )}
+      {isModalDeleteAvalOpen && (                      
+        modalDeleteAval())
+      }
       {/* Header */}
       {isAuth && userInfo && (
         <HeaderLogado {...(userInfo as User)} />
@@ -184,6 +191,7 @@ export default function ProfessorPerfil() {
 
       {/* Conteúdo Principal */}
       <main className="w-full max-w-[40%] min-h-fit mx-auto bg-white rounded shadow-md my-5">
+
         {/* Perfil */}
         <section className="bg-customGreen border-b rounded-t p-5 flex items-center">
           <Image
@@ -286,12 +294,6 @@ export default function ProfessorPerfil() {
                         />   
                       </div>
                     )}
-                    {isModalEditOpen && (
-                      modalEditAval()
-                    )}
-                    {isModalDeleteAvalOpen && (                      
-                      modalDeleteAval())
-                    }
                   </div>
 
                   <p className="text-sm text-gray-500">

@@ -6,7 +6,6 @@ import { toast } from "react-toastify";
 import Link from "next/link";
 
 export default function HeaderLogado(userInfo:User) {  
-    //const router = useRouter();
     return(  
     <header className="flex justify-between bg-customGreen pb-1 items-center mb-2 min-h-fit ">
         <div className="flex bg-azulUnb pb-1">

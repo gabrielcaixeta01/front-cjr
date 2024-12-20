@@ -15,6 +15,7 @@ import telaCarregamento from "@/components/telas_carregamento/avaliacao/tela_car
 import HeaderLogado from "@/components/headers/logado/page"
 import HeaderDeslogado from '@/components/headers/deslogado/page';
 import { jwtDecode } from 'jwt-decode'
+import ModalCreateComment from "@/components/modais/createComment"
 
 export default function TelaAvaliacao() {
   
@@ -506,7 +507,7 @@ export default function TelaAvaliacao() {
                                     />   
                                 </div>
                                 )}
-                                {isModalCommentOpen && (
+                                {isModalCommentOpen && userInfo && (
                                 modalCreateComment()                           
                                 )}
                                 {isModalDeleteAvalOpen && (
