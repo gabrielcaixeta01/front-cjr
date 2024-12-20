@@ -280,7 +280,10 @@ export default function PerfilAluno() {
             userInfo.avaliacoes.map((avaliacao) => (
               <article
                 key={avaliacao.id}
-                className="bg-customGreen rounded-lg shadow mb-4 flex flex-row p-3"
+                onClick={()=> {
+                  router.push(`/avaliacao/${avaliacao.id}`)
+                }}
+                className="bg-customGreen group shadow-md hover:bg-[#a5e8c7] transition duration-300 ease-in-out cursor-pointer rounded-lg  mb-4 flex flex-row p-3"
               >
                 <div className="flex items-start justify-center w-16 h-16 mr-2">
                   <Image
@@ -288,12 +291,18 @@ export default function PerfilAluno() {
                     alt="Autor"
                     width={64}
                     height={64}
-                    className="w-12 h-12 object-cover rounded-full bg-white"
+                    className="w-12 h-12 object-cover rounded-full bg-white cursor-default"
+                    onClick={(event)=> event.stopPropagation()} 
                   />
                 </div>
                 <div className="max-w-[550px]">
-                  <div className="flex space-x-12">
-                    <p className="font-bold text-gray-800">{userInfo.name}</p>
+                  <div className="flex space-x-12 cursor-default">
+                    <p
+                    onClick={(event)=> event.stopPropagation()} 
+                    onSelect={(event)=>{
+                      event.stopPropagation()
+                    }}
+                    className="font-bold text-gray-800">{userInfo.name}</p>
                     {loggedInUserId===avaliacao.userId && (
                       <div className="flex flex-row">
                         <Image
@@ -301,23 +310,25 @@ export default function PerfilAluno() {
                         alt="Editar avaliação"
                         width={64} 
                         height={64}
-                        onClick = {()=> {
-                          toggleModalEdit(); 
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          toggleModalEdit();
                           setTextoEdit(avaliacao.text);
                           setIdAvalEdited(avaliacao.id);
                         }}
-                        className="w-4 h-4 object-cover mx-2 shadow-md hover:bg-[#adeccc] transition duration-300 hover:scale-110 ease-in-out cursor-pointer"   
+                        className="w-4 h-4 object-cover mx-2 shadow-md hover:bg-[#ffffff] transition duration-300 hover:scale-110 ease-in-out cursor-pointer"   
                         />  
                         <Image
                         src="/lixeira.png"
                         alt="Excluir avaliação"
                         width={64} 
                         height={64}
-                        onClick = {()=> {
+                        onClick={(event) => {
+                          event.stopPropagation();
                           toggleDeleteAval();
                           setIdAvalDeleted(avaliacao.id);
                         }}
-                        className="w-4 h-4 object-cover mx-2 shadow-md hover:bg-[#adeccc] transition duration-300 hover:scale-110  ease-in-out cursor-pointer"
+                        className="w-4 h-4 object-cover mx-2 shadow-md hover:bg-[#ffffff] transition duration-300 hover:scale-110 ease-in-out cursor-pointer"
                         />   
                       </div>
                     )}
@@ -332,7 +343,8 @@ export default function PerfilAluno() {
                       "Curso não encontrado"}
                   </p>
                   <p
-                  onClick={()=> router.push(`/avaliacao/${avaliacao.id}`)} 
+                  onClick={(event)=> event.stopPropagation()} 
+                  onSelect={(event)=> event.stopPropagation()}
                   className="text-gray-700 mt-2 whitespace-pre-wrap overflow-wrap: break-words break-word white-space: normal hover:bg-[#adeccc] transition duration-300 ease-in-out cursor-pointer"
                   >{avaliacao.text}</p>
 
@@ -340,11 +352,13 @@ export default function PerfilAluno() {
                   {avaliacao.comments && avaliacao.comments.length > 0 && (
                     <div className="mt-2">
                       <button
-                        className="text-gray-500 text-sm font-medium cursor-pointer mb-2"
-                        onClick={() =>
+                        className="text-gray-500 text-sm font-medium  mb-2 transition duration-300 hover:scale-110 ease-in-out cursor-pointer"
+                        onClick={(event) =>{
+                          event.stopPropagation();
                           setOpenComments((prev) =>
                             prev === avaliacao.id ? null : avaliacao.id
                           )
+                        }
                         }
                       >
                         {openComments === avaliacao.id
@@ -366,17 +380,22 @@ export default function PerfilAluno() {
                                   alt="Foto do autor do comentário"
                                   width={64}
                                   height={64}
-                                  className="w-8 h-8 object-cover cursor-pointer rounded-full bg-white"
-                                  onClick={() =>
+                                  className="w-8 h-8 object-cover rounded-full bg-white transition-transform duration-300 hover:scale-110 ease-in-out cursor-pointer"
+                                  onClick={(event) => {
+                                    event.stopPropagation();
                                     router.push(`/user/aluno/${comment.user?.id}`)
-                                  }
+                                  }}
                                 />
                               </div>
                               <p
-                                className="font-semibold cursor-pointer text-gray-700"
-                                onClick={() =>
+                                className="font-semibold text-gray-700 bg-white transition-transform duration-300 hover:scale-110 ease-in-out cursor-pointer"
+                                onClick={(event) =>{
+                                  event.stopPropagation();
                                   router.push(`/user/aluno/${comment.user?.id}`)
-                                }
+                                }}
+                                onSelect={(event)=>{
+                                  event.stopPropagation()
+                                }}
                               >
                                 {comment.user?.name || "Usuário desconhecido"}
                               </p>

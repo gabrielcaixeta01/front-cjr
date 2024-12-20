@@ -450,7 +450,7 @@ export default function TelaAvaliacao() {
                             />         
                         </div>
                         <div className='flex ml-3 items-center'>
-                            <span className="font-sans text-black text-[15px] font-[500] leading-[16.94px]  hover:bg-blue-200 transition duration-300 ease-in-out cursor-pointer" onClick={()=> router.push(`/user/aluno/${userAvalInfo.id}`)}>{userAvalInfo.name}</span>
+                            <span className="font-sans text-black text-[15px] font-[500] leading-[16.94px]  transition duration-300 ease-in-out cursor-pointer" onClick={()=> router.push(`/user/aluno/${userAvalInfo.id}`)}>{userAvalInfo.name}</span>
                             <span className="font-sans text-[#71767B] text-[12px] leading-[16.94px] flex ml-[6px] mr-[3px] font-bold"> · </span>
                             <span className="font-sans text-[#71767B] text-[12px] font-[350] leading-[16.94px] flex">{formatData(localAval.updatedAt).data}, às {formatData(localAval.updatedAt).hora}</span>
                             <span className="font-sans text-[#71767B] text-[12px] font-bold leading-[16.94px] flex ml-[3px] mr-[3px]"> · </span>
@@ -541,7 +541,7 @@ export default function TelaAvaliacao() {
                                 onClick={() => router.push(`/user/aluno/${comentario.userId}`)}
                                 />
                             </div>
-                            <span onClick= {()=> router.push(`/user/aluno/${comentario.userId}`)} className="font-sans text-black ml-2 text-[13px] font-[500] leading-[15.73px] text-center items-center hover:bg-blue-200 transition duration-300 ease-in-out cursor-pointer"> 
+                            <span onClick= {()=> router.push(`/user/aluno/${comentario.userId}`)} className="font-sans text-black ml-2 text-[13px] font-[500] leading-[15.73px] text-center items-center transition duration-300 ease-in-out cursor-pointer"> 
                                 {comentario.user?.name} 
                             </span> 
                             <span className="font-sans text-[#71767B] pl-2 text-[13px] font-[350] leading-[15.73px] text-center items-center"> 

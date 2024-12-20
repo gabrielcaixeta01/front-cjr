@@ -148,7 +148,7 @@ const EditarPerfil = () => {
         },
       });
       localStorage.removeItem("authToken");
-      toast.success("Perfil excluído com sucesso.");
+      toast.success("Perfil excluído com sucesso.",{autoClose:1500});
       setTimeout(() => {
         router.push("/feed");
       }, 2000);

@@ -389,7 +389,7 @@ export default function ProfessorPerfil() {
               isAuth
                 ? "bg-azulCjr text-white"
                 : "bg-gray-300 text-gray-500 cursor-not-allowed"
-            } w-[15rem] h-[3.5rem] mx-auto rounded-lg shadow-md hover:shadow-lg transition duration-500`}
+            } w-[9rem] h-[3rem] mx-auto rounded-lg shadow-md hover:shadow-lg transition duration-500`}
             
             onClick={() => {
               if (profSelected && profSelected.courses?.length === 0) {
@@ -401,7 +401,7 @@ export default function ProfessorPerfil() {
 
             disabled={!isAuth}
           >
-            Criar nova avaliação
+            Avaliar
           </button>
         </section>
 
@@ -413,7 +413,10 @@ export default function ProfessorPerfil() {
             professorInfo.avaliacoes.map((avaliacao) => (
               <article
                 key={avaliacao.id}
-                className="bg-customGreen rounded-lg shadow mb-4 flex flex-row p-3"
+                onClick={()=> {
+                  router.push(`/avaliacao/${avaliacao.id}`)
+                }}
+                className="bg-customGreen group shadow-md hover:bg-[#a5e8c7] transition duration-300 ease-in-out cursor-pointer rounded-lg  mb-4 flex flex-row p-3"
               >
                 <div className="flex items-start justify-center w-16 h-16 mr-2">
                   <Image
@@ -421,9 +424,10 @@ export default function ProfessorPerfil() {
                     alt="Foto do autor"
                     width={64}
                     height={64}
-                    className="w-12 h-12 object-cover rounded-full cursor-pointer bg-white"
-                    onClick={() =>
-                      router.push(`/user/aluno/${avaliacao.user?.id || ""}`)
+                    className="w-12 h-12 object-cover rounded-full cursor-pointer bg-white shadow-md transition duration-300 hover:scale-110 ease-in-out"
+                    onClick={(event) =>{
+                      event.stopPropagation();
+                      router.push(`/user/aluno/${avaliacao.user?.id || ""}`)}
                     }
                   />
                 </div>
@@ -431,10 +435,14 @@ export default function ProfessorPerfil() {
                 <div className="max-w-[550px]">
                   <div className="flex space-x-12">
                     <p
-                      className="font-bold text-gray-800 cursor-pointer"
-                      onClick={() =>
-                        router.push(`/user/aluno/${avaliacao.user?.id || ""}`)
+                      className="font-bold text-gray-800 cursor-pointer transition duration-300 hover:scale-105 ease-in-out"
+                      onClick={(event) =>{
+                        event.stopPropagation();
+                        router.push(`/user/aluno/${avaliacao.user?.id || ""}`)}
                       }
+                      onSelect={(event)=>{
+                        event.stopPropagation()
+                      }}
                     >
                       {avaliacao.user?.name || "Usuário desconhecido"}
                     </p>
@@ -445,23 +453,25 @@ export default function ProfessorPerfil() {
                           alt="Editar avaliação"
                           width={64}
                           height={64}
-                          onClick={() => {
+                          onClick={(event) => {
+                            event.stopPropagation();
                             toggleModalEdit();
                             setTextoEdit(avaliacao.text);
                             setIdAvalEdited(avaliacao.id);
                           }}
-                          className="w-4 h-4 object-cover mx-2 shadow-md hover:bg-[#adeccc] transition duration-300 hover:scale-110 ease-in-out cursor-pointer"
+                          className="w-4 h-4 object-cover mx-2 shadow-md hover:bg-[#ffffff] transition duration-300 hover:scale-110 ease-in-out cursor-pointer"
                         />
                         <Image
                           src="/lixeira.png"
                           alt="Excluir avaliação"
                           width={64}
                           height={64}
-                          onClick={() => {
+                          onClick={(event) => {
+                            event.stopPropagation();
                             toggleDeleteAval();
                             setIdAvalDeleted(avaliacao.id);
                           }}
-                          className="w-4 h-4 object-cover mx-2 shadow-md hover:bg-[#adeccc] transition duration-300 hover:scale-110  ease-in-out cursor-pointer"
+                          className="w-4 h-4 object-cover mx-2 shadow-md hover:bg-[#ffffff] transition duration-300 hover:scale-110  ease-in-out cursor-pointer"
                         />
                       </div>
                     )}
@@ -472,7 +482,8 @@ export default function ProfessorPerfil() {
                     {avaliacao.course?.name || "Curso desconhecido"}
                   </p>
                   <p
-                    onClick={() => router.push(`/avaliacao/${avaliacao.id}`)}
+                    onClick={(event)=> event.stopPropagation()}
+                    onSelect={(event)=> event.stopPropagation()}
                     className="text-gray-700 mt-2 whitespace-pre-wrap overflow-wrap: break-words break-word white-space: normal hover:bg-[#adeccc] transition duration-300 ease-in-out cursor-pointer"
                   >
                     {avaliacao.text}
@@ -480,11 +491,12 @@ export default function ProfessorPerfil() {
                   {avaliacao.comments && avaliacao.comments.length > 0 && (
                     <div className="mt-2 ">
                       <button
-                        className="text-gray-500 text-sm font-medium cursor-pointer mb-2"
-                        onClick={() =>
+                        className="text-gray-500 text-sm font-medium cursor-pointer mb-2 transition duration-300 hover:scale-110 ease-in-out"
+                        onClick={(event) =>{
+                          event.stopPropagation();
                           setOpenComments((prev) =>
                             prev === avaliacao.id ? null : avaliacao.id
-                          )
+                          )}
                         }
                       >
                         {openComments === avaliacao.id
@@ -499,11 +511,13 @@ export default function ProfessorPerfil() {
                             className="bg-gray-100 rounded-[50px] text-sm p-4 mt-1"
                           >
                             <p
-                              className="font-semibold text-gray-700 flex items-center cursor-pointer"
-                              onClick={() =>
+                              className="font-semibold text-gray-700 flex items-center cursor-pointer origin-center transition-transform duration-300 hover:scale-105 ease-in-out"
+                              onClick={(event) =>{
+                                event.stopPropagation();
                                 router.push(
                                   `/user/aluno/${comment.user?.id || ""}`
                                 )
+                              }
                               }
                             >
                               <Image
@@ -514,16 +528,20 @@ export default function ProfessorPerfil() {
                                 alt="Foto do autor do comentário"
                                 width={24}
                                 height={24}
-                                className="w-6 h-6 object-cover rounded-full bg-white mr-2"
-                                onClick={() =>
+                                className="w-6 h-6 object-cover rounded-full bg-white mr-2 transition-transform origin-center duration-300 hover:scale-105 ease-in-out"
+                                onClick={(event) =>{
+                                  event.stopPropagation();
                                   router.push(
                                     `/user/aluno/${comment.user?.id || ""}`
                                   )
-                                }
+                                }}
                               />
                               {comment.user?.name || "Usuário desconhecido"}
                             </p>
-                            <p className="text-gray-600 text-sm ml-[2rem] mt-1 whitespace-pre-wrap overflow-wrap: break-words break-word white-space: normal">
+                            <p
+                            onSelect={(event)=> event.stopPropagation()}  
+                            onClick={(event)=> event.stopPropagation()}         
+                            className="text-gray-600 text-sm ml-[2rem] mt-1 whitespace-pre-wrap overflow-wrap: break-words break-word white-space: normal">
                               {comment.text}
                             </p>
                           </div>
