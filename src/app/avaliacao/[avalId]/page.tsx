@@ -475,7 +475,7 @@ export default function TelaAvaliacao() {
                                 alt="Fazer comentário"
                                 width={48}
                                 height={48}
-                                className="w-6 h-6 rounded-full shadow-md hover:bg-blue-200 transition duration-300 hover:scale-110  ease-in-out cursor-pointer"
+                                className="w-6 h-6 rounded-full  hover:bg-white transition duration-300 hover:scale-110  ease-in-out cursor-pointer"
                                 onClick= {()=>toggleModalComment()}
                                 />
                               )} 
@@ -484,7 +484,7 @@ export default function TelaAvaliacao() {
                                     alt="Fazer comentário"
                                     width={48}
                                     height={48}
-                                    className="w-6 h-6 rounded-full shadow-md hover:bg-blue-200 transition duration-300 hover:scale-110  ease-in-out cursor-pointer"
+                                    className="w-6 h-6 rounded-full shadow-md transition duration-300 hover:scale-110  ease-in-out cursor-pointer"
                                     onClick= {()=>router.push("/login")}
                                     />
                                 )}
@@ -513,7 +513,7 @@ export default function TelaAvaliacao() {
                                     width={64} 
                                     height={64}
                                     onClick = {()=> {toggleModalEdit(); setTextoEdit(localAval.text)}}
-                                    className="w-4 h-4 object-cover mx-2 shadow-md hover:bg-blue-200 transition duration-300 hover:scale-110 ease-in-out cursor-pointer"   
+                                    className="w-5 h-5 mx-2 p-0.5 transition duration-300 rounded object-cover hover:bg-white hover:scale-110 ease-in-out cursor-pointer"   
                                     />  
                                     <Image
                                     src="/lixeira.png"
@@ -521,7 +521,7 @@ export default function TelaAvaliacao() {
                                     width={64} 
                                     height={64}
                                     onClick = {()=> toggleDeleteAval()}
-                                    className="w-4 h-4 object-cover mx-2 shadow-md hover:bg-blue-200 transition duration-300 hover:scale-110  ease-in-out cursor-pointer"
+                                    className="w-5 h-5 mx-2 p-0.5 transition duration-300 rounded object-cover hover:bg-white hover:scale-110 ease-in-out cursor-pointer"
                                     />   
                                 </div>
                                 )}

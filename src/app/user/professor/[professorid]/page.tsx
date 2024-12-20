@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import axios from "axios";
-import { Avaliacao, Course, Professor, User } from "@/types";
+import { Avaliacao, Professor, User } from "@/types";
 import HeaderLogado from "@/components/headers/logado/page";
 import HeaderDeslogado from "@/components/headers/deslogado/page";
 import { jwtDecode } from "jwt-decode";
@@ -48,7 +48,7 @@ export default function ProfessorPerfil() {
           );
           setUserInfo(userResponse.data as User);
           setIsAuth(true);
-        } catch (error) {
+        } catch {
           setIsAuth(false);
         }
       }
@@ -66,7 +66,7 @@ export default function ProfessorPerfil() {
           `http://localhost:4000/professors/${professorid}`
         );
         setProfessorInfo(response.data as Professor);
-      } catch (error) {
+      } catch {
       } finally {
         setLoading(false);
       }
@@ -97,7 +97,7 @@ export default function ProfessorPerfil() {
       setTimeout(() => {
         window.location.reload();
       }, 1200);
-    } catch (error) {
+    } catch {
       toast.error("Erro ao criar avaliação. Por favor, tente novamente.");
     }
   };
@@ -115,7 +115,7 @@ export default function ProfessorPerfil() {
         const profFound = await fetchProfessorInfo(id);
         setProfSelected(profFound);
       }
-    } catch (error) {
+    } catch {
       toast.error("Erro ao procurar professor");
     }
   };
@@ -245,7 +245,7 @@ export default function ProfessorPerfil() {
                       setTimeout(() => {
                         window.location.reload();
                       }, 1600);
-                    } catch (error) {
+                    } catch {
                       toast.error("Erro ao editar avaliação", {
                         autoClose: 2200,
                       });
@@ -289,7 +289,7 @@ export default function ProfessorPerfil() {
                   setTimeout(() => {
                     window.location.reload();
                   }, 1100);
-                } catch (error) {
+                } catch {
                   toast.error("Erro ao excluir avaliação");
                 }
               }}
@@ -387,7 +387,7 @@ export default function ProfessorPerfil() {
               isAuth
                 ? "bg-azulCjr text-white"
                 : "bg-gray-300 text-gray-500 cursor-not-allowed"
-            } w-[9rem] h-[3rem] mx-auto rounded-lg shadow-md hover:shadow-lg transition duration-500`}
+            } w-[9rem] h-[3rem] mx-auto rounded-lg shadow-md hover:shadow-lg hover:bg-blue-600 transition duration-500`}
             
             onClick={() => {
               if (profSelected && profSelected.courses?.length === 0) {
@@ -422,7 +422,7 @@ export default function ProfessorPerfil() {
                     alt="Foto do autor"
                     width={64}
                     height={64}
-                    className="w-12 h-12 object-cover rounded-full cursor-pointer bg-white shadow-md transition duration-300 hover:scale-110 ease-in-out"
+                    className="w-12 h-12 object-cover rounded-full cursor-pointer bg-white shadow-md transition duration-300 ease-in-out"
                     onClick={(event) =>{
                       event.stopPropagation();
                       router.push(`/user/aluno/${avaliacao.user?.id || ""}`)}
@@ -430,20 +430,26 @@ export default function ProfessorPerfil() {
                   />
                 </div>
 
-                <div className="max-w-[550px]">
-                  <div className="flex space-x-12">
-                    <p
-                      className="font-bold text-gray-800 cursor-pointer transition duration-300 hover:scale-105 ease-in-out"
-                      onClick={(event) =>{
-                        event.stopPropagation();
-                        router.push(`/user/aluno/${avaliacao.user?.id || ""}`)}
-                      }
-                      onSelect={(event)=>{
-                        event.stopPropagation()
-                      }}
-                    >
-                      {avaliacao.user?.name || "Usuário desconhecido"}
-                    </p>
+                <div className="w-full ">
+                  <div className="flex justify-between w-full">
+                    <div className="flex flex-row items-center">
+                      <p
+                        className="font-bold text-gray-800 cursor-pointer mr-2 transition duration-300 hover:scale-105 ease-in-out"
+                        onClick={(event) =>{
+                          event.stopPropagation();
+                          router.push(`/user/aluno/${avaliacao.user?.id || ""}`)}
+                        }
+                        onSelect={(event)=>{
+                          event.stopPropagation()
+                        }}
+                      >
+                        {avaliacao.user?.name || "Usuário desconhecido"}
+                      </p>
+                      <p className="text-sm text-gray-500">
+                        {new Date(avaliacao.createdAt || "").toLocaleDateString()} -{" "}
+                        {avaliacao.course?.name || "Curso desconhecido"}
+                      </p>
+                    </div>
                     {userInfo?.id === avaliacao.userId && (
                       <div className="flex flex-row">
                         <Image
@@ -457,7 +463,7 @@ export default function ProfessorPerfil() {
                             setTextoEdit(avaliacao.text);
                             setIdAvalEdited(avaliacao.id);
                           }}
-                          className="w-4 h-4 object-cover mx-2 shadow-md hover:bg-[#ffffff] transition duration-300 hover:scale-110 ease-in-out cursor-pointer"
+                          className="w-5 h-5 mx-2 p-0.5 transition duration-300 rounded object-cover hover:bg-white hover:scale-110 ease-in-out cursor-pointer"
                         />
                         <Image
                           src="/lixeira.png"
@@ -469,20 +475,15 @@ export default function ProfessorPerfil() {
                             toggleDeleteAval();
                             setIdAvalDeleted(avaliacao.id);
                           }}
-                          className="w-4 h-4 object-cover mx-2 shadow-md hover:bg-[#ffffff] transition duration-300 hover:scale-110  ease-in-out cursor-pointer"
+                          className="w-5 h-5 mx-2 p-0.5 transition duration-300 rounded object-cover hover:bg-white hover:scale-110 ease-in-out cursor-pointer"
                         />
                       </div>
                     )}
                   </div>
-
-                  <p className="text-sm text-gray-500">
-                    {new Date(avaliacao.createdAt || "").toLocaleDateString()} -{" "}
-                    {avaliacao.course?.name || "Curso desconhecido"}
-                  </p>
                   <p
                     onClick={(event)=> event.stopPropagation()}
                     onSelect={(event)=> event.stopPropagation()}
-                    className="text-gray-700 mt-2 whitespace-pre-wrap overflow-wrap: break-words break-word white-space: normal hover:bg-[#adeccc] transition duration-300 ease-in-out cursor-pointer"
+                    className="text-gray-700 mt-2 whitespace-pre-wrap overflow-wrap: break-words break-word white-space: normal transition duration-300 ease-in-out cursor-pointer"
                   >
                     {avaliacao.text}
                   </p>
@@ -526,7 +527,7 @@ export default function ProfessorPerfil() {
                                 alt="Foto do autor do comentário"
                                 width={24}
                                 height={24}
-                                className="w-6 h-6 object-cover rounded-full bg-white mr-2 transition-transform origin-center duration-300 hover:scale-105 ease-in-out"
+                                className="w-6 h-6 object-cover rounded-full bg-white mr-2 transition-transform origin-center duration-300 ease-in-out"
                                 onClick={(event) =>{
                                   event.stopPropagation();
                                   router.push(
@@ -539,7 +540,7 @@ export default function ProfessorPerfil() {
                             <p
                             onSelect={(event)=> event.stopPropagation()}  
                             onClick={(event)=> event.stopPropagation()}         
-                            className="text-gray-600 text-sm ml-[2rem] mt-1 whitespace-pre-wrap overflow-wrap: break-words break-word white-space: normal">
+                            className="text-gray-600 text-sm ml-[2rem] mt-1 whitespace-pre-wrap overflow-wrap:break-words break-word white-space: normal">
                               {comment.text}
                             </p>
                           </div>
