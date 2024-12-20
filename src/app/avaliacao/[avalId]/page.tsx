@@ -180,7 +180,7 @@ export default function TelaAvaliacao() {
               onClick={() => {
                 if (!textoComment.trim()) {
                   toast.error("O comentário não pode ser vazio", { autoClose: 2200 });
-                } else {
+                } else if (userInfo && localAval){
                   const newComment: Partial<Comment> = {
                     text: textoComment,
                     userId: userInfo.id,
@@ -454,7 +454,9 @@ export default function TelaAvaliacao() {
                             <span className="font-sans text-[#71767B] text-[12px] leading-[16.94px] flex ml-[6px] mr-[3px] font-bold"> · </span>
                             <span className="font-sans text-[#71767B] text-[12px] font-[350] leading-[16.94px] flex">{formatData(localAval.updatedAt).data}, às {formatData(localAval.updatedAt).hora}</span>
                             <span className="font-sans text-[#71767B] text-[12px] font-bold leading-[16.94px] flex ml-[3px] mr-[3px]"> · </span>
-                            <span className="font-sans text-[#71767B] text-[12px] font-[350] leading-[16.94px] flex">{localProf.name} </span>
+                            <span 
+                            onClick={()=> router.push(`/user/professor/${localProf.id}`)}
+                            className="font-sans text-[#71767B] text-[12px] font-[350] leading-[16.94px] flex cursor-pointer">{localProf.name} </span>
                             <span className="font-sans text-[#71767B] text-[12px] font-bold leading-[16.94px] flex ml-[3px] mr-[3px]"> · </span>
                             <span className="font-sans text-[#71767B] text-[12px] font-[350] leading-[16.94px] flex">{localCourse.name}</span>
                         </div>
