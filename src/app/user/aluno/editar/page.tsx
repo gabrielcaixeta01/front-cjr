@@ -147,8 +147,8 @@ const EditarPerfil = () => {
           Authorization: `Bearer ${token}`,
         },
       });
-      toast.success("Perfil excluído com sucesso.");
       localStorage.removeItem("authToken");
+      toast.success("Perfil excluído com sucesso.");
       setTimeout(() => {
         router.push("/feed");
       }, 2000);

@@ -38,6 +38,7 @@ export default function FeedLogado() {
   
       if (token) {
         try {
+          console.log("tem token")
           const decoded: { sub: number } = jwtDecode(token);
           const userData = await fetchUserInfo(decoded.sub);
           setUserInfo(userData);
@@ -163,8 +164,9 @@ export default function FeedLogado() {
     setCourseSelected("-1");
   };
 
-  
-
+  const warningMessageProf = () =>{
+    return toast.warning("O professor não ministra nenhuma disciplina", {autoClose:2200})
+  }
 
   // Modal de avaliação
   const modalAvaliacao = () => (
