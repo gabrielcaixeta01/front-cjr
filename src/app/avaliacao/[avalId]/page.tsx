@@ -15,7 +15,6 @@ import telaCarregamento from "@/components/telas_carregamento/avaliacao/tela_car
 import HeaderLogado from "@/components/headers/logado/page"
 import HeaderDeslogado from '@/components/headers/deslogado/page';
 import { jwtDecode } from 'jwt-decode'
-import ModalCreateComment from "@/components/modais/createComment"
 
 export default function TelaAvaliacao() {
   
@@ -484,7 +483,7 @@ export default function TelaAvaliacao() {
                                     alt="Fazer comentário"
                                     width={48}
                                     height={48}
-                                    className="w-6 h-6 rounded-full shadow-md transition duration-300 hover:scale-110  ease-in-out cursor-pointer"
+                                    className="w-6 h-6 rounded-full transition duration-300 hover:scale-110  ease-in-out cursor-pointer"
                                     onClick= {()=>router.push("/login")}
                                     />
                                 )}

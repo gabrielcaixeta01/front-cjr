@@ -385,9 +385,9 @@ export default function ProfessorPerfil() {
           <button
             className={`${
               isAuth
-                ? "bg-azulCjr text-white"
+                ? "bg-azulCjr text-white hover:bg-blue-600"
                 : "bg-gray-300 text-gray-500 cursor-not-allowed"
-            } w-[9rem] h-[3rem] mx-auto rounded-lg shadow-md hover:shadow-lg hover:bg-blue-600 transition duration-500`}
+            } w-[9rem] h-[3rem] mx-auto rounded-lg shadow-md hover:shadow-lg  transition duration-500`}
             
             onClick={() => {
               if (profSelected && profSelected.courses?.length === 0) {
@@ -490,7 +490,7 @@ export default function ProfessorPerfil() {
                   {avaliacao.comments && avaliacao.comments.length > 0 && (
                     <div className="mt-2 ">
                       <button
-                        className="text-gray-500 text-sm font-medium cursor-pointer mb-2 transition duration-300 hover:scale-110 ease-in-out"
+                        className="text-gray-500 text-sm font-medium cursor-pointer mb-2 transition duration-300 ease-in-out"
                         onClick={(event) =>{
                           event.stopPropagation();
                           setOpenComments((prev) =>
@@ -510,7 +510,7 @@ export default function ProfessorPerfil() {
                             className="bg-gray-100 rounded-[50px] text-sm p-4 mt-1"
                           >
                             <p
-                              className="font-semibold text-gray-700 flex items-center cursor-pointer origin-center transition-transform duration-300 hover:scale-105 ease-in-out"
+                              className="font-semibold text-gray-700 flex items-center cursor-pointer origin-center transition-transform duration-300 ease-in-out"
                               onClick={(event) =>{
                                 event.stopPropagation();
                                 router.push(

@@ -291,8 +291,9 @@ export default function PerfilAluno() {
                     onClick={(event)=> event.stopPropagation()} 
                   />
                 </div>
-                <div className="max-w-[550px]">
+                <div className="w-full">
                   <div className="flex space-x-12 cursor-default">
+                    <div className="flex flex-row justify-between w-full">
                     <p
                     onClick={(event)=> event.stopPropagation()} 
                     onSelect={(event)=>{
@@ -312,7 +313,7 @@ export default function PerfilAluno() {
                           setTextoEdit(avaliacao.text);
                           setIdAvalEdited(avaliacao.id);
                         }}
-                        className="w-4 h-4 object-cover mx-2 shadow-md hover:bg-[#ffffff] transition duration-300 hover:scale-110 ease-in-out cursor-pointer"   
+                        className="w-5 h-5 mx-2 p-0.5 transition duration-500 rounded object-cover hover:bg-white hover:scale-110 ease-in-out cursor-pointer"   
                         />  
                         <Image
                         src="/lixeira.png"
@@ -324,10 +325,11 @@ export default function PerfilAluno() {
                           toggleDeleteAval();
                           setIdAvalDeleted(avaliacao.id);
                         }}
-                        className="w-4 h-4 object-cover mx-2 shadow-md hover:bg-[#ffffff] transition duration-300 hover:scale-110 ease-in-out cursor-pointer"
+                        className="w-5 h-5 mx-2 p-0.5 transition duration-500 rounded object-cover hover:bg-white hover:scale-110 ease-in-out cursor-pointer"
                         />   
                       </div>
                     )}
+                    </div>
                   </div>
                                              
                   <div className="flex space-x-1">                        
@@ -383,7 +385,7 @@ export default function PerfilAluno() {
                                   alt="Foto do autor do comentário"
                                   width={64}
                                   height={64}
-                                  className="w-8 h-8 object-cover rounded-full bg-white transition-transform duration-300 hover:scale-110 ease-in-out cursor-pointer"
+                                  className="w-8 h-8 object-cover rounded-full bg-white transition-transform duration-300 ease-in-out cursor-pointer"
                                   onClick={(event) => {
                                     event.stopPropagation();
                                     router.push(`/user/aluno/${comment.user?.id}`)
@@ -391,7 +393,7 @@ export default function PerfilAluno() {
                                 />
                               </div>
                               <p
-                                className="font-semibold text-gray-700 bg-transparent transition-transform duration-300 hover:scale-110 ease-in-out cursor-pointer"
+                                className="font-semibold text-gray-700 bg-transparent transition-transform duration-300 ease-in-out cursor-pointer"
                                 onClick={(event) =>{
                                   event.stopPropagation();
                                   router.push(`/user/aluno/${comment.user?.id}`)
