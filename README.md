@@ -1,36 +1,43 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+README - UnbReview
 
-## Getting Started
+Sobre o Projeto:
+  UnbReview é uma plataforma interativa desenvolvida para os alunos da Universidade de Brasília (UnB). O site permite que os alunos avaliem professores, compartilhem experiências e opiniões sobre disciplinas, e comentem   em avaliações feitas por outros usuários. O objetivo principal do projeto é criar uma comunidade colaborativa que auxilie os estudantes a tomarem decisões mais informadas sobre seus cursos e professores.
 
-First, run the development server:
+Funcionalidades Principais
+	1.	Cadastro e Login
+  	•	Cadastro de novos alunos.
+  	•	Login seguro com autenticação JWT.
+  	•	Login automático após o cadastro bem-sucedido.
+	2.	Feed de Professores
+  	•	Visualize uma lista de professores cadastrados, organizados por departamentos e disciplinas.
+  	•	Busque por professores pelo nome ou departamento.
+  	•	Ordene professores por nome ou data de cadastro.
+	3.	Avaliações
+  	•	Escreva avaliações sobre professores.
+  	•	Leia avaliações publicadas por outros alunos.
+  	•	Comente em avaliações para interagir com outros usuários.
+	4.	Perfil do Usuário
+  	•	Cada aluno possui um perfil personalizável com foto, nome, departamento e programa de estudo.
+  	•	Editar e atualizar informações pessoais.
+  	•	Excluir o perfil.
+	5.	Interação e Comunidade
+  	•	Sistema de comentários em avaliações.
+  	•	Acompanhe o feedback de outros alunos.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+Tecnologias Utilizadas
+  Frontend:
+  	•	Framework: Next.js (React)
+  	•	Linguagem: TypeScript
+  	•	Estilização: Tailwind CSS
+  	•	Bibliotecas Auxiliares:
+    	-	Formik & Yup (Validação de Formulários)
+    	-	React Toastify (Notificações)
+    	-	Axios (Requisições HTTP)
+      - class-validator (validar dados)
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+  Backend:
+  	•	Nest.js
+  	•	Banco de Dados: Prisma ORM
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+  Autenticação:
+  	•	JSON Web Tokens (JWT)
