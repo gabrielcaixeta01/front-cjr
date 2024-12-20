@@ -190,18 +190,16 @@ export default function FeedLogado() {
         </select>
 
         {Number(idProfSelected)>0 && profSelected && profSelected.courses?.length===0 && (
-          <select> 
-            <select
-              disabled
-              value={courseSelected}
-              className="bg-white h-[2rem] w-[90%] pl-[0.325rem] mt-5 rounded-md"
-              onChange={(event) => {
-                setCourseSelected(event.target.value);
-              }}
+          <select
+            disabled
+            value={courseSelected}
+            className="bg-white h-[2rem] w-[90%] pl-[0.325rem] mt-5 rounded-md"
+            onChange={(event) => {
+              setCourseSelected(event.target.value);
+            }}
            >
-          <option value="-1" disabled>Disciplina</option>
+          <option value="-1" disabled>Não há nenhuma disciplina cadastrada para este professor</option>
         </select>
-          </select>
         )}
 
       {Number(idProfSelected)>0 && profSelected && profSelected.courses && profSelected.courses?.length>0 && (

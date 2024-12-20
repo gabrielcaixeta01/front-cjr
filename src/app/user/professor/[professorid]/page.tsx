@@ -33,14 +33,8 @@ export default function ProfessorPerfil() {
   const [idAvalDeleted, setIdAvalDeleted] = useState(0);
   const [texto, setTexto] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [idProfSelected, setIdProfSelected] = useState("-1");
   const [courseSelected, setCourseSelected] = useState("-1");
   const [profSelected, setProfSelected] = useState<Professor | null>(null);
-  const [professores, setProfessores] = useState<Professor[]>([]);
-  const [courses, setCourses] = useState<Course[]>([]);
-  const [filteredProfessores, setFilteredProfessores] = useState<Professor[]>(
-    []
-  );
 
   // Verifica a autenticação e pega informações do usuário logado
   useEffect(() => {
@@ -61,37 +55,6 @@ export default function ProfessorPerfil() {
     };
 
     verifyAccess();
-  }, []);
-
-  // Busca professores
-  useEffect(() => {
-    const fetchProfessores = async () => {
-      try {
-        const response = await axios.get("http://localhost:4000/professors");
-        setProfessores(response.data as Professor[]);
-        setFilteredProfessores(response.data as Professor[]);
-      } catch (error) {
-        console.error("Erro ao buscar professores:", error);
-        toast.error("Erro ao buscar professores.");
-      }
-    };
-
-    fetchProfessores();
-  }, []);
-
-  // Busca cursos
-  useEffect(() => {
-    const fetchCourses = async () => {
-      try {
-        const response = await axios.get("http://localhost:4000/courses");
-        setCourses(response.data as Course[]);
-      } catch (error) {
-        console.error("Erro ao buscar disciplinas.", error);
-        toast.error("Erro ao buscar disciplinas.");
-      }
-    };
-
-    fetchCourses();
   }, []);
 
   // Busca informações do professor
@@ -129,11 +92,12 @@ export default function ProfessorPerfil() {
         return;
       }
       await createAval(aval);
-      toast.success("Avaliação criada com sucesso!", { autoClose: 2200 });
+      toggleModal();
+      toast.success("Avaliação criada com sucesso!", { autoClose: 900 });
       resetModalFields();
       setTimeout(() => {
-        toggleModal();
-      }, 500);
+        window.location.reload();
+      }, 1200);
     } catch (error) {
       console.error("Erro ao criar avaliação:", error);
       toast.error("Erro ao criar avaliação. Por favor, tente novamente.");
@@ -144,7 +108,6 @@ export default function ProfessorPerfil() {
 
   const resetModalFields = () => {
     setTexto("");
-    setIdProfSelected("-1");
     setCourseSelected("-1");
   };
 
@@ -158,51 +121,18 @@ export default function ProfessorPerfil() {
       toast.error("Erro ao procurar professor");
     }
   };
+
+  useEffect(()=> {
+    if (professorInfo){
+      findProfSelected(professorInfo?.id)
+    }
+  },[professorInfo])
+
   // Modal de avaliação
   const modalAvaliacao = () => (
     <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
-      <div className="h-screen text-black w-[60%] max-h-[60%] flex flex-col mx-auto bg-[#3EEE9A] rounded-md items-center">
-        <select
-          value={idProfSelected}
-          className="bg-white h-[2rem] w-[90%] pl-[0.325rem] mt-5 rounded-md"
-          onChange={(event) => {
-            setIdProfSelected(event.target.value);
-            findProfSelected(Number(event.target.value));
-            setCourseSelected("-1");
-          }}
-        >
-          <option value="-1" disabled>
-            Nome do professor
-          </option>
-
-          <option key={professorInfo?.id} value={professorInfo?.id}>
-            {professorInfo?.name}
-          </option>
-        </select>
-
-        {Number(idProfSelected) > 0 &&
-          profSelected &&
-          profSelected.courses?.length === 0 && (
-            <select>
-              <select
-                disabled
-                value={courseSelected}
-                className="bg-white h-[2rem] w-[90%] pl-[0.325rem] mt-5 rounded-md"
-                onChange={(event) => {
-                  setCourseSelected(event.target.value);
-                }}
-              >
-                <option value="-1" disabled>
-                  Disciplina
-                </option>
-              </select>
-            </select>
-          )}
-
-        {Number(idProfSelected) > 0 &&
-          profSelected &&
-          profSelected.courses &&
-          profSelected.courses?.length > 0 && (
+      <div className="h-screen text-black w-[60%] max-h-[53%] flex flex-col mx-auto bg-[#3EEE9A] rounded-md items-center">
+        {Number(profSelected?.id) > 0 && profSelected && profSelected.courses && profSelected.courses?.length > 0 && (
             <select
               value={courseSelected}
               className="bg-white h-[2rem] w-[90%] pl-[0.325rem] mt-5 rounded-md"
@@ -221,27 +151,7 @@ export default function ProfessorPerfil() {
             </select>
           )}
 
-        {Number(idProfSelected) <= 0 && (
-          <select
-            disabled
-            value={courseSelected}
-            className="bg-white h-[2rem] w-[90%] pl-[0.325rem] mt-5 rounded-md"
-            onChange={(event) => {
-              setCourseSelected(event.target.value);
-            }}
-          >
-            <option value="-1" disabled>
-              Disciplina
-            </option>
-            {courses.map((course) => (
-              <option key={course.id} value={course.id}>
-                {course.name}
-              </option>
-            ))}
-          </select>
-        )}
-
-        <div className="flex flex-col h-[12rem] w-[90%] bg-[#A4FED3] mt-[2rem] rounded-md">
+        <div className="flex flex-col h-[12rem] w-[90%] bg-[#A4FED3] mt-[1.5rem] rounded-md">
           <textarea
             value={texto}
             maxLength={500}
@@ -268,14 +178,13 @@ export default function ProfessorPerfil() {
               onClick={() => {
                 if (
                   !texto.trim() ||
-                  idProfSelected === "-1" ||
                   courseSelected === "-1"
                 ) {
                   toast.error("Preencha todos os campos!");
                 } else {
                   creatingAval({
                     text: texto,
-                    professorId: parseInt(idProfSelected, 10),
+                    professorId: professorInfo?.id,
                     courseId: parseInt(courseSelected, 10),
                     userId: Number(userInfo?.id),
                   });
@@ -465,7 +374,7 @@ export default function ProfessorPerfil() {
                   className="w-6 h-6"
                 />
                 <p className="text-sm text-gray-700">
-                  Cursos:{" "}
+                  Disciplinas:{" "}
                   {professorInfo.courses
                     ? professorInfo.courses
                         .map((course) => course.name)
@@ -481,9 +390,15 @@ export default function ProfessorPerfil() {
                 ? "bg-azulCjr text-white"
                 : "bg-gray-300 text-gray-500 cursor-not-allowed"
             } w-[15rem] h-[3.5rem] mx-auto rounded-lg shadow-md hover:shadow-lg transition duration-500`}
+            
             onClick={() => {
-              toggleModal();
+              if (profSelected && profSelected.courses?.length === 0) {
+                toast.warning('Não há nenhuma disciplina cadastrada para este professor', {autoClose:1700});
+              } else if (profSelected && profSelected.courses && profSelected.courses?.length > 0) {
+                toggleModal();
+              }
             }}
+
             disabled={!isAuth}
           >
             Criar nova avaliação
