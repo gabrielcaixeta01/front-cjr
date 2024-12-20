@@ -2,15 +2,12 @@
 "use client";
 import { format } from 'date-fns';
 import Image from "next/image";
-import { BellIcon } from "@heroicons/react/24/solid";
-import { ArrowRightOnRectangleIcon } from "@heroicons/react/20/solid";
 import { useParams,useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import { Avaliacao, Comment, User } from "@/types";
-import { findAval, fetchUserInfo, deleteAval, getOneCourse, createComment, updateAval, deleteComment, updateComment, fetchProfessorInfo } from "@/utils/api";
-import { Avaliacao } from "@prisma/client";
+import { findAval, fetchUserInfo, deleteAval, createComment, updateAval, deleteComment, updateComment, fetchProfessorInfo } from "@/utils/api";
 import telaCarregamento from "@/components/telas_carregamento/avaliacao/tela_carregamento_aval"
 import HeaderLogado from "@/components/headers/logado/page"
 import HeaderDeslogado from '@/components/headers/deslogado/page';
@@ -27,7 +24,6 @@ export default function TelaAvaliacao() {
   const [isModalDeleteCommentOpen, setIsModalDeleteCommentOpen] = useState(false);
   const [isModalEditCommentOpen, setIsModalEditCommentOpen] = useState(false);
   const [localProf, setLocalProf] = useState<{ id: number; name: string } | null>(null)
-  const [localCourse, setLocalCourse] = useState([])
   const [textoEdit, setTextoEdit] = useState("");
   const [textoEditComment, setTextoEditComment] = useState("");
   const [idCommentDeleted, setIdCommentDeleted] = useState(0);
@@ -77,11 +73,6 @@ export default function TelaAvaliacao() {
       findingProf(localAval.professorId)
     }, [localAval])
   
-    useEffect(()=>{
-      if (localAval?.courseId!=null)
-      findingCourse(localAval.courseId)
-    },[localAval])
-  
     useEffect(() => {
       const loadUserAvalInfo = async () => {
         try {
@@ -108,17 +99,6 @@ export default function TelaAvaliacao() {
     }
   }
 
-  const findingCourse = async (id:number)=>{
-    try{
-      if (id>0){
-      const course = await getOneCourse(id);
-      setLocalCourse(course);
-    }
-    }
-    catch (error){
-      toast.error("Erro ao procurar curso")
-    }
-  }
 
   //função para tratar da data
   const formatData = (dataPrisma:Date) => {
@@ -223,12 +203,14 @@ export default function TelaAvaliacao() {
           <button
             onClick={()=> {
                             toggleDeleteAval();
-                            try{                                              
-                              deleteAval(localAval.id);
-                              toast.success("Avaliação excluída com sucesso!",{autoClose:800})
-                              setTimeout(() => {
-                                router.push(`/feed`);
-                                }, 1100);              
+                            try{                    
+                              if (localAval){                          
+                                deleteAval(localAval.id);
+                                toast.success("Avaliação excluída com sucesso!",{autoClose:800})
+                                setTimeout(() => {
+                                  router.push(`/feed`);
+                                  }, 1100);
+                              }          
                             }
                             catch(error){
                               toast.error("Erro ao excluir avaliação")
@@ -451,6 +433,8 @@ export default function TelaAvaliacao() {
                             />         
                         </div>
                         <div className='flex ml-3 items-center'>
+                          {localProf && localAval.updatedAt && (
+                            <>
                             <span className="font-sans text-black text-[15px] font-[500] leading-[16.94px]  transition duration-300 ease-in-out cursor-pointer" onClick={()=> router.push(`/user/aluno/${userAvalInfo.id}`)}>{userAvalInfo.name}</span>
                             <span className="font-sans text-[#71767B] text-[12px] leading-[16.94px] flex ml-[6px] mr-[3px] font-bold"> · </span>
                             <span className="font-sans text-[#71767B] text-[12px] font-[350] leading-[16.94px] flex">{formatData(localAval.updatedAt).data}, às {formatData(localAval.updatedAt).hora}</span>
@@ -459,7 +443,9 @@ export default function TelaAvaliacao() {
                             onClick={()=> localProf && router.push(`/user/professor/${localProf.id}`)}
                             className="font-sans text-[#71767B] text-[12px] font-[350] leading-[16.94px] flex cursor-pointer">{localProf.name} </span>
                             <span className="font-sans text-[#71767B] text-[12px] font-bold leading-[16.94px] flex ml-[3px] mr-[3px]"> · </span>
-                            <span className="font-sans text-[#71767B] text-[12px] font-[350] leading-[16.94px] flex">{localCourse.name}</span>
+                            <span className="font-sans text-[#71767B] text-[12px] font-[350] leading-[16.94px] flex">{localAval.course?.name}</span> 
+                            </>)}
+                            
                         </div>
                     </div>
                     <div className='flex flex-col ml-[4.25rem]'>
@@ -582,7 +568,7 @@ export default function TelaAvaliacao() {
                             <div className="pl-[2.3rem] break-words"> 
                                 <p className="text-[#222E50] text-[14px] text-[500] leading-[16.94px] pb-2 whitespace-pre-wrap overflow-wrap: break-words break-word white-space: normal">{comentario.text}</p>
                             </div>
-                            {index !== localAval.comments.length - 1 && (
+                            {localAval.comments && index !== localAval.comments.length - 1 && (
                             <div className="border-b border-[#71767B] w-full mb-[0.75rem]"></div>
                             )}
                         </div>

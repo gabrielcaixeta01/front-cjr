@@ -119,7 +119,6 @@ export default function Cadastro() {
         toast.error("Usuário criado, mas erro ao logar.", { autoClose: 3000 });
       }
     } catch (error) {
-      console.error("Erro ao criar ou logar usuário:", error);
       toast.error("Erro ao criar ou logar usuário.", { autoClose: 3000 });
     }
   };

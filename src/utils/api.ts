@@ -173,16 +173,10 @@ export const getUserByEmail = async (email: string): Promise<User | null> => {
 export const loginUser = async (email: string, password: string) => {
   try {
     const response = await api.post<{ access_token: string }>("/login", { email, password });
-    console.log("Resposta:", response.data);
-    
-    const { access_token } = response.data;
-    console.log("Token obtidoooo:", access_token);
-    if(access_token){
 
-    
-      localStorage.setItem("authToken", access_token);
-      console.log("Token armazenado no localStorage:", localStorage.getItem("authToken"));
-    
+    const { access_token } = response.data;
+    if(access_token){
+      localStorage.setItem("authToken", access_token);    
     }
     return response.data; 
   } catch (error: any) {
@@ -190,7 +184,6 @@ export const loginUser = async (email: string, password: string) => {
       
       toast.error("Senha ou email incorretos. Verifique e tente de novo.", { autoClose: 3000 });
     } else {
-      console.error("Erro ao buscar informações do professor:", error);
     }
     return null;
   }
