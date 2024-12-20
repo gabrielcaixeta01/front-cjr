@@ -100,8 +100,11 @@ export default function Cadastro() {
       profilepic: values.profilepic || undefined,
     };
 
+    console.log(newUser);
+
     try {
       const response = await createUser(newUser);
+      console.log(response);
       console.log("Usuário criado:", response);
       toast.success("Usuário criado com sucesso!", { autoClose: 3000 });
       router.push("/login");
@@ -178,14 +181,12 @@ export default function Cadastro() {
                 className="text-red-500 text-sm mt-2"
               />
 
-              <Field
-                as="select"
-                name="program"
+              <select
                 value={values.program?.id || ""}
                 className="w-3/4 h-12 p-2 border-[0.125rem] border-gray-300 rounded-lg focus:border-gray-500 mt-8 text-black"
-                onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
+                onChange={(event: React.ChangeEvent<HTMLSelectElement>) => {
                   const selectedProgram = programs.find(
-                    (program) => program.id === parseInt(e.target.value)
+                    (program) => program.id === parseInt(event.target.value)
                   );
                   setFieldValue(
                     "program",
@@ -201,21 +202,20 @@ export default function Cadastro() {
                     {program.name}
                   </option>
                 ))}
-              </Field>
+              </select>
               <ErrorMessage
                 name="program"
                 component="div"
                 className="text-red-500 text-sm mt-2"
               />
 
-              <Field
-                as="select"
-                name="department"
+              <select
                 value={values.department?.id || ""}
                 className="w-3/4 h-12 p-2 border-[0.125rem] border-gray-300 rounded-lg focus:border-gray-500 mt-8 text-black"
-                onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
-                  const selectedDepartment = departments.find(
-                    (department) => department.id === parseInt(e.target.value)
+                onChange={(event: React.ChangeEvent<HTMLSelectElement>) => {
+                  const selectedDepartment = programs.find(
+                    (departament) =>
+                      departament.id === parseInt(event.target.value)
                   );
                   setFieldValue(
                     "department",
@@ -226,12 +226,12 @@ export default function Cadastro() {
                 <option value="" disabled>
                   Selecione o departamento
                 </option>
-                {departments.map((department) => (
-                  <option key={department.id} value={department.id}>
-                    {department.name}
+                {departments.map((departament) => (
+                  <option key={departament.id} value={departament.id}>
+                    {departament.name}
                   </option>
                 ))}
-              </Field>
+              </select>
               <ErrorMessage
                 name="department"
                 component="div"
