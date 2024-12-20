@@ -1,5 +1,6 @@
 import axios from "axios";
 import { User, Avaliacao, Comment, Professor } from "@/types";
+import { toast } from "react-toastify";
 
 // Configuração do Axios com a base URL correta
 export const api = axios.create({
@@ -169,7 +170,6 @@ export const getUserByEmail = async (email: string): Promise<User | null> => {
     const response = await api.get(`/user/email/${email}`);
     return response.data as User || null; 
   } catch (error) {
-    console.error("Erro ao buscar usuário ", error);
     return null;
   }
 };
@@ -189,11 +189,19 @@ export const loginUser = async (email: string, password: string) => {
     
     }
     return response.data; 
-  } catch (error) {
-    console.error("Erro ao fazer login:", error);
-    throw new Error("Credenciais inválidas ou erro no servidor.");
+  } catch (error: any) {
+    if (error.response && error.response.status === 401) {
+      
+      toast.error("Senha ou email incorretos. Verifique e tente de novo.", { autoClose: 3000 });
+    } else {
+      console.error("Erro ao buscar informações do professor:", error);
+    }
+    return null;
   }
+      
+    
 };
+
 
 export const logoutUser = () => {
   localStorage.removeItem("authToken");

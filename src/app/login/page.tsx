@@ -4,6 +4,8 @@ import { useRouter } from "next/navigation";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { getUserByEmail, loginUser } from "@/utils/api";
+import { User } from "@/types";
+import { toast } from "react-toastify";
 
 const validationSchema = Yup.object({
   email: Yup.string()
@@ -23,18 +25,28 @@ export default function Login() {
   const onSubmit = async (values: typeof initialValues) => {
     console.log(values);
     try {
+      const existingUser: User | null = await getUserByEmail(values.email);
+      if(!existingUser){
+        toast.error("Senha ou email incorretos. Verifique e tente de novo.", {
+          autoClose: 3000,
+        });
+        return null;
+      }
       const response = await loginUser(values.email, values.password);
-      const { access_token } = response as { access_token: string };
-      console.log("Token:", access_token);
+      if (response) {
+        const { access_token } = response as { access_token: string };
+        console.log("Token:", access_token);
+      
 
-      if (access_token) {
-        const user = await getUserByEmail(values.email);
-        if (user) {
-          console.log(localStorage.getItem("authToken"));
-          router.push(`/feed`);
+        if (access_token) {
+          const user = await getUserByEmail(values.email);
+          if (user) {
+            console.log(localStorage.getItem("authToken"));
+            router.push(`/feed`);
+          }
+        } else {
+          alert("Falha no login. Verifique suas credenciais.");
         }
-      } else {
-        alert("Falha no login. Verifique suas credenciais.");
       }
     } catch (error) {
       console.error("Erro ao fazer login:", error);
