@@ -39,7 +39,7 @@ export default function PerfilAluno() {
           const decoded: { sub: number } = jwtDecode(token);
           setLoggedInUserId(decoded.sub); // Salva o ID do usuário logado
           setIsAuth(true); // Define como autenticado
-        } catch (error) {
+        } catch {
           setIsAuth(false);
         }
       } else {
@@ -58,7 +58,6 @@ export default function PerfilAluno() {
         if (!userIdToFetch) return; // Se não há ID, para aqui
         const userData = await fetchUserInfo(userIdToFetch);
         setUserInfo(userData);
-      } catch (error) {
       } finally {
         setLoading(false);
       }
@@ -77,7 +76,7 @@ export default function PerfilAluno() {
         ]);
         setProfessores(professoresResponse.data as { id: number; name: string }[]);
         setCursos(cursosResponse.data as { id: number; name: string }[]);
-      } catch (error) {
+      } catch {
       }
     };
 
@@ -331,7 +330,7 @@ export default function PerfilAluno() {
                     )}
                   </div>
                                              
-                  <div className="flex">                        
+                  <div className="flex space-x-1">                        
                     <p className="text-sm text-gray-500">
                       {new Date(avaliacao.createdAt || "").toLocaleDateString()} - {" "}
                     </p> 
@@ -392,7 +391,7 @@ export default function PerfilAluno() {
                                 />
                               </div>
                               <p
-                                className="font-semibold text-gray-700 bg-white transition-transform duration-300 hover:scale-110 ease-in-out cursor-pointer"
+                                className="font-semibold text-gray-700 bg-transparent transition-transform duration-300 hover:scale-110 ease-in-out cursor-pointer"
                                 onClick={(event) =>{
                                   event.stopPropagation();
                                   router.push(`/user/aluno/${comment.user?.id}`)
