@@ -475,7 +475,8 @@ export default function TelaAvaliacao() {
                                 onClick= {()=>toggleModalComment()}
                                 />
                               )} 
-                              {!isAuth && (<Image
+                              {!isAuth && (
+                                  <Image
                                     src="/comente.png"
                                     alt="Fazer comentário"
                                     width={48}
@@ -530,18 +531,22 @@ export default function TelaAvaliacao() {
                             <div key={comentario.id} className='mt-1'>
                             <div  className="flex mx-left mb-[0.2rem] items-center"> 
                             <div className="items-center">
+                              <Link href={`/user/aluno/${comentario.userId}`}> 
                                 <Image
-                                src={comentario.user?.profilepic || profilePic}
-                                alt="Foto de perfil do autor do comentário"
-                                width={48}
-                                height={48}
-                                className="w-7 h-7 rounded-full shadow-md bg-white object-cover cursor-pointer"
-                                onClick={() => router.push(`/user/aluno/${comentario.userId}`)}
+                                  src={comentario.user?.profilepic || profilePic}
+                                  alt="Foto de perfil do autor do comentário"
+                                  width={48}
+                                  height={48}
+                                  className="w-7 h-7 rounded-full shadow-md bg-white object-cover cursor-pointer"
+                                  onClick={() => router.push(`/user/aluno/${comentario.userId}`)}
                                 />
+                              </Link>               
                             </div>
-                            <span onClick= {()=> router.push(`/user/aluno/${comentario.userId}`)} className="font-sans text-black ml-2 text-[13px] font-[500] leading-[15.73px] text-center items-center transition duration-300 ease-in-out cursor-pointer"> 
-                                {comentario.user?.name} 
-                            </span> 
+                            <Link href={`/user/aluno/${comentario.userId}`}> 
+                              <span onClick= {()=> router.push(`/user/aluno/${comentario.userId}`)} className="font-sans text-black ml-2 text-[13px] font-[500] leading-[15.73px] text-center items-center transition duration-300 ease-in-out cursor-pointer"> 
+                                  {comentario.user?.name} 
+                              </span> 
+                            </Link>
                             <span className="font-sans text-[#71767B] pl-2 text-[13px] font-[350] leading-[15.73px] text-center items-center"> 
                                 · {formatData(comentario.updatedAt).data}, ás {formatData(comentario.updatedAt).hora}  
                             </span>  

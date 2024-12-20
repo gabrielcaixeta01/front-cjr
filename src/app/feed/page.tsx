@@ -11,6 +11,7 @@ import { jwtDecode } from "jwt-decode";
 import HeaderDeslogado from "@/components/headers/deslogado/page";
 import HeaderLogado from "@/components/headers/logado/page";
 import telaCarregamento from "@/components/telas_carregamento/feed/tela_carregamento_feed"
+import Link from "next/link";
 
 export default function FeedLogado() {
   const router = useRouter();
@@ -278,7 +279,7 @@ export default function FeedLogado() {
   }
 
   return (
-    <div className="bg-gray-100 min-h-screen">
+    <div className="bg-gray-100 min-h-screen min-w-screen">
       {/* Header */}
       {isAuth && userInfo ? (
         <HeaderLogado/>
@@ -358,27 +359,31 @@ export default function FeedLogado() {
             {/* Grid de Professores */}
             <section className="p-4 grid w-[70%] min-h-fit mx-auto grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
               {filteredProfessores.map((professor) => (
-                <div
-                  key={professor.id}
-                  className="p-4 bg-white rounded-lg shadow cursor-pointer hover:shadow-md"
-                  onClick={() => router.push(`/user/professor/${professor.id}`)}
-                >
-                  <Image
-                    src={professor.profilepic || "/default-profile.png"}
-                    alt={professor.name}
-                    width={80}
-                    height={80}
-                    className="rounded-full mx-auto"
-                  />
-                  <h3 className="text-center text-black font-semibold mt-2">{professor.name}</h3>
-                  <p className="text-center text-gray-400 text-sm mb-3 w-full truncate overflow-hidden">
-                    {professor.department?.name || "Departamento não informado"}
-                  </p>
-                  <p className=" text-center text-azulCjr text-xs w-full truncate overflow-hidden">
-                    {professor.courses?.length
-                      ? professor.courses.map((course) => course.name).join(", ")
-                      : "Sem matérias informadas"}
-                  </p>
+                <div key={professor.id}>
+                  <Link href={`/user/professor/${professor.id}`}>
+                    <div
+                      key={professor.id}
+                      className="p-4 bg-white rounded-lg shadow cursor-pointer hover:shadow-md"
+                      onClick={() => router.push(`/user/professor/${professor.id}`)}
+                    >
+                      <Image
+                        src={professor.profilepic || "/default-profile.png"}
+                        alt={professor.name}
+                        width={80}
+                        height={80}
+                        className="rounded-full mx-auto"
+                      />
+                      <h3 className="text-center text-black font-semibold mt-2">{professor.name}</h3>
+                      <p className="text-center text-gray-400 text-sm mb-3 w-full truncate overflow-hidden">
+                        {professor.department?.name || "Departamento não informado"}
+                      </p>
+                      <p className=" text-center text-azulCjr text-xs w-full truncate overflow-hidden">
+                        {professor.courses?.length
+                          ? professor.courses.map((course) => course.name).join(", ")
+                          : "Sem matérias informadas"}
+                      </p>
+                    </div>
+                  </Link>
                 </div>
               ))}
             </section>

@@ -258,12 +258,12 @@ export default function PerfilAluno() {
             </div>
             {isAuth && loggedInUserId === Number(id) && (
               <div className="flex flex-col">
-                <button
-                  className="bg-azulCjr text-white rounded-[60px] px-4 py-2 hover:bg-blue-600 transition duration-300 ease-in-out shadow-md hover:shadow-lg"
-                  onClick={() => router.push(`/user/aluno/editar`)}
-                >
-                  Editar Perfil
-                </button>
+                  <button
+                    className="bg-azulCjr text-white rounded-[60px] px-4 py-2 hover:bg-blue-600 transition duration-300 ease-in-out shadow-md hover:shadow-lg"
+                    onClick={() => router.push(`/user/aluno/editar`)}
+                  >
+                    Editar Perfil
+                  </button>
               </div>
             )}
           </div>
