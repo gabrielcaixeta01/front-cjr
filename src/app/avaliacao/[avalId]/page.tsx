@@ -12,6 +12,8 @@ import telaCarregamento from "@/components/telas_carregamento/avaliacao/tela_car
 import HeaderLogado from "@/components/headers/logado/page"
 import HeaderDeslogado from '@/components/headers/deslogado/page';
 import { jwtDecode } from 'jwt-decode'
+import Link from "next/link";
+
 
 export default function TelaAvaliacao() {
   
@@ -423,6 +425,8 @@ export default function TelaAvaliacao() {
                 <div className=" w-full max-w-[100%] flex flex-col mx-auto border-b-[1.5px] border-b-black pb-[0.7rem] mt-2">
                     <div className="flex items-center pl-3 pb-[0.7rem] mt-2">
                         <div className="pl-1">
+                          <Link
+                          href={`/user/aluno/${userAvalInfo.id}`}> 
                             <Image
                             src={userAvalInfo.profilepic || profilePic} //caso a foto de perfil do usuário seja null, é colocada uma foto de perfil padrão
                             alt="Foto de perfil do usuário que fez a avaliação"
@@ -430,18 +434,23 @@ export default function TelaAvaliacao() {
                             height={48}
                             className="w-9 h-9 rounded-full shadow-md bg-white object-cover cursor-pointer"
                             onClick={() => router.push(`/user/aluno/${userAvalInfo.id}`)}
-                            />         
+                            />
+                            </Link>          
                         </div>
                         <div className='flex ml-3 items-center'>
                           {localProf && localAval.updatedAt && (
                             <>
-                            <span className="font-sans text-black text-[15px] font-[500] leading-[16.94px]  transition duration-300 ease-in-out cursor-pointer" onClick={()=> router.push(`/user/aluno/${userAvalInfo.id}`)}>{userAvalInfo.name}</span>
+                            <Link href={`/user/aluno/${userAvalInfo.id}`}>                             
+                              <span className="font-sans text-black text-[15px] font-[500] leading-[16.94px]  transition duration-300 ease-in-out cursor-pointer" onClick={()=> router.push(`/user/aluno/${userAvalInfo.id}`)}>{userAvalInfo.name}</span>
+                            </Link>
                             <span className="font-sans text-[#71767B] text-[12px] leading-[16.94px] flex ml-[6px] mr-[3px] font-bold"> · </span>
                             <span className="font-sans text-[#71767B] text-[12px] font-[350] leading-[16.94px] flex">{formatData(localAval.updatedAt).data}, às {formatData(localAval.updatedAt).hora}</span>
                             <span className="font-sans text-[#71767B] text-[12px] font-bold leading-[16.94px] flex ml-[3px] mr-[3px]"> · </span>
-                            <span 
-                            onClick={()=> localProf && router.push(`/user/professor/${localProf.id}`)}
-                            className="font-sans text-[#71767B] text-[12px] font-[350] leading-[16.94px] flex cursor-pointer">{localProf.name} </span>
+                            <Link href={`/user/professor/${localProf.id}`}> 
+                              <span 
+                              onClick={()=> localProf && router.push(`/user/professor/${localProf.id}`)}
+                              className="font-sans text-[#71767B] text-[12px] font-[350] leading-[16.94px] flex cursor-pointer">{localProf.name} </span>
+                            </Link>
                             <span className="font-sans text-[#71767B] text-[12px] font-bold leading-[16.94px] flex ml-[3px] mr-[3px]"> · </span>
                             <span className="font-sans text-[#71767B] text-[12px] font-[350] leading-[16.94px] flex">{localAval.course?.name}</span> 
                             </>)}
