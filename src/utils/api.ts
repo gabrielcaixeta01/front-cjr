@@ -37,7 +37,7 @@ export const fetchUserID = async (): Promise<number> => {
   try {
     const response = await api.get<{ id: number }>("/user/me");
     return response.data.id;
-  } catch (error) {
+  } catch {
     throw new Error("Erro ao buscar o ID do usuário.");
   }
 };
@@ -46,7 +46,7 @@ export const fetchUserInfo = async (userId: number): Promise<User> => {
   try {
     const response = await api.get<User>(`/user/${userId}`);
     return response.data;
-  } catch (error) {
+  } catch {
     throw new Error("Erro ao buscar informações do usuário.");
   }
 };
@@ -85,7 +85,7 @@ export const createAval = async (aval: Partial<Avaliacao>): Promise<Avaliacao | 
     );
 
     return response.data as Avaliacao; 
-  } catch (error: any) {
+  } catch (error: unknown) {
     throw error; 
   }
 };
@@ -136,7 +136,7 @@ export const fetchProfessorInfo = async (professorId: number): Promise<Professor
   try {
     const response = await api.get<Professor>(`/professors/${professorId}`);
     return response.data;
-  } catch (error) {
+  } catch {
     throw new Error("Erro ao buscar informações do professor.");
   }
 };
@@ -165,7 +165,7 @@ export const getUserByEmail = async (email: string): Promise<User | null> => {
    try {
     const response = await api.get(`/user/email/${email}`);
     return response.data as User || null; 
-  } catch (error) {
+  } catch {
     return null;
   }
 };

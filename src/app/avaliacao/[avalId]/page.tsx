@@ -26,7 +26,7 @@ export default function TelaAvaliacao() {
   const [isModalDeleteAvalOpen, setIsToggleDeleteAvalOpen] = useState(false);
   const [isModalDeleteCommentOpen, setIsModalDeleteCommentOpen] = useState(false);
   const [isModalEditCommentOpen, setIsModalEditCommentOpen] = useState(false);
-  const [localProf, setLocalProf] = useState([])
+  const [localProf, setLocalProf] = useState<{ id: number; name: string } | null>(null)
   const [localCourse, setLocalCourse] = useState([])
   const [textoEdit, setTextoEdit] = useState("");
   const [textoEditComment, setTextoEditComment] = useState("");
@@ -281,7 +281,9 @@ export default function TelaAvaliacao() {
                     isEdited:true,
                   }
                   try{
-                    updateAval(avalEdited,localAval.id);
+                    if (localAval) {
+                      updateAval(avalEdited, localAval.id);
+                    }
                     toggleModalEdit(); 
                     toast.success("A avaliação foi editada com sucesso", {autoClose:1100});
                     setTimeout(() => {
@@ -414,7 +416,7 @@ export default function TelaAvaliacao() {
       <div className="flex flex-col h-screen min-h-fit overflow-y-scroll bg-gray-100">
         {}
         {isAuth && userInfo ? (
-          <HeaderLogado {...(userInfo as User)} />
+          <HeaderLogado />
         ) : (
           <HeaderDeslogado />
         )}
@@ -454,7 +456,7 @@ export default function TelaAvaliacao() {
                             <span className="font-sans text-[#71767B] text-[12px] font-[350] leading-[16.94px] flex">{formatData(localAval.updatedAt).data}, às {formatData(localAval.updatedAt).hora}</span>
                             <span className="font-sans text-[#71767B] text-[12px] font-bold leading-[16.94px] flex ml-[3px] mr-[3px]"> · </span>
                             <span 
-                            onClick={()=> router.push(`/user/professor/${localProf.id}`)}
+                            onClick={()=> localProf && router.push(`/user/professor/${localProf.id}`)}
                             className="font-sans text-[#71767B] text-[12px] font-[350] leading-[16.94px] flex cursor-pointer">{localProf.name} </span>
                             <span className="font-sans text-[#71767B] text-[12px] font-bold leading-[16.94px] flex ml-[3px] mr-[3px]"> · </span>
                             <span className="font-sans text-[#71767B] text-[12px] font-[350] leading-[16.94px] flex">{localCourse.name}</span>

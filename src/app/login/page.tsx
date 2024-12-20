@@ -44,7 +44,7 @@ export default function Login() {
           alert("Falha no login. Verifique suas credenciais.");
         }
       }
-    } catch (error) {
+    } catch {
       alert("Erro ao fazer login. Tente novamente.");
     }
   };

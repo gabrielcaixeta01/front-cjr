@@ -5,13 +5,11 @@ import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { useEffect, useRef, useState } from "react";
 import {
-  getAllDepartments,
-  getAllPrograms,
   createUser,
   getUserByEmail,
 } from "@/utils/api";
 import { Department, Program, User } from "@/types";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
 
@@ -66,7 +64,7 @@ export default function Cadastro() {
       try {
         const response = await axios.get("http://localhost:4000/departments"); // URL corrigida
         setDepartments(response.data as Department[]);
-      } catch (error) {
+      } catch {
         toast.error("Erro ao buscar professores.");
       }
     };
@@ -78,7 +76,7 @@ export default function Cadastro() {
       try {
         const response = await axios.get("http://localhost:4000/programs"); // URL corrigida
         setPrograms(response.data as Program[]);
-      } catch (error) {
+      } catch {
         toast.error("Erro ao buscar professores.");
       }
     };
@@ -108,10 +106,10 @@ export default function Cadastro() {
 
 
     try {
-      const response = await createUser(newUser);
+      await createUser(newUser);
       toast.success("Usuário criado com sucesso!", { autoClose: 3000 });
       router.push("/login");
-    } catch (error) {
+    } catch {
       toast.error("Erro ao criar usuário", { autoClose: 3000 });
     }
   };
