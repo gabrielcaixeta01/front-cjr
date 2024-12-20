@@ -7,6 +7,7 @@ import { useEffect, useRef, useState } from "react";
 import {
   createUser,
   getUserByEmail,
+  loginUser,
 } from "@/utils/api";
 import { Department, Program, User } from "@/types";
 import { toast } from "react-toastify";
@@ -107,10 +108,19 @@ export default function Cadastro() {
 
     try {
       await createUser(newUser);
-      toast.success("Usuário criado com sucesso!", { autoClose: 3000 });
-      router.push("/login");
-    } catch {
-      toast.error("Erro ao criar usuário", { autoClose: 3000 });
+  
+      // Faz login após criar o usuário
+      const response = await loginUser(values.email, values.password);
+      if (response && response.access_token) {
+        localStorage.setItem("authToken", response.access_token);
+        toast.success("Usuário criado e logado com sucesso!", { autoClose: 3000 });
+        router.push("/feed");
+      } else {
+        toast.error("Usuário criado, mas erro ao logar.", { autoClose: 3000 });
+      }
+    } catch (error) {
+      console.error("Erro ao criar ou logar usuário:", error);
+      toast.error("Erro ao criar ou logar usuário.", { autoClose: 3000 });
     }
   };
 

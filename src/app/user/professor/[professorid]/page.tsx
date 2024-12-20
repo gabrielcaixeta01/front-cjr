@@ -507,7 +507,7 @@ export default function ProfessorPerfil() {
                         avaliacao.comments.map((comment) => (
                           <div
                             key={comment.id}
-                            className="bg-gray-100 rounded-[50px] text-sm p-4 mt-1"
+                            className="bg-gray-100 rounded-[50px] w-[90%] text-sm p-4 mt-1"
                           >
                             <p
                               className="font-semibold text-gray-700 flex items-center cursor-pointer origin-center transition-transform duration-300 ease-in-out"

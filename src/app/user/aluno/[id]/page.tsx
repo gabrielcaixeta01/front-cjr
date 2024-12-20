@@ -376,7 +376,7 @@ export default function PerfilAluno() {
                         avaliacao.comments.map((comment) => (
                           <div
                             key={comment.id}
-                            className="bg-gray-100 rounded-[50px] text-sm p-3 mt-1"
+                            className="bg-gray-100 rounded-[50px] w-[90%] text-sm p-3 mt-1"
                           >
                             <div className="flex items-center">
                               <div className="flex mr-2 mb-1 ml-1">
