@@ -123,7 +123,7 @@ export default function Cadastro() {
   };
 
   return (
-    <div className="w-full h-screen flex relative">
+    <div className="w-full h-screen flex relative h-screen min-h-fit overflow-y-scroll">
       <div className="ImgContainer flex justify-center h-full flex-1 relative">
         <div className="absolute w-full h-screen bg-black/30 z-30"></div>
         <Image
@@ -222,7 +222,8 @@ export default function Cadastro() {
                 className="w-3/4 h-12 p-2 border-[0.125rem] border-gray-300 rounded-lg focus:border-gray-500 mt-8 text-black"
                 onChange={(event: React.ChangeEvent<HTMLSelectElement>) => {
                   const selectedDepartment = departments.find(
-                    (department) => department.id === parseInt(event.target.value)
+                    (department) =>
+                      department.id === parseInt(event.target.value)
                   );
                   setFieldValue(
                     "department",
@@ -266,6 +267,7 @@ export default function Cadastro() {
 
                 <button
                   type="button"
+                  onClick={() => router.push("/login")}
                   className="bg-green-300 border-[0.125rem] border-gray-500 p-2 rounded-lg hover:scale-110 duration-200 w-40 h-12 text-xl text-black"
                 >
                   Fazer Login
