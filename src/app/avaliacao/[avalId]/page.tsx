@@ -413,12 +413,28 @@ export default function TelaAvaliacao() {
   return (
     <>
       <div className="flex flex-col h-screen min-h-fit overflow-y-scroll bg-gray-100">
-        {/* Header */}
+        {}
         {isAuth && userInfo ? (
           <HeaderLogado {...(userInfo as User)} />
         ) : (
           <HeaderDeslogado />
         )}
+        {isModalCommentOpen && userInfo && (
+          modalCreateComment()                           
+        )}
+        {isModalDeleteAvalOpen && (
+          modalDeleteAval()
+        )}
+        {isModalEditOpen && (
+          modalEditAval()
+        )}
+        {isModalDeleteCommentOpen && (
+          modalDeleteComment(idCommentDeleted)
+        )}
+        {isModalEditCommentOpen && (
+            modalEditComment(idCommentEdited)
+        )}  
+
         <div className="w-full max-w-[40%]  mx-auto min-h-fit bg-white h-screen rounded shadow-md ">
             <div className=" w-full max-w-[95%] bg-[#3EEE9A] rounded-md mt-8 flex flex-col mx-auto mb-4 min-h-fit" >
                 <div className=" w-full max-w-[100%] flex flex-col mx-auto border-b-[1.5px] border-b-black pb-[0.7rem] mt-2">
@@ -507,15 +523,7 @@ export default function TelaAvaliacao() {
                                     />   
                                 </div>
                                 )}
-                                {isModalCommentOpen && userInfo && (
-                                modalCreateComment()                           
-                                )}
-                                {isModalDeleteAvalOpen && (
-                                modalDeleteAval()
-                                )}
-                                {isModalEditOpen && (
-                                modalEditAval()
-                                )}                             
+                     
                         </div>  
                     </div>
                 </div>
@@ -564,13 +572,7 @@ export default function TelaAvaliacao() {
                                     }}
                                     className="w-4 h-4 object-cover shadow-md hover:bg-blue-200 transition duration-300 hover:scale-110  ease-in-out cursor-pointer">
                                 </Image>
-        
-                                {isModalDeleteCommentOpen && (
-                                    modalDeleteComment(idCommentDeleted)
-                                )}
-                                {isModalEditCommentOpen && (
-                                    modalEditComment(idCommentEdited)
-                                )}       
+             
                                 </div>    
                             )}               
                             </div>

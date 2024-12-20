@@ -237,22 +237,6 @@ export default function FeedLogado() {
         </select>
         )}
 
-          
-        {/*<select
-          value={courseSelected}
-          className="bg-white h-[2rem] w-[90%] pl-[0.325rem] mt-5 rounded-md"
-          onChange={(event) => {
-            setCourseSelected(event.target.value);
-          }}
-        >
-          <option value="-1" disabled>Disciplina</option>
-          {courses.map((course) => (
-            <option key={course.id} value={course.id}>
-              {course.name}
-            </option>
-          ))}
-        </select>*/}
-
         <div className="flex flex-col h-[12rem] w-[90%] bg-[#A4FED3] mt-[2rem] rounded-md">
         <textarea
           value={texto}
@@ -310,6 +294,8 @@ export default function FeedLogado() {
         <HeaderDeslogado />
       )}
 
+      {isModalOpen && isAuth && modalAvaliacao()}
+      
       {/* Buscar Professores */}
             <div className="flex justify-center my-5 text-black">
             <input
@@ -374,7 +360,7 @@ export default function FeedLogado() {
               >
                 Criar nova avaliação
               </button>
-              {isModalOpen && isAuth && modalAvaliacao()}
+
             </div>
       
             {/* Grid de Professores */}
