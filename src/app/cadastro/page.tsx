@@ -89,7 +89,7 @@ export default function Cadastro() {
     const existingUser: User | null = await getUserByEmail(values.email);
     if (existingUser) {
       toast.error("Este e-mail já está cadastrado.", { autoClose: 3000 });
-      return; 
+      return;
     }
     const newUser = {
       name: values.name,
@@ -249,12 +249,19 @@ export default function Cadastro() {
                 }}
               />
 
-              <section className="mt-16">
+              <section className="mt-16 flex space-x-8">
                 <button
                   type="submit"
                   className="bg-green-300 border-[0.125rem] border-gray-500 p-2 rounded-lg hover:scale-110 duration-200 w-40 h-12 text-xl text-black"
                 >
                   Criar Conta
+                </button>
+
+                <button
+                  type="button"
+                  className="bg-green-300 border-[0.125rem] border-gray-500 p-2 rounded-lg hover:scale-110 duration-200 w-40 h-12 text-xl text-black"
+                >
+                  Fazer Login
                 </button>
               </section>
             </Form>

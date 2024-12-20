@@ -98,7 +98,7 @@ export default function Login() {
               className="text-red-500 mt-1 text-sm"
             />
 
-            <section className="mt-20 flex space-x-6">
+            <section className="mt-20 flex space-x-8">
               <button
                 type="submit"
                 className="bg-green-300 border-[0.125rem] border-gray-500 p-2 rounded-lg hover:scale-110 duration-200 w-40 h-12 text-xl text-black"
