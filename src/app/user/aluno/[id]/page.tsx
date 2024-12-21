@@ -350,7 +350,7 @@ export default function PerfilAluno() {
                   <p
                   onClick={(event)=> event.stopPropagation()} 
                   onSelect={(event)=> event.stopPropagation()}
-                  className="text-gray-700 mt-2 whitespace-pre-wrap overflow-wrap: break-words break-word white-space: normal hover:bg-[#adeccc] transition duration-300 ease-in-out cursor-pointer"
+                  className="text-gray-700 mt-2 whitespace-pre-wrap overflow-wrap: break-words break-word white-space: normal"
                   >{avaliacao.text}</p>
 
                   {/* Botão para abrir/fechar comentários */}
