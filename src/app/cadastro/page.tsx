@@ -271,7 +271,7 @@ export default function Cadastro() {
                   onClick={() => router.push("/login")}
                   className="bg-green-300 border-[0.125rem] border-gray-500 p-2 rounded-lg hover:scale-110 duration-200 w-40 h-12 text-xl text-black"
                 >
-                  Fazer Login
+                  Voltar
                 </button>
               </section>
             </Form>
