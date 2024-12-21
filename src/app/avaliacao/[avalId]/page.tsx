@@ -170,8 +170,8 @@ export default function TelaAvaliacao() {
                   try {
                     createComment(newComment);
                     setTextoComment("");
-                    toggleModalComment();
                     toast.success("O comentário foi criado com sucesso", { autoClose: 1200 });
+                    toggleModalComment();
                     setTimeout(() => {
                       window.location.reload();
                     }, 1700);

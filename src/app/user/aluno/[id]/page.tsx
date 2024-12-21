@@ -405,8 +405,9 @@ export default function PerfilAluno() {
                                 {comment.user?.name || "Usuário desconhecido"}
                               </p>
                             </div>
-                            <p className="text-gray-600 text-sm ml-[2.8rem] whitespace-pre-wrap overflow-wrap: break-words break-word white-space: normal">{comment.text}</p>
+                            <p className="text-gray-600 text-sm ml-[2.8rem] whitespace-pre-wrap overflow-wrap: break-words break-word white-space: normal">{comment.text}</p>                            
                           </div>
+                          
                         ))}
                     </div>
                   )}
